@@ -41,16 +41,16 @@ async function getDashboardData() {
       },
     });
 
-    const lowBalanceList = allStudents.map(s => {
+    const lowBalanceList = allStudents.map((s: any) => {
       const used = s.lessons.length;
       // Note: we assume package provides a certain number of lessons, here we use lessons_remaining directly from invoice as simplified logic or calculate from package.
       // The legacy code used `session_count` on invoice. We will use `lessons_remaining` or total package lessons.
       // Let's approximate: 
-      const totalPurchased = s.invoices.reduce((sum, inv) => sum + inv.lessons_remaining, 0) + used; // rough approximation for legacy logic
+      const totalPurchased = s.invoices.reduce((sum: any, inv: any) => sum + inv.lessons_remaining, 0) + used; // rough approximation for legacy logic
       const rem = totalPurchased - used; // actually just sum of lessons_remaining might be better, but we follow legacy style of tracking `rem`
       
       return { ...s, rem };
-    }).filter(s => s.rem <= 2).sort((a, b) => a.rem - b.rem);
+    }).filter((s: any) => s.rem <= 2).sort((a: any, b: any) => a.rem - b.rem);
 
     return { monthIncome, monthProfit, totalLessons, lowBalanceList };
   } catch (e) {
@@ -155,7 +155,7 @@ export default async function DashboardPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.lowBalanceList.map((s) => (
+            {data.lowBalanceList.map((s: any) => (
               <div key={s.id} className="alert-card shadow-sm hover:shadow-xl group">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:scale-110 transition-transform">

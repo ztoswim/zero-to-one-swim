@@ -39,7 +39,7 @@ export default async function StudentsPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in" style={{ animationDelay: '0.1s' }}>
-        {data.students.map((student) => (
+        {data.students.map((student: any) => (
           <div key={student.id} className="bg-white rounded-[2rem] p-6 border border-gray-50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center font-black text-xl">

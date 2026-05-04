@@ -39,7 +39,7 @@ export default async function CoachesPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in" style={{ animationDelay: '0.1s' }}>
-        {data.coaches.map((coach) => (
+        {data.coaches.map((coach: any) => (
           <div key={coach.id} className="bg-white rounded-[2rem] p-6 border border-gray-50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-5 text-gray-900 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
               <Medal className="w-24 h-24 rotate-12" />

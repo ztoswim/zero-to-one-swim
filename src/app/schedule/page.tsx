@@ -56,7 +56,7 @@ export default async function SchedulePage() {
           {data.lessons.length === 0 && !data.error && (
             <div className="text-center py-12 text-gray-400 font-bold">No upcoming classes scheduled.</div>
           )}
-          {data.lessons.map((lesson) => (
+          {data.lessons.map((lesson: any) => (
             <div key={lesson.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-2xl border border-gray-50 hover:border-primary-100 hover:bg-primary-50/30 transition-all gap-4">
               <div className="flex items-center gap-6">
                 <div className="text-center w-16">

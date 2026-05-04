@@ -20,7 +20,7 @@ async function getDashboardData() {
       },
     });
 
-    const monthIncome = monthlyInvoices.reduce((sum, inv) => sum + Number(inv.total_amount || 0), 0);
+    const monthIncome = monthlyInvoices.reduce((sum: any, inv: any) => sum + Number(inv.total_amount || 0), 0);
     const monthProfit = Math.round(monthIncome * 0.4);
 
     // Total lessons

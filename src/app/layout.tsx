@@ -9,8 +9,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Dashboard | Swim Academy",
-  description: "Swim Academy management system",
+  title: "Dashboard | Zero To One Swim",
+  description: "Zero To One Swim management system",
 };
 
 export default function RootLayout({

@@ -40,7 +40,7 @@ export default async function CreateInvoicePage() {
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <select className="w-full h-14 pl-12 pr-4 bg-gray-50 border border-gray-100 rounded-2xl font-bold text-gray-900 focus:ring-2 focus:ring-primary-500 outline-none appearance-none cursor-pointer">
                 <option value="">Choose a student...</option>
-                {data.students.map(s => (
+                {data.students.map((s: any) => (
                   <option key={s.id} value={s.id}>{s.name} ({s.phone})</option>
                 ))}
               </select>

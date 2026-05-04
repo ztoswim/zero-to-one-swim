@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Students | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            success: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .student-card { @apply bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer animate-in; }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-50" data-mobile-action="user-plus" data-mobile-click="openAddModal()">
+<div id="app" v-cloak class="min-h-screen flex">
+  <div class="flex-1 flex flex-col relative min-w-0">
+    <main class="flex-1 overflow-y-scroll w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24">
+      <div class="max-w-[1600px] w-full mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Student <span class="text-primary-500">Directory</span></h1>
+            <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Managing academy participants</p>
+          </div>
+          <button @click="openAddModal" class="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 font-black flex items-center gap-2">Register New Student <i data-lucide="user-plus" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-10 relative group">
+          <input type="text" v-model="search" placeholder="Search by name, phone or parent..." 
+                 class="w-full h-16 bg-white rounded-3xl border-2 border-gray-50 px-16 font-bold text-gray-900 outline-none focus:border-primary-500 focus:ring-8 focus:ring-primary-50 transition-all shadow-sm">
+          <span class="absolute left-6 top-1/2 -translate-y-1/2 text-2xl text-gray-300 group-focus-within:text-primary-500 transition-colors">
+            <i data-lucide="search"></i>
+          </span>
+        </div>
+
+        <!-- Students Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div v-for="(s, idx) in filteredStudents" :key="s.id" @click="openDetail(s)" class="student-card group" :style="{ animationDelay: (idx * 0.05) + 's' }">
+            <!-- Balance Tag -->
+            <div class="absolute top-0 right-0 p-8">
+              <div class="text-center px-4 py-2 rounded-2xl border-2" :class="s.rem <= 0 ? 'bg-red-50 border-red-100 text-red-500' : s.rem <= 2 ? 'bg-orange-50 border-orange-100 text-orange-500' : 'bg-primary-50 border-primary-50 text-primary-500'">
+                <div class="text-2xl font-black leading-none">{{ s.rem }}</div>
+                <div class="text-[8px] font-black uppercase tracking-widest mt-1">Left</div>
+              </div>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="flex items-center gap-5 mb-10">
+              <div class="w-20 h-20 rounded-[2rem] bg-gray-50 flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 group-hover:scale-110 transition-transform">
+                <i data-lucide="user" class="w-10 h-10"></i>
+              </div>
+              <div>
+                <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-none mb-2">{{ s.name }}</h3>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">{{ s.phone }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Meta -->
+            <div class="flex gap-3">
+              <div class="flex-1 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Area</p>
+                <p class="text-[10px] font-black text-gray-700 uppercase">{{ s.sameArea || 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Student Detail Modal -->
+    <div v-if="showDetail" class="modal-overlay" @click.self="showDetail = false">
+      <div class="modal-content modal-lg animate-in">
+        <div class="px-10 py-8 bg-gradient-to-br from-gray-900 to-black text-white relative overflow-hidden">
+          <div class="flex justify-between items-start relative z-10">
+            <div class="flex items-center gap-8">
+              <div class="w-32 h-32 rounded-[3rem] bg-white text-gray-400 flex items-center justify-center text-6xl shadow-2xl">
+                <i data-lucide="user" class="w-16 h-16"></i>
+              </div>
+              <div>
+                <h3 class="text-5xl font-black tracking-tighter leading-none mb-4">{{ selectedStudent?.name }}</h3>
+                <p class="text-xl font-bold">{{ selectedStudent?.phone }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="confirmDelete(selectedStudent)" class="w-12 h-12 rounded-2xl bg-red-500/20 hover:bg-red-500/40 text-red-100 flex items-center justify-center transition-all group/del">
+                <i data-lucide="trash-2" class="w-5 h-5 group-hover/del:scale-110 transition-transform"></i>
+              </button>
+              <button @click="showDetail=false" class="w-12 h-12 rounded-2xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-10 bg-gray-50 overflow-y-auto max-h-[60vh] space-y-12">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <section>
+              <h4 class="text-xl font-black text-gray-900 tracking-tight mb-6">Invoice <span class="text-primary-500">Log</span></h4>
+              <div class="space-y-4">
+                <div v-for="inv in detailInvoices" :key="inv.id" class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                  <div>
+                    <p class="font-black text-gray-900">{{ store.packages.find(p=>p.id===inv.package_id)?.name }}</p>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ U.dateDMY(inv.date) }}</p>
+                  </div>
+                  <p class="font-black text-primary-500">RM{{ inv.total_price }}</p>
+                </div>
+              </div>
+            </section>
+            <section>
+              <h4 class="text-xl font-black text-gray-900 tracking-tight mb-6">Lesson <span class="text-primary-500">Timeline</span></h4>
+              <div class="space-y-4">
+                <div v-for="l in detailLessons" :key="l.id" class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                  <div>
+                    <p class="font-black text-gray-900">{{ U.dateDMY(l.lesson_date) }}</p>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ U.timeAMPM(l.start_time) }}</p>
+                  </div>
+                  <span class="badge px-3 py-1 text-[8px] font-black uppercase" :class="l.status==='completed' ? 'badge-success' : 'badge-primary'">{{ U.text(l.status) }}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <student-modal 
+      :show="showStudentModal" 
+      :form="studentForm" 
+      :is-edit="editingStudent" 
+      @close="showStudentModal = false" 
+      @save="saveStudent">
+    </student-modal>
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="modal-overlay" @click.self="showDeleteModal = false" style="display: none;"
+      :style="{ display: showDeleteModal ? 'flex' : 'none' }">
+      <div class="modal-content modal-sm animate-in p-10 md:p-12">
+          <div class="w-24 h-24 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-xl shadow-red-100/50">
+            <i data-lucide="trash-2" class="w-10 h-10"></i></div>
+          <h3 class="text-4xl font-black text-gray-900 tracking-tighter mb-6 text-center">Delete Student?</h3>
+          <p class="text-base text-gray-400 font-bold mb-12 px-2 leading-relaxed text-center">Are you sure you want to delete <b>{{ selectedStudent?.name }}</b>? This will also remove all their invoices and lessons. This action cannot be undone.</p>
+
+          <div class="flex gap-4">
+            <button @click="showDeleteModal = false"
+              class="btn btn-secondary flex-1 py-5 text-xs uppercase tracking-widest font-black">Cancel</button>
+            <button @click="executeDelete"
+              class="btn bg-red-500 hover:bg-red-600 text-white flex-1 py-5 text-xs uppercase tracking-widest font-black rounded-2xl shadow-2xl shadow-red-200 hover:scale-[1.02] active:scale-[0.98] transition-all">Delete
+              Now</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/components.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script>
+  AppFactory.create({
+    setup() {
+      const { ref, reactive, computed, onMounted } = Vue;
+      const store = Store.data;
+      const search = ref('');
+      const showDetail = ref(false);
+      const showStudentModal = ref(false);
+      const selectedStudent = ref(null);
+      const editingStudent = ref(false);
+      const studentForm = reactive({ name: '', phone: '', sameArea: '' });
+      const showDeleteModal = ref(false);
+      const modal = ref({ success: false, successMessage: '' });
+
+      const filteredStudents = computed(() => {
+        return store.students.map(s => {
+          const total = store.invoices.filter(i => (i.student_id === s.id || (i.participants && i.participants.includes(s.id))) && i.status === 'paid').reduce((a, i) => a + (store.packages.find(p => p.id === i.package_id)?.sessions || 0), 0);
+          const used = store.lessons.filter(l => l.student_id === s.id && ['completed', 'absent'].includes(l.status)).length;
+          return { ...s, rem: total - used };
+        }).filter(s => s.name.toLowerCase().includes(search.value.toLowerCase()) || s.phone.includes(search.value));
+      });
+
+      const openAddModal = () => {
+        editingStudent.value = false;
+        Object.assign(studentForm, { id: U.id('S'), name: '', phone: '', sameArea: '' });
+        showStudentModal.value = true;
+      };
+
+      const saveStudent = async () => {
+        if (editingStudent.value) {
+          const idx = store.students.findIndex(s => s.id === studentForm.id);
+          if (idx > -1) store.students[idx] = { ...store.students[idx], ...JSON.parse(JSON.stringify(studentForm)) };
+        } else {
+          store.students.unshift({ ...JSON.parse(JSON.stringify(studentForm)) });
+        }
+        await Store.save();
+        showStudentModal.value = false;
+        modal.value = { success: true, successMessage: 'Student profile saved!' };
+      };
+
+      const confirmDelete = (s) => {
+        if (!s) return;
+        selectedStudent.value = s;
+        showDeleteModal.value = true;
+      };
+
+      const executeDelete = async () => {
+        if (!selectedStudent.value) return;
+        Store.deleteStudent(selectedStudent.value.id);
+        showDeleteModal.value = false;
+        showDetail.value = false;
+        modal.value = { success: true, successMessage: 'Student profile deleted!' };
+      };
+
+      const openDetail = (s) => { selectedStudent.value = s; showDetail.value = true; };
+      const detailInvoices = computed(() => {
+        if (!selectedStudent.value) return [];
+        return store.invoices.filter(i => i.student_id === selectedStudent.value.id || (i.participants && i.participants.includes(selectedStudent.value.id)));
+      });
+      const detailLessons = computed(() => {
+        if (!selectedStudent.value) return [];
+        return store.lessons.filter(l => l.student_id === selectedStudent.value.id);
+      });
+
+      onMounted(() => Store.init());
+      return { store, U, search, filteredStudents, showStudentModal, editingStudent, studentForm, selectedStudent, showDetail, showDeleteModal, modal, openAddModal, saveStudent, openDetail, detailInvoices, detailLessons, confirmDelete, executeDelete };
+    }
+  });
+</script>
+</body>
+</html>

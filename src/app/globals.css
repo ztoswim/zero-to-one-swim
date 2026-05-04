@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #fff7ed;
+  --color-primary-100: #ffedd5;
+  --color-primary-200: #fed7aa;
+  --color-primary-300: #fdba74;
+  --color-primary-400: #fb923c;
+  --color-primary-500: #f97316;
+  --color-primary-600: #ea580c;
+  --color-primary-700: #c2410c;
+  --color-primary-800: #9a3412;
+  --color-primary-900: #7c2d12;
+  --color-success: #10b981;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer components {
+  .metric-card {
+    @apply bg-white rounded-[2.5rem] p-8 border border-gray-50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden;
+  }
+  .alert-card {
+    @apply bg-white rounded-[2rem] p-6 border border-gray-100 flex items-center justify-between gap-4 transition-all hover:border-primary-200;
+  }
+  .stat-label {
+    @apply text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2;
+  }
+  .stat-value {
+    @apply text-4xl font-black text-gray-900 tracking-tighter;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-2xl font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply bg-primary-500 text-white hover:bg-primary-600 hover:shadow-lg hover:shadow-primary-200 hover:-translate-y-0.5 focus:ring-primary-500;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

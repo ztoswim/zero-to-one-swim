@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            success: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .metric-card { @apply bg-white rounded-[2.5rem] p-8 border border-gray-50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden; }
+    .alert-card { @apply bg-white rounded-[2rem] p-6 border border-gray-100 flex items-center justify-between gap-4 transition-all hover:border-primary-200; }
+    .stat-label { @apply text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2; }
+    .stat-value { @apply text-4xl font-black text-gray-900 tracking-tighter; }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-50">
+<div id="app" v-cloak class="min-h-screen flex">
+  <div class="flex-1 flex flex-col relative min-w-0">
+    <main class="flex-1 overflow-y-scroll w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24">
+      <div class="max-w-[1600px] w-full mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+          <div>
+            <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Performance <span class="text-primary-500">Hub</span></h1>
+            <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Real-time academy overview</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="../create-invoice/index.html" class="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">New Invoice <i data-lucide="plus" class="w-5 h-5"></i></a>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 animate-in">
+          <!-- Income -->
+          <div class="metric-card">
+            <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black rotate-12">RM</div>
+            <div class="relative z-10">
+              <p class="stat-label">Monthly Income</p>
+              <div class="flex items-baseline gap-1">
+                <span class="text-xl font-black text-primary-500 opacity-60">RM</span>
+                <span class="stat-value">{{ stats.monthIncome }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profit -->
+          <div class="metric-card">
+            <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black -rotate-12 flex justify-center">
+              <i data-lucide="trending-up" class="w-32 h-32"></i>
+            </div>
+            <div class="relative z-10">
+              <p class="stat-label">Monthly Profit</p>
+              <div class="flex items-baseline gap-1">
+                <span class="text-xl font-black text-green-500 opacity-60">RM</span>
+                <span class="stat-value text-green-600">{{ stats.monthProfit }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lessons -->
+          <div class="metric-card">
+            <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black rotate-45 flex justify-center">
+              <i data-lucide="calendar" class="w-32 h-32"></i>
+            </div>
+            <div class="relative z-10">
+              <p class="stat-label">Total Lessons</p>
+              <span class="stat-value">{{ stats.totalLessons }}</span>
+            </div>
+          </div>
+
+          <!-- Alerts -->
+          <div class="metric-card" :class="lowBalanceList.length > 0 ? 'bg-red-50 border-red-100' : ''">
+            <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black -rotate-12 flex justify-center">
+              <i data-lucide="alert-circle" class="w-32 h-32"></i>
+            </div>
+            <div class="relative z-10">
+              <p class="stat-label">Renewal Alerts</p>
+              <span class="stat-value" :class="lowBalanceList.length > 0 ? 'text-red-600' : ''">{{ lowBalanceList.length }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alert Section -->
+        <section v-if="lowBalanceList.length" class="animate-in" style="animation-delay: 0.2s;">
+          <div class="flex items-center gap-4 mb-8">
+            <h2 class="text-3xl font-black text-gray-900 tracking-tighter">Low Balance <span class="text-red-500">Alerts</span></h2>
+            <div class="flex-1 h-px bg-gray-100"></div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="s in lowBalanceList" :key="s.id" class="alert-card shadow-sm hover:shadow-xl group">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:scale-110 transition-transform">
+                  <i data-lucide="user"></i>
+                </div>
+                <div>
+                  <h3 class="font-black text-gray-900 leading-none">{{ s.name }}</h3>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase mt-1 tracking-widest">{{ s.phone }}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-4">
+                <div class="text-center">
+                  <div class="text-2xl font-black leading-none" :class="s.rem <= 0 ? 'text-red-600' : 'text-orange-500'">{{ s.rem }}</div>
+                  <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Rem</div>
+                </div>
+                <a :href="U.wa(s.phone, s.name, s.rem)" target="_blank" 
+                   class="w-12 h-12 rounded-2xl bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-200 hover:scale-110 transition-all active:scale-90">
+                  <i data-lucide="message-square"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section v-else class="text-center py-20 bg-white rounded-[3rem] border border-dashed border-gray-200">
+          <div class="text-6xl mb-4 text-success flex justify-center">
+            <i data-lucide="check-circle" class="w-16 h-16"></i>
+          </div>
+          <h3 class="text-xl font-black text-gray-900 uppercase tracking-widest">All Clear</h3>
+          <p class="text-gray-400 font-bold text-sm">No students need renewal at this moment.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/components.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script>
+  AppFactory.create({
+    setup() {
+      const { ref, reactive, computed, onMounted } = Vue;
+      const store = Store.data;
+      const stats = reactive({ monthIncome: 0, monthProfit: 0, totalLessons: 0 });
+
+      const lowBalanceList = computed(() => {
+        return store.students
+          .map(s => {
+            const used = store.lessons.filter(l => l.student_id === s.id && ['completed', 'absent'].includes(l.status)).length;
+            const total = store.invoices
+              .filter(i => (i.student_id === s.id || (i.participants && i.participants.includes(s.id))) && i.status === 'paid')
+              .reduce((sum, inv) => sum + (inv.session_count || 0), 0);
+            return { ...s, rem: total - used };
+          })
+          .filter(s => s.rem <= 2)
+          .sort((a, b) => a.rem - b.rem);
+      });
+
+      const calcStats = () => {
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+
+        const monthlyInvoices = store.invoices.filter(inv => {
+          const d = new Date(inv.date);
+          return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+        });
+
+        stats.monthIncome = monthlyInvoices.reduce((sum, inv) => sum + (inv.total_price || 0), 0);
+        stats.monthProfit = Math.round(stats.monthIncome * 0.4);
+        stats.totalLessons = store.lessons.length;
+      };
+
+      onMounted(async () => {
+        await Store.init();
+        calcStats();
+      });
+
+      return { store, U, stats, lowBalanceList };
+    }
+  });
+</script>
+</body>
+</html>

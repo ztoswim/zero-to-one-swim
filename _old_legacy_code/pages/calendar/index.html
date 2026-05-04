@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            success: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .day-card { @apply bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm mb-12 animate-in; }
+    .lesson-item { @apply p-6 rounded-3xl border border-gray-50 bg-white shadow-sm flex justify-between items-center cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98]; }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50">
+<div id="app" v-cloak class="min-h-screen flex">
+  <div class="flex-1 flex flex-col relative min-w-0">
+    <main class="flex-1 overflow-y-scroll w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24">
+      <div class="max-w-[1600px] w-full mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Lesson <span class="text-primary-500">Schedule</span></h1>
+            <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage upcoming and past sessions</p>
+          </div>
+          
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center bg-white border-2 border-gray-100 rounded-2xl px-4 py-1 shadow-sm focus-within:border-primary-500 transition-all">
+              <i data-lucide="calendar" class="w-4 h-4 text-gray-400 mr-2"></i>
+              <wheel-date-input v-model="selectedDay" @update:model-value="railBaseDate = selectedDay" 
+                               class="border-0 shadow-none !bg-transparent h-10 w-32 text-xs"></wheel-date-input>
+            </div>
+            <div v-for="c in [ {id: '', name: 'All Coaches'}, ...store.coaches ]" :key="c.id"
+                 @click="filterCoach = c.id"
+                 :class="[
+                   'px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer border-2 whitespace-nowrap',
+                   filterCoach === c.id ? 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-100' : 'bg-white text-gray-400 border-gray-100 hover:border-primary-200'
+                 ]">
+              {{ c.name }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Date Rail -->
+        <div class="flex items-center justify-center mb-10 sticky top-0 bg-gray-50/80 backdrop-blur-md z-10 pt-10 pb-6 -mx-4 px-4 border-b border-gray-100">
+          <div class="flex gap-4 justify-center flex-nowrap pt-4 px-10">
+            <div v-for="day in days" :key="day" 
+                 @click="selectedDay = day"
+                 :class="[
+                   'min-w-[110px] md:min-w-[120px] p-6 rounded-[2.5rem] flex flex-col items-center gap-2 transition-all cursor-pointer border-2 date-card shrink-0',
+                   selectedDay === day ? 'bg-white border-primary-500 shadow-xl -translate-y-2' : 'bg-white/50 border-transparent text-gray-400 hover:bg-white'
+                 ]">
+              <span class="text-[10px] font-black uppercase tracking-widest">{{ U.weekDay(day) }}</span>
+              <span class="text-3xl font-black tracking-tighter" :class="selectedDay === day ? 'text-gray-900' : 'text-gray-400'">{{ day.split('-')[2] }}</span>
+              <div v-if="getLessons(day).length > 0" class="flex gap-1 mt-1">
+                <span v-for="i in Math.min(3, getLessons(day).length)" class="w-2 h-2 rounded-full" :class="selectedDay === day ? 'bg-primary-500' : 'bg-gray-200'"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Day View -->
+        <div v-if="selectedDay" class="animate-in">
+          <div class="flex items-center gap-6 mb-12">
+            <div class="w-20 h-20 rounded-[2.5rem] bg-primary-500 text-white flex flex-col items-center justify-center shadow-2xl shadow-primary-200">
+               <span class="text-xs font-black uppercase tracking-widest opacity-60">{{ U.weekDay(selectedDay) }}</span>
+               <span class="text-3xl font-black tracking-tighter">{{ selectedDay.split('-')[2] }}</span>
+            </div>
+            <div>
+              <h2 class="text-4xl font-black text-gray-900 tracking-tighter">{{ U.dateDMY(selectedDay) }}</h2>
+              <p class="text-xs font-black text-primary-500 uppercase tracking-[0.3em] mt-1">{{ getLessons(selectedDay).length }} Sessions Scheduled</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6">
+            <div v-for="g in getLessons(selectedDay)" :key="g.time + g.coach_id" 
+                 class="group relative bg-white rounded-[3.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col md:flex-row md:items-center gap-10">
+              
+              <div class="md:w-40 flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-gray-50 pb-6 md:pb-0 md:pr-10">
+                <div class="text-3xl font-black text-gray-900 group-hover:text-primary-600 transition-colors tracking-tighter mb-2">{{ U.timeAMPM(g.time) }}</div>
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-primary-500 animate-pulse"></div>
+                  <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ U.name(g.coach_id, [], store.coaches) }}</span>
+                </div>
+              </div>
+
+
+              <div class="flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div v-for="l in g.lessons" :key="l.id" @click.stop="openLesson(l)" 
+                       class="p-6 bg-gray-50/50 hover:bg-primary-50 rounded-[2.5rem] border border-transparent hover:border-primary-100 transition-all cursor-pointer flex items-center gap-4 group/card">
+                    <div class="w-14 h-14 rounded-[1.5rem] bg-white flex items-center justify-center text-gray-400 shadow-sm group-hover/card:scale-110 transition-transform">
+                      <i data-lucide="user" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-black text-gray-900 text-lg tracking-tight mb-1">{{ U.name(l.student_id, store.students) }}</h4>
+                      <span class="badge px-2 py-0.5 text-[8px] font-black uppercase inline-block w-fit" 
+                            :class="l.status==='completed' ? 'badge-success' : 'badge-primary'">
+                        {{ U.text(l.status) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="getLessons(selectedDay).length === 0" class="py-32 text-center bg-white rounded-[4rem] border-2 border-dashed border-gray-100 animate-in">
+              <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-200">
+                <i data-lucide="calendar-x" class="w-12 h-12"></i>
+              </div>
+              <h3 class="text-3xl font-black text-gray-900 tracking-tighter mb-2">NO LESSONS</h3>
+              <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Nothing scheduled for {{ U.dateDMY(selectedDay) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <global-modals 
+      :modal="modal" 
+      :mk="mk" 
+      :store="store" 
+      @status="handleStatus" 
+      @makeup="modal.makeup=true" 
+      @postpone="handlePostpone"
+      @confirm-makeup="confirmMakeup"
+      @success-confirm="modal.success = false">
+    </global-modals>
+  </div>
+</div>
+
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/components.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script>
+  AppFactory.create({
+    setup() {
+      const { ref, reactive, computed, onMounted, watch } = Vue;
+      const store = Store.data;
+      const filterCoach = ref('');
+      const railBaseDate = ref(U.date(new Date()));
+      const selectedDay = ref(U.date(new Date()));
+      const modal = ref({ open: false, l: null, makeup: false, success: false, successMessage: '' });
+      const mk = ref({ date: '', time: '' });
+
+      const days = computed(() => U.getDaysRange(railBaseDate.value, 7, 7));
+
+      watch(selectedDay, (val) => {
+        railBaseDate.value = val;
+      });
+
+      const getLessons = (day) => {
+        const list = store.lessons.filter(l => l.date === day && (!filterCoach.value || l.coach_id === filterCoach.value));
+        const groups = {};
+        list.forEach(l => {
+          const key = `${l.time}_${l.coach_id}`;
+          if (!groups[key]) groups[key] = { time: l.time, coach_id: l.coach_id, lessons: [] };
+          groups[key].lessons.push(l);
+        });
+        return Object.values(groups).sort((a, b) => a.time.localeCompare(b.time));
+      };
+
+
+      const openLesson = (l) => { modal.value = { open: true, l: l, makeup: false }; };
+      
+      const handleStatus = async (status) => {
+        if (!modal.value.l) return;
+        modal.value.l.status = status;
+        await Store.save();
+        modal.value.open = false;
+      };
+
+      const confirmMakeup = async () => {
+        if (!mk.value.date || !mk.value.time) return alert('Please select a makeup time');
+        const orig = modal.value.l;
+        
+        const conflict = store.lessons.some(l => 
+          l.status === 'scheduled' && l.date === mk.value.date && l.time === mk.value.time &&
+          (l.coach_id === orig.coach_id || l.student_id === orig.student_id)
+        );
+        if (conflict) return alert('Conflict detected!');
+
+        orig.date = mk.value.date;
+        orig.time = mk.value.time;
+        orig.status = 'scheduled';
+
+        orig.type = 'makeup';
+        
+        await Store.save();
+        modal.value.makeup = false; 
+        modal.value.open = false;
+        modal.value.success = true;
+        modal.value.successMessage = 'Session rescheduled successfully';
+      };
+
+      const handlePostpone = async () => {
+        const l = modal.value.l;
+        if (!l) return;
+        
+        // Find all future lessons in the SAME invoice
+        const futureLessons = store.lessons.filter(item => 
+          item.invoice_id === l.invoice_id && 
+          item.status === 'scheduled' &&
+          item.date >= l.date
+        );
+        
+        futureLessons.forEach(item => {
+          const d = new Date(item.date);
+          d.setDate(d.getDate() + 7);
+          item.date = U.date(d);
+        });
+        
+        await Store.save();
+        modal.value.open = false;
+        modal.value.success = true;
+        modal.value.successMessage = `Shifted ${futureLessons.length} sessions by 1 week`;
+
+      };
+
+      onMounted(() => Store.init());
+      return { store, U, filterCoach, selectedDay, railBaseDate, modal, mk, days, getLessons, openLesson, handleStatus, confirmMakeup, handlePostpone };
+    }
+  });
+</script>
+</body>
+</html>

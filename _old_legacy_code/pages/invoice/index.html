@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            success: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .invoice-card { @apply bg-white rounded-[2rem] p-6 border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all hover:shadow-xl hover:-translate-y-1 animate-in; }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-50">
+<div id="app" v-cloak class="min-h-screen flex">
+  <div class="flex-1 flex flex-col relative min-w-0">
+    <main class="flex-1 overflow-y-scroll w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24">
+      <div class="max-w-[1600px] w-full mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Billing <span class="text-primary-500">History</span></h1>
+            <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Review all academy invoices</p>
+          </div>
+          <a href="../create-invoice/index.html" class="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">Generate New Bill <i data-lucide="plus" class="w-5 h-5"></i></a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-10 flex flex-col md:flex-row gap-4">
+          <div class="flex-1 relative group">
+            <input type="text" v-model="search" placeholder="Search by student or invoice ID..." 
+                   class="w-full h-14 bg-white rounded-2xl border-2 border-gray-50 px-14 font-bold text-gray-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all shadow-sm">
+            <span class="absolute left-6 top-1/2 -translate-y-1/2 text-xl text-gray-300 group-focus-within:text-primary-500 transition-colors">
+              <i data-lucide="search"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- Invoices List -->
+        <div class="space-y-4">
+          <div v-for="inv in displayInvoices" :key="inv.id" 
+               class="bg-white rounded-[2rem] p-6 hover:shadow-2xl hover:shadow-primary-100/50 transition-all cursor-pointer group border border-gray-50 flex items-center gap-6"
+               @click="openDetail(inv)">
+            
+            <!-- Left: Status Indicator -->
+            <div class="relative">
+              <div :class="['w-16 h-16 rounded-3xl flex items-center justify-center transition-transform group-hover:scale-110', 
+                   inv.lessons_remaining === 0 ? 'bg-gray-50 text-gray-400' : 'bg-primary-50 text-primary-500 shadow-lg shadow-primary-100']">
+                <i :data-lucide="inv.lessons_remaining === 0 ? 'check-check' : 'zap'" class="w-7 h-7"></i>
+              </div>
+              <div v-if="inv.isLatest" class="absolute -top-2 -right-2 w-6 h-6 bg-success text-white rounded-full flex items-center justify-center text-[10px] font-black border-4 border-white shadow-sm" title="Latest active invoice">
+                <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+              </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-1">
+                <h3 class="font-black text-gray-900 truncate tracking-tight text-lg">{{ inv.invoice_number || 'INV-PENDING' }}</h3>
+                <span :class="['px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest', 
+                      inv.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600']">
+                  {{ inv.status }}
+                </span>
+                <span v-if="inv.usedCount + inv.lessons_remaining === 0" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600 animate-pulse">
+                  Data Issue: No Lessons
+                </span>
+              </div>
+              <p class="text-sm font-bold text-gray-500 mb-2">
+                {{ (inv.participants || [inv.student_id]).map(id => U.name(id, store.students)).join(', ') }}
+              </p>
+              
+              <!-- Progress Bar & Percentage -->
+              <div class="flex items-center gap-4 mb-2">
+                <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-primary-500 rounded-full transition-all duration-1000" 
+                       :style="{ width: inv.progressPercent + '%' }"></div>
+                </div>
+                <span class="text-[10px] font-black text-primary-600 w-8 text-right">
+                  {{ Math.round(inv.progressPercent) }}%
+                </span>
+              </div>
+
+              <!-- Footer Info: Sessions & Issued By -->
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
+                  {{ inv.usedCount }} / {{ inv.totalSessions }} Sessions
+                </span>
+                <span class="text-[9px] font-bold text-gray-300 uppercase tracking-widest">
+                  Issued By: <span class="text-gray-500">{{ inv.issuedBy || 'Felicia' }}</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Right: Price & Actions -->
+            <div class="flex items-center gap-6">
+              <div class="text-right min-w-[80px]">
+                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Amount</p>
+                <p class="text-lg font-black text-primary-600 leading-none">RM{{ inv.total_amount }}</p>
+              </div>
+              <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button @click.stop="confirmDelete(inv)" class="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all">
+                  <i data-lucide="trash-2" class="w-5 h-5"></i>
+                </button>
+                <div class="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400">
+                  <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Load More Button -->
+          <div v-if="hasMore" class="pt-10 pb-20 text-center">
+            <button @click="loadMore" 
+                    class="px-10 py-5 bg-white border-2 border-primary-100 text-primary-500 font-black rounded-[2rem] hover:bg-primary-50 hover:border-primary-200 transition-all shadow-xl shadow-primary-50 active:scale-95 flex items-center gap-3 mx-auto">
+              <span>Show More Invoices</span>
+              <i data-lucide="chevron-down" class="w-5 h-5"></i>
+            </button>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4">Showing {{ displayInvoices.length }} of {{ filteredInvoices.length }} results</p>
+          </div>
+
+          <!-- Empty Search State -->
+          <div v-if="filteredInvoices.length === 0" class="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+            <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i data-lucide="search-x" class="w-12 h-12 text-gray-300"></i>
+            </div>
+            <h3 class="text-2xl font-black text-gray-900 mb-2">No Invoices Found</h3>
+            <p class="text-gray-400 font-bold max-w-xs mx-auto">Try adjusting your search filters to find what you're looking for.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Detail Modal -->
+    <div v-if="showDetail" class="modal-overlay" style="z-index: 70;" @click.self="showDetail = false">
+      <div class="modal-content modal-md animate-in">
+        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-2xl">
+          <h3 class="text-xl font-black text-gray-900 tracking-tighter flex items-center gap-2">
+            <i data-lucide="file-text" class="w-5 h-5 text-primary-500"></i> Billing Detail
+          </h3>
+          <button @click="showDetail = false" class="close-btn p-2 hover:bg-gray-50 rounded-xl transition-colors">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="p-8 space-y-6 bg-gray-50/50" v-if="selectedInvoice">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Date</p>
+              <p class="font-bold text-gray-900 text-sm">{{ U.dateDMY(selectedInvoice.payment_date || selectedInvoice.created_at) }}</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
+              <p class="font-black text-success text-sm uppercase">{{ selectedInvoice.status }} ✓</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+            <div>
+              <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-2">Student(s)</p>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="id in (selectedInvoice.participants || [selectedInvoice.student_id])" :key="id" 
+                      class="px-3 py-1.5 bg-gray-50 text-gray-900 font-bold text-xs rounded-xl flex items-center gap-2">
+                  {{ U.name(id, store.students) }}
+                </span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Coach</p>
+                <p class="font-black text-gray-900 text-xs">{{ U.name(selectedInvoice.coach_id, [], store.coaches) }}</p>
+              </div>
+              <div>
+                <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Package</p>
+                <p class="font-black text-gray-900 text-xs">{{ U.packageName(selectedInvoice.package_id, store.packages) }}</p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="p-6 bg-primary-500 rounded-3xl text-white shadow-xl shadow-primary-100 relative overflow-hidden">
+            <p class="text-[10px] font-black opacity-60 uppercase tracking-widest mb-2">Total Amount</p>
+            <p class="text-4xl font-black tracking-tighter">RM{{ selectedInvoice.total_amount }}</p>
+          </div>
+
+
+          <div class="space-y-4">
+            <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2">Lessons</h4>
+            <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              <!-- 对于 1v2，同一天的多条记录只显示一条，但保留状态 -->
+              <div v-for="l in (selectedInvoice.relatedLessons || []).sort((a,b) => new Date(b.date) - new Date(a.date))" 
+                   :key="l.id"
+                   class="bg-white p-4 rounded-2xl border border-gray-100 flex items-center justify-between shadow-sm">
+                <div>
+                  <p class="font-black text-gray-900 text-xs">{{ U.dateDMY(l.date) }}</p>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase">{{ U.timeAMPM(l.time) }}</p>
+                </div>
+
+                <span class="text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border" 
+                      :class="l.status==='completed' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-blue-50 text-blue-600 border-blue-100'">
+                  {{ U.text(l.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirm -->
+    <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="showDeleteConfirm = false">
+      <div class="modal-content modal-sm animate-in">
+        <div class="p-10 text-center">
+          <h3 class="text-3xl font-black text-gray-900 tracking-tighter mb-3">Delete Invoice?</h3>
+          <p class="text-sm text-gray-400 font-bold mb-10 leading-relaxed">This will also remove all associated lessons.</p>
+          <div class="flex gap-4">
+            <button @click="showDeleteConfirm = false" class="btn btn-secondary flex-1 py-4 uppercase font-black">Cancel</button>
+            <button @click="executeDelete" class="btn bg-red-500 text-white flex-1 py-4 uppercase font-black rounded-2xl shadow-xl shadow-red-100">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <global-modals :modal="modal" :store="store" @success-confirm="modal.success = false"></global-modals>
+</div>
+
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/components.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script>
+  AppFactory.create({
+    setup() {
+      const { ref, reactive, computed, onMounted } = Vue;
+      const store = Store.data;
+      const search = ref('');
+      const showDetail = ref(false);
+      const selectedInvoice = ref(null);
+      const showDeleteConfirm = ref(false);
+      const pendingDelete = ref(null);
+      const modal = ref({ success: false, successMessage: '' });
+
+      const limit = ref(20);
+      const filteredInvoices = computed(() => {
+        // 1. 按基础单号分组处理 1v2 情况
+        const groups = {};
+        [...store.invoices].forEach(inv => {
+          // 仅剥离我添加的 _DUP 后缀，保留原始单号中的 -0593
+          const baseNumber = (inv.invoice_number || '').replace(/_DUP\d+$/, '');
+          
+          if (!groups[baseNumber]) {
+            groups[baseNumber] = [{ 
+              ...inv, 
+              invoice_number: baseNumber,
+              participants: [inv.student_id],
+              ids: [inv.id],
+              total_amount: parseFloat(inv.total_amount) || 0
+            }];
+          } else {
+            // 核心规则：只有【单号基础一致】且【学生不同】时才合并为 1v2
+            let existingEntryWithSameStudent = groups[baseNumber].find(g => g.participants.includes(inv.student_id));
+            
+            if (existingEntryWithSameStudent) {
+              // 如果这组里已经有这个学生了，说明是同一个人的两个不同单据（如 Hannah），独立显示
+              groups[baseNumber].push({ 
+                ...inv, 
+                invoice_number: baseNumber,
+                participants: [inv.student_id],
+                ids: [inv.id],
+                total_amount: parseFloat(inv.total_amount) || 0
+              });
+            } else {
+              // 不同的学生，合并到本组第一个条目（视为 1v2）
+              groups[baseNumber][0].participants.push(inv.student_id);
+              groups[baseNumber][0].total_amount += (parseFloat(inv.total_amount) || 0);
+              groups[baseNumber][0].ids.push(inv.id);
+            }
+          }
+        });
+
+        let list = Object.values(groups).flat();
+
+        // 2. 搜索过滤
+        if (search.value) {
+          const q = search.value.toLowerCase();
+          list = list.filter(inv => {
+            const names = inv.participants.map(id => U.name(id, store.students).toLowerCase());
+            return names.some(n => n.includes(q)) || inv.invoice_number.toLowerCase().includes(q);
+          });
+        }
+
+        // 3. 排序：绝对倒序
+        list.sort((a, b) => {
+          const dateA = new Date(a.payment_date || a.created_at || 0);
+          const dateB = new Date(b.payment_date || b.created_at || 0);
+          if (dateB - dateA !== 0) return dateB - dateA;
+          return b.invoice_number.localeCompare(a.invoice_number);
+        });
+
+        // 4. 数据映射
+        return list.map(inv => {
+          const relatedLessons = store.lessons.filter(l => inv.ids.includes(l.invoice_id));
+          const uniqueDates = new Set(relatedLessons.filter(l => ['completed', 'attended'].includes(l.status)).map(l => l.date));
+          const sessionProgress = uniqueDates.size;
+          const lessonsRemaining = inv.lessons_remaining || 0;
+          const totalSessions = sessionProgress + lessonsRemaining;
+          
+          // 进度计算：如果剩余课时为 0，强制显示 100%
+          const progressPercent = totalSessions > 0 ? (sessionProgress / totalSessions * 100) : (lessonsRemaining === 0 ? 100 : 0);
+
+          const coach_id = inv.coach_id || (relatedLessons[0] ? relatedLessons[0].coach_id : null);
+          
+          return { 
+            ...inv, 
+            usedCount: sessionProgress, 
+            totalSessions: totalSessions || (lessonsRemaining === 0 ? sessionProgress : 1),
+            progressPercent: progressPercent,
+            coach_id,
+            relatedLessons // 保存供详情查看
+          };
+        });
+      });
+
+      const displayInvoices = computed(() => filteredInvoices.value.slice(0, limit.value));
+      const hasMore = computed(() => limit.value < filteredInvoices.value.length);
+      const loadMore = () => { limit.value += 30; };
+
+      const openDetail = (inv) => { selectedInvoice.value = inv; showDetail.value = true; };
+      const confirmDelete = (inv) => { pendingDelete.value = inv; showDeleteConfirm.value = true; };
+      const executeDelete = async () => {
+        if(!pendingDelete.value) return;
+        Store.deleteInvoice(pendingDelete.value.id);
+        showDeleteConfirm.value = false;
+        modal.value = { success: true, successMessage: 'Invoice and lessons deleted!' };
+      };
+
+      const renewInvoice = (inv) => {
+        sessionStorage.setItem('renew_invoice', JSON.stringify(inv));
+        window.location.href = '../create-invoice/index.html';
+      };
+
+      onMounted(() => Store.init());
+      return { store, U, search, filteredInvoices, displayInvoices, hasMore, loadMore, showDetail, selectedInvoice, openDetail, showDeleteConfirm, confirmDelete, executeDelete, modal, renewInvoice };
+    }
+  });
+</script>
+</body>
+</html>

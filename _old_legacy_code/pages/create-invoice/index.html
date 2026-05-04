@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Bill | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+            },
+            success: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .input-field { @apply w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all outline-none bg-white font-medium text-gray-900; }
+    .label { @apply block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1; }
+    .card { @apply bg-white rounded-[2.5rem] border border-gray-100; }
+    .btn-primary { @apply bg-primary-500 hover:bg-primary-600 text-white font-black rounded-2xl transition-all flex items-center justify-center gap-2; }
+    .btn-secondary { @apply bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-100 font-bold rounded-2xl transition-all; }
+    .label .req { @apply text-primary-500 ml-0.5 font-black; }
+    .animate-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    input.hide-spinners::-webkit-inner-spin-button, input.hide-spinners::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input.hide-spinners { -moz-appearance: textfield; }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <div id="app" v-cloak class="min-h-screen flex">
+    <div class="flex-1 flex flex-col relative min-w-0">
+      <main class="flex-1 overflow-y-auto w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 flex flex-col h-screen">
+        <div class="max-w-[1600px] w-full mx-auto flex-1 flex flex-col min-h-0">
+          <!-- Page Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 flex-shrink-0">
+            <div>
+              <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Create New <span
+                  class="text-primary-500">Bill</span></h1>
+              <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Generate invoice and schedule</p>
+            </div>
+            <button onclick="history.back()" class="btn btn-secondary px-8 shadow-sm h-12">Discard & Back</button>
+          </div>
+
+          <div class="flex flex-col xl:flex-row gap-6 items-start flex-1 min-h-0">
+            <!-- Left Side: Form Sections -->
+            <div
+              class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full items-start min-h-0 overflow-y-auto hide-scrollbar pb-6 pr-2">
+
+              <div class="space-y-4">
+                <!-- Step 1: Personnel -->
+                <div class="card p-6 shadow-sm">
+                  <div class="flex items-center gap-3 mb-5">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-primary-500 text-white flex items-center justify-center shadow-md shadow-primary-200">
+                      <i data-lucide="user" class="w-6 h-6"></i></div>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-900">Basic Information</h2>
+                      <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Select Student and Staff</p>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-8 pb-8 border-b border-gray-50">
+                    <div class="form-group">
+                      <label class="label">Invoice Number <span class="req">*</span></label>
+                      <input type="text" v-model="form.inv_number"
+                        class="input-field h-12 text-sm font-black text-primary-600 bg-primary-50/30 border-primary-100"
+                        placeholder="INV-XXXXXX">
+                    </div>
+                    <div class="form-group">
+                      <label class="label">Payment Date <span class="req">*</span></label>
+                      <wheel-date-input v-model="form.payment_date" class="h-12 text-sm"></wheel-date-input>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <!-- Student Search -->
+                    <div class="form-group relative">
+                      <label class="label">Search Student <span class="req">*</span></label>
+                      <div class="relative">
+                        <input type="text" v-model="studentSearch" class="input-field pl-4 h-12 text-sm"
+                          placeholder="Search student by name or phone...">
+                      </div>
+
+                      <!-- Search Results -->
+                      <div v-if="studentSearch"
+                        class="absolute z-30 w-full mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 max-h-64 overflow-y-auto">
+                        <div v-for="s in filteredStudents" :key="s.id" @click="selectStudent(s)"
+                          class="p-5 hover:bg-primary-50 cursor-pointer flex justify-between items-center border-b border-gray-50 last:border-0 transition-all">
+                          <div>
+                            <div class="font-black text-gray-900 text-sm">{{ s.name }}</div>
+                            <div class="text-[9px] text-gray-400 font-bold uppercase">{{ s.phone }}</div>
+                          </div>
+                          <div
+                            class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-black text-xs">
+                            {{ form.participants.includes(s.id) ? '✓' : '+' }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Coach Selection -->
+                    <div class="form-group">
+                      <label class="label">Assigned Coach <span class="req">*</span></label>
+                      <div class="relative">
+                        <select v-model="form.coach_id" class="input-field h-12 appearance-none pr-10 cursor-pointer text-sm">
+                          <option v-for="c in store.coaches" :key="c.id" :value="c.id">{{ c.name }}</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
+                            </path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div v-if="form.participants.length > 0" class="md:col-span-2 pt-2">
+                      <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Current
+                        Selection</p>
+                      <div class="flex flex-wrap gap-3">
+                        <!-- Participants -->
+                        <div v-for="(pid, pidx) in form.participants" :key="pid"
+                          class="px-5 py-3 bg-white rounded-2xl border-2 border-primary-500 flex items-center gap-4 animate-in shadow-sm">
+                          <div class="flex items-center gap-3">
+                            <div
+                              class="w-8 h-8 rounded-lg bg-primary-50 text-primary-500 flex items-center justify-center text-sm font-black">
+                              {{ pidx + 1 }}</div>
+                            <div class="font-black text-gray-900 text-sm">{{ U.name(pid, store.students) }}</div>
+                          </div>
+                          <button @click="toggleParticipant(pid)"
+                            class="text-primary-500 font-black hover:scale-125 transition-transform">&times;</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="md:col-span-2 p-8 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center group hover:bg-primary-50 hover:border-primary-200 transition-all cursor-pointer mt-4"
+                      @click="openStudentModal">
+                      <div
+                        class="w-16 h-16 rounded-3xl bg-white flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="user-plus" class="w-8 h-8 text-primary-500"></i></div>
+                      <h4 class="text-lg font-black text-gray-900 tracking-tight">Register New Student</h4>
+                      <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Add to database and
+                        automatically select</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2: Course & Billing -->
+                <div class="card p-6 shadow-sm">
+                  <div class="flex items-center gap-3 mb-5">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-primary-500 text-white flex items-center justify-center shadow-md shadow-primary-200">
+                      <i data-lucide="package" class="w-6 h-6"></i></div>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-900">Course & Billing</h2>
+                      <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Select Plan and Payment
+                        Method</p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-6">
+                    <!-- Package Grid -->
+                    <div class="w-full px-1">
+                      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-3">
+                        <label class="label mb-0">Choose Lesson Package <span class="req">*</span></label>
+                        <!-- Category Tabs -->
+                        <div class="flex flex-col gap-6">
+                          <!-- Category Tabs - 4 Column Symmetric Grid -->
+                          <div
+                            class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 bg-gray-100/50 p-1.5 rounded-3xl w-full border border-gray-100">
+                            <button type="button" @click="pkgCategory = 'Private'"
+                              class="px-2 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              :class="pkgCategory === 'Private' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'">Private</button>
+                            <button type="button" @click="pkgCategory = 'D2D (A)'"
+                              class="px-2 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              :class="pkgCategory === 'D2D (A)' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'">D2D (Near)</button>
+                            <button type="button" @click="pkgCategory = 'D2D (B)'"
+                              class="px-2 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              :class="pkgCategory === 'D2D (B)' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'">D2D (Far)</button>
+                            <button type="button" @click="pkgCategory = 'Group'"
+                              class="px-2 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              :class="pkgCategory === 'Group' ? 'bg-white text-primary-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'">Group</button>
+                          </div>
+                          
+                          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <!-- Type Selection -->
+                            <div class="flex flex-wrap items-center gap-2">
+                              <button v-for="type in ['1v1', '1v2', '1v3', '1v4']" :key="type" type="button"
+                                @click="pkgType = type"
+                                class="px-6 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border-2"
+                                :class="pkgType === type ? 'border-primary-500 bg-primary-50 text-primary-600' : 'border-transparent text-gray-400 hover:text-gray-600 bg-gray-50/50'">{{ type }}</button>
+                            </div>
+                            
+                            <!-- 90m Toggle - Right Aligned for Balance -->
+                            <label class="flex items-center gap-3 cursor-pointer group bg-white px-5 py-2.5 rounded-2xl border border-gray-100 shadow-sm hover:border-primary-200 transition-all">
+                              <span class="text-[10px] font-black uppercase tracking-widest" :class="is90m ? 'text-primary-500' : 'text-gray-400'">90 Min Session</span>
+                              <div class="relative inline-flex items-center">
+                                <input type="checkbox" v-model="is90m" class="sr-only peer">
+                                <div class="w-10 h-5.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-primary-500"></div>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pb-4">
+                        <label v-for="pkg in filteredPackages" :key="pkg.id"
+                          class="relative p-5 rounded-[2rem] border-2 cursor-pointer transition-all overflow-hidden bg-white shadow-sm hover:translate-y-[-2px] active:scale-95 flex flex-col justify-center items-center text-center"
+                          :class="form.pkg_id === pkg.id ? 'border-primary-500 ring-4 ring-primary-50 z-10' : 'border-gray-100 opacity-60'">
+                          <input type="radio" :value="pkg.id" v-model="form.pkg_id" class="hidden">
+                          <div v-if="form.pkg_id === pkg.id"
+                            class="absolute -right-6 -top-6 w-16 h-16 bg-primary-500 rounded-full opacity-10"></div>
+                          <div class="text-3xl font-black text-gray-900 mb-0.5 tracking-tighter">{{ pkg.lesson_count }}</div>
+                          <div class="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-2">Sessions</div>
+                          <div class="text-[10px] font-bold text-gray-600 mb-2 px-2 leading-tight min-h-[2.5rem] flex items-center justify-center">{{ pkg.name }}</div>
+                          
+                          <!-- 90m Badge -->
+                          <div v-if="pkg.duration === 90" class="mb-2 px-2 py-0.5 bg-primary-100 text-primary-600 rounded text-[8px] font-black uppercase tracking-widest">90 Minutes</div>
+                          
+                          <div class="w-8 h-1 rounded-full bg-gray-100 mb-2 transition-colors"
+                            :class="form.pkg_id === pkg.id ? 'bg-primary-200' : ''"></div>
+                          <div class="text-primary-500 font-black text-xl tracking-tighter">RM{{ pkg.price }}</div>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div class="grid grid-cols-1 gap-4 pt-6 border-t border-gray-100">
+                      <div class="form-group">
+                        <label class="label">Payment Mode <span class="req">*</span></label>
+                        <div class="relative">
+                          <select v-model="form.method" class="input-field h-12 appearance-none pr-10 cursor-pointer">
+                            <option value="" disabled>Select Method</option>
+                            <option value="cash">Cash / Physical</option>
+                            <option value="transfer">Online Transfer</option>
+                            <option value="ewallet">E-Wallet Payment</option>
+                          </select>
+                          <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7">
+                              </path>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End of Form Sections Grid -->
+
+              <div class="space-y-4"> <!-- Start of Column 2 (Schedule) -->
+                <!-- Step 3: Schedule -->
+                <div class="card p-6 shadow-sm">
+                  <div class="flex items-center gap-3 mb-5">
+                    <div
+                      class="w-10 h-10 rounded-xl bg-primary-500 text-white flex items-center justify-center shadow-md shadow-primary-200">
+                      <i data-lucide="calendar" class="w-6 h-6"></i></div>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-900">Schedule Plan</h2>
+                      <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Timing and Recurrence</p>
+                    </div>
+                  </div>
+
+                  <!-- Shared Slot Toggle & Warning -->
+                  <div v-if="conflicts.length > 0" 
+                       :class="form.isSharedSlot ? 'bg-primary-50 border-primary-100' : 'bg-orange-50 border-orange-100'"
+                       class="p-6 rounded-[2rem] border mb-6 flex flex-col gap-4 animate-in">
+                    <div class="flex items-start gap-4">
+                      <div :class="form.isSharedSlot ? 'bg-primary-500 text-white' : 'bg-orange-500 text-white'"
+                           class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                        <i :data-lucide="form.isSharedSlot ? 'users' : 'alert-triangle'" class="w-6 h-6"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 :class="form.isSharedSlot ? 'text-primary-900' : 'text-orange-900'" class="font-black text-sm tracking-tight">
+                          {{ form.isSharedSlot ? 'Shared Slot Mode Active' : 'Time Slot Occupied' }}
+                        </h4>
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                          <span v-for="name in conflictNames" :key="name" 
+                                :class="form.isSharedSlot ? 'bg-primary-100 text-primary-700' : 'bg-orange-100 text-orange-700'"
+                                class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-current opacity-70">
+                            {{ name }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                          <input type="checkbox" v-model="form.isSharedSlot" class="sr-only peer">
+                          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="form-group">
+                      <label class="label">First Session Date <span class="req">*</span></label>
+                      <wheel-date-input v-model="form.date" class="h-12 text-sm"></wheel-date-input>
+                    </div>
+                    <div class="form-group">
+                      <label class="label">First Session Time <span class="req">*</span></label>
+                      <wheel-time-input v-model="form.time" class="h-12 text-sm"></wheel-time-input>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-6">
+                    <label class="label">Lesson Duration <span class="req">*</span></label>
+                    <div class="grid grid-cols-4 gap-2">
+                      <button v-for="d in [30, 45, 50, 90]" :key="d" type="button"
+                        @click="form.duration = d"
+                        class="py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border-2"
+                        :class="form.duration === d ? 'border-primary-500 bg-primary-50 text-primary-600' : 'border-transparent text-gray-400 hover:text-gray-600 bg-gray-50/50'">
+                        {{ d }}m
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4">
+                    <label class="label ml-1">Recurrence Model <span class="req">*</span></label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <label
+                        v-for="mode in [{v:'fixed', t:'Fixed Weekly', d:'Standard'}, {v:'weekly', t:'Select Days', d:'Custom Week'}, {v:'custom', t:'Manual Fix', d:'Hand Pick'}]"
+                        :key="mode.v"
+                        class="p-4 rounded-[1.5rem] border-2 flex flex-col items-center text-center gap-1 cursor-pointer transition-all hover:translate-y-[-2px] active:scale-95 shadow-sm"
+                        :class="form.mode === mode.v ? 'border-primary-500 bg-primary-50 ring-4 ring-primary-50' : 'border-gray-50 bg-white opacity-60'">
+                        <input type="radio" :value="mode.v" v-model="form.mode" class="hidden">
+                        <div class="w-12 h-12 flex items-center justify-center text-primary-500 mb-2">
+                          <i :data-lucide="mode.v === 'fixed' ? 'calendar' : (mode.v === 'weekly' ? 'refresh-cw' : 'edit-3')" class="w-8 h-8"></i>
+                        </div>
+                        <div class="font-black text-gray-900 uppercase tracking-tighter leading-tight">{{ mode.t }}
+                        </div>
+                        <div class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em]">{{ mode.d }}</div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Weekly Picker -->
+                  <div v-if="form.mode === 'weekly'" class="mt-6 p-6 bg-gray-900 rounded-[2rem] text-white animate-in">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 text-center">
+                      Configure Recurrence Pattern</p>
+                    <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                      <label v-for="day in weekDayOptions" :key="day.value" class="cursor-pointer">
+                        <input type="checkbox" :value="day.value" v-model.number="form.weekDays" class="hidden">
+                        <div
+                          class="py-3 px-1 flex items-center justify-center rounded-xl border-2 font-black text-[11px] transition-all uppercase tracking-wider shadow-sm"
+                          :style="{ borderColor: form.weekDays.includes(day.value) ? 'var(--color-primary-500)' : 'rgba(255,255,255,0.05)', backgroundColor: form.weekDays.includes(day.value) ? 'var(--color-primary-500)' : 'rgba(255,255,255,0.1)', color: 'white' }">
+                          {{ day.label }}
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Generation Preview -->
+                  <div
+                    v-if="currentPkg && (form.mode === 'fixed' || (form.mode === 'weekly' && form.weekDays.length > 0))"
+                    class="mt-6 bg-white p-4 rounded-[1.5rem] border border-primary-100 shadow-lg shadow-primary-50/50">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-50">
+                      <div>
+                        <h4 class="font-black text-gray-900 text-sm tracking-tighter">Automatic Generation</h4>
+                      </div>
+                      <div
+                        class="bg-primary-500 text-white px-3 py-1 rounded-full font-black text-[10px] uppercase tracking-widest shadow-sm">
+                        {{ currentPkg.lesson_count }} Slots</div>
+                    </div>
+                    <div class="grid gap-2" :class="currentPkg.sessions === 1 ? 'grid-cols-1' : 'grid-cols-2'">
+                      <div v-for="(dt, idx) in (form.mode === 'fixed' ? fixedDates : weeklyDates)" :key="idx"
+                        class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                        <div class="flex items-center gap-2">
+                          <span class="text-[10px] font-black text-gray-400">#{{ idx + 1 }}</span>
+                          <span class="font-black text-gray-800 text-xs tracking-tighter">{{ formatDateDisplay(dt) }}</span>
+                        </div>
+                        <span class="text-primary-500 font-black text-[9px] uppercase">{{ U.weekDay(dt) }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Manual Slots -->
+                  <div v-if="currentPkg && form.mode === 'custom'"
+                    class="mt-4 grid gap-2 animate-in max-h-[280px] overflow-y-auto hide-scrollbar"
+                    :class="currentPkg.sessions === 1 ? 'grid-cols-1' : 'grid-cols-2'">
+                    <div v-for="(slot, idx) in form.custom_dates" :key="idx"
+                      class="p-2 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between gap-1 overflow-hidden">
+                      <div class="text-[10px] font-black text-gray-400 shrink-0">#{{ idx + 1 }}</div>
+                      <div class="flex flex-1 gap-1 min-w-0 justify-end">
+                        <wheel-date-input v-model="slot.date" class="text-[10px] h-8 shrink"></wheel-date-input>
+                        <wheel-time-input v-model="slot.time" class="text-[10px] h-8 shrink"></wheel-time-input>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End of Schedule Section -->
+            </div> <!-- End of Left Side Column -->
+
+            <!-- Checkout Summary Sidebar -->
+            <div class="w-full xl:w-[380px] flex-shrink-0 sticky top-4">
+              <div class="card shadow-2xl border-0 overflow-hidden"
+                style="box-shadow: 0 30px 60px -15px rgba(249, 115, 22, 0.2);">
+                <!-- Top Header -->
+                <div class="bg-gradient-to-br from-primary-500 to-primary-600 p-8 text-white relative">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h3 class="text-[10px] font-black opacity-80 mb-1 uppercase tracking-[0.4em]">Final Amount Due</h3>
+                      <div class="text-5xl font-black tracking-tighter flex items-start gap-1">
+                        <span class="text-xl mt-2 opacity-80">RM</span>
+                        {{ finalTotalPrice }}
+                      </div>
+                      <div v-if="form.discount > 0"
+                        class="mt-2 text-[10px] font-black bg-white/20 px-2 py-1 rounded inline-block">
+                        SAVED RM{{ form.discount }}
+                      </div>
+                    </div>
+                    <div class="text-right opacity-20 font-black text-4xl rotate-12 -mr-4 tracking-tighter uppercase">
+                      Invoice
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-10 space-y-10 bg-white">
+                  <!-- Data Table -->
+                  <div class="space-y-8">
+                    <div class="group">
+                      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Selected Course
+                      </p>
+                      <p class="text-xl font-black text-gray-900 leading-tight">{{ currentPkg ? currentPkg.name : 'Please select a package...' }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 py-8 border-y border-gray-50">
+                      <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Coach</p>
+                        <p class="font-black text-gray-800 text-lg">{{ U.name(form.coach_id, [], store.coaches) }}</p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Quantity</p>
+                        <p class="font-black text-gray-800 text-lg">{{ currentPkg ? currentPkg.lesson_count : 0 }} Sessions</p>
+                      </div>
+                    </div>
+
+                    <div class="flex justify-between items-center group">
+                      <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Per Student
+                        Value</span>
+                      <div class="flex items-baseline gap-1">
+                        <span class="text-xs font-black text-primary-500 opacity-60">RM</span>
+                        <span class="text-4xl font-black text-primary-500 tracking-tighter">{{ personalPrice }}</span>
+                      </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-50 group">
+                      <label class="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] mb-3 block">Apply
+                        Discount</label>
+                      <div class="relative">
+                        <div class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-black text-lg">RM</div>
+                        <input type="number" v-model="form.discount"
+                          class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl pl-12 pr-5 py-4 font-black text-xl focus:border-primary-500 focus:bg-white transition-all outline-none text-primary-600"
+                          placeholder="0.00">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Requirement Checklist Banner -->
+                  <div v-if="formErrors.length > 0" class="bg-red-50 p-8 rounded-[2.5rem] border border-red-100 flex items-start gap-5 animate-in">
+                    <i data-lucide="alert-circle" class="w-8 h-8 text-red-500 shrink-0"></i>
+                    <div class="flex-1">
+                      <p class="text-[10px] text-red-600 font-black uppercase tracking-wider mb-3 leading-none">Incomplete Requirements:</p>
+                      <div class="grid grid-cols-1 gap-y-2">
+                        <div v-for="err in formErrors" :key="err" class="flex items-center gap-2">
+                          <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
+                          <span class="text-[9px] text-red-500 font-black uppercase tracking-widest leading-none">{{ err }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Primary Action -->
+                  <div class="space-y-6">
+                    <button @click="submitInvoice"
+                      class="btn btn-primary w-full py-8 text-2xl font-black shadow-2xl shadow-primary-200 hover:scale-[1.03] active:scale-[0.97] transition-all disabled:opacity-20 disabled:grayscale disabled:scale-100 group"
+                      :disabled="formErrors.length > 0">
+                      CONFIRM & SUBMIT <i data-lucide="send" class="w-6 h-6 group-hover:translate-x-2 transition-transform"></i>
+                    </button>
+                    <div class="flex items-center justify-center gap-4">
+                      <div class="h-px flex-1 bg-gray-100"></div>
+                      <p class="text-[9px] text-gray-400 uppercase tracking-[0.3em] font-black whitespace-nowrap">Swim
+                        Academy Professional</p>
+                      <div class="h-px flex-1 bg-gray-100"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+ 
+               <div class="mt-8">
+                 <button @click="isResetModalOpen = true"
+                    class="w-full py-5 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:bg-red-50 hover:border-red-100 transition-all active:scale-95 flex flex-col items-center group">
+                   <i data-lucide="trash-2" class="w-6 h-6 text-gray-300 group-hover:text-red-500 mb-1 transition-colors"></i>
+                   <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest group-hover:text-red-500 transition-colors">Clear Data</span>
+                 </button>
+               </div>
+             </div>
+          </div>
+        </div>
+      </main>
+      
+      <!-- Reset Confirmation Modal -->
+      <div v-if="isResetModalOpen" class="modal-overlay" @click.self="isResetModalOpen = false" style="display: none;"
+        :style="{ display: isResetModalOpen ? 'flex' : 'none' }">
+        <div class="modal-content modal-sm animate-in">
+            <div
+              class="w-24 h-24 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-red-100/50">
+              <i data-lucide="trash-2" class="w-10 h-10"></i></div>
+            <h3 class="text-3xl font-black text-gray-900 tracking-tighter mb-3">Clear Everything?</h3>
+            <p class="text-sm text-gray-400 font-bold mb-10 px-4 leading-relaxed">This will reset all selected students,
+              packages, and schedule data. This action cannot be undone.</p>
+
+            <div class="flex gap-4">
+              <button @click="isResetModalOpen = false"
+                class="btn btn-secondary flex-1 py-5 text-xs uppercase tracking-widest font-black">Cancel</button>
+              <button @click="executeReset"
+                class="btn bg-red-500 hover:bg-red-600 text-white flex-1 py-5 text-xs uppercase tracking-widest font-black rounded-2xl shadow-2xl shadow-red-200 hover:scale-[1.02] active:scale-[0.98] transition-all">Clear
+                Now</button>
+            </div>
+        </div>
+      </div>
+
+      <student-modal :show="showStudentModal" :form="studentForm" :is-edit="false" @close="showStudentModal = false"
+        @save="saveStudent">
+      </student-modal>
+      <global-modals :modal="globalModal" :mk="makeupForm" :store="store" @success-confirm="goHistory"></global-modals>
+    </div>
+  </div>
+
+  <script src="../../assets/js/utils.js"></script>
+  <script src="../../assets/js/components.js"></script>
+  <script src="../../assets/js/store.js"></script>
+  <script src="../../assets/js/nav.js"></script>
+  <script>
+    AppFactory.create({
+      setup() {
+        const { ref, reactive, computed, watch, onMounted, toRaw } = Vue;
+        const store = Store.data;
+        
+        const form = ref({
+          date: '', time: '', mode: 'fixed', participants: [], custom_dates: [], weekDays: [],
+          inv_number: '', discount: 0,
+          isSharedSlot: false, duration: 45
+        });
+
+        const generateInvNumber = () => {
+          if (store.invoices.length === 0) {
+            const d = new Date();
+            const datePart = `${String(d.getFullYear()).slice(2)}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+            return `INV${datePart}-0001`;
+          }
+          
+          // 获取最近一张单的单号并递增
+          const lastInv = store.invoices[0].invoice_number || '';
+          const match = lastInv.match(/INV(\d+)-(\d+)/);
+          if (match) {
+            const datePart = match[1];
+            const nextNum = String(parseInt(match[2]) + 1).padStart(4, '0');
+            return `INV${datePart}-${nextNum}`;
+          }
+          return `INV-NEW`;
+        };
+        
+        const studentSearch = ref('');
+        const showStudentModal = ref(false);
+        const isResetModalOpen = ref(false);
+        const globalModal = ref({ success: false, successMessage: '' });
+        const studentForm = ref({ name: '', phone: '', gender: '', dob: '', parent_name: '', sameArea: '' });
+        const makeupForm = ref({ date: '', time: '' });
+        const pkgCategory = ref('Private');
+        const pkgType = ref('1v1');
+        const weekDayOptions = [
+          { value: 0, label: 'Sun' },
+          { value: 1, label: 'Mon' },
+          { value: 2, label: 'Tue' },
+          { value: 3, label: 'Wed' },
+          { value: 4, label: 'Thu' },
+          { value: 5, label: 'Fri' },
+          { value: 6, label: 'Sat' }
+        ];
+
+        const currentPkg = computed(() => store.packages.find(p => p.id === form.value.pkg_id));
+        const participantLimit = computed(() => Number(pkgType.value.replace('1v', '')) || 1);
+        const isGroup = computed(() => participantLimit.value > 1);
+
+        // 当学生变动时，仅同步基础 ID，不再强制重置配套类型
+        watch(() => form.value.participants.length, (count) => {
+          if (form.value.participants.length > 0) form.value.student_id = form.value.participants[0];
+          else form.value.student_id = '';
+          Vue.nextTick(() => window.lucide && lucide.createIcons());
+        }, { immediate: true });
+        const selectedCount = computed(() => form.value.participants.length);
+        
+        const is90m = ref(false);
+        const filteredPackages = computed(() => {
+          const combinedType = `${pkgCategory.value}-${pkgType.value}`;
+          const targetDuration = is90m.value ? 90 : 45;
+          
+          return store.packages
+            .filter(p => p.type === combinedType && p.duration === targetDuration)
+            .sort((a, b) => a.lesson_count - b.lesson_count);
+        });
+
+        const filteredStudents = computed(() => {
+          const q = studentSearch.value.trim().toLowerCase();
+          return store.students.filter(s => {
+            if (!q) return true;
+            return s.name.toLowerCase().includes(q) || (s.phone || '').toLowerCase().includes(q);
+          });
+        });
+
+        const personalPrice = computed(() => {
+          if (!currentPkg.value) return 0;
+          const total = Math.max(0, currentPkg.value.price - (form.value.discount || 0));
+          if (!isGroup.value || form.value.participants.length === 0) return total;
+          return Math.round(total / form.value.participants.length * 100) / 100;
+        });
+
+        // Watch for pkg_id change to auto-fill transport fee
+        watch(() => form.value.pkg_id, (newPkgId) => {
+          const pkg = store.packages.find(p => p.id === newPkgId);
+          if (pkg) {
+            form.value.transport_fee = pkg.transport_fee || 0;
+            // Also update duration if it changes
+            if (pkg.duration) form.value.duration = pkg.duration;
+          }
+        });
+
+        const finalTotalPrice = computed(() => {
+          if (!currentPkg.value) return 0;
+          return Math.max(0, currentPkg.value.price - (form.value.discount || 0));
+        });
+
+        const selectStudent = (s) => {
+          // 切换为单人模式：选择新学生时替换旧学生
+          form.value.participants = [s.id];
+          studentSearch.value = '';
+          Vue.nextTick(() => window.lucide && lucide.createIcons());
+        };
+
+        const toggleParticipant = (id) => {
+          // 单人模式下，点击 X 直接清空
+          form.value.participants = [];
+          Vue.nextTick(() => window.lucide && lucide.createIcons());
+        };
+
+        const formErrors = computed(() => {
+          const errs = [];
+          if (!form.value.inv_number) errs.push('Invoice Number');
+          if (!form.value.payment_date) errs.push('Payment Date');
+          
+          if (form.value.participants.length === 0) {
+            errs.push('Student');
+          }
+          
+          if (!form.value.coach_id) errs.push('Coach');
+          if (!form.value.pkg_id) errs.push('Lesson Package');
+          if (!form.value.method) errs.push('Payment Mode');
+          if (!form.value.date) errs.push('Start Date');
+          if (!form.value.time) errs.push('Start Time');
+          
+          if (conflicts.value.length > 0 && !form.value.isSharedSlot) {
+            errs.push('Slot Occupied (Need Shared Slot)');
+          }
+          return errs;
+        });
+
+        const formatDateDisplay = (dateStr) => {
+          if (!dateStr) return '';
+          const parts = dateStr.split('-');
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        };
+
+        const getLocalYYYYMMDD = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+        const fixedDates = computed(() => {
+          if (!form.value.date || !currentPkg.value) return [];
+          const dates = [];
+          const [y, m, d] = form.value.date.split('-').map(Number);
+          const startDate = new Date(y, m - 1, d);
+          for (let i = 0; i < currentPkg.value.lesson_count; i++) {
+            const next = new Date(startDate);
+            next.setDate(next.getDate() + (i * 7));
+            dates.push(getLocalYYYYMMDD(next));
+          }
+          return dates;
+        });
+
+        const conflicts = computed(() => {
+          if (!form.value.coach_id || !form.value.time || !form.value.date) return [];
+          const targetDates = form.value.mode === 'fixed' ? fixedDates.value : 
+                             (form.value.mode === 'weekly' ? weeklyDates.value : 
+                              form.value.custom_dates.map(d => d.date));
+          
+          const newStart = form.value.time;
+          const newEnd = U.addMins(newStart, form.value.duration || 45);
+          
+          return store.lessons.filter(l => {
+            if (l.coach_id !== form.value.coach_id) return false;
+            if (!targetDates.includes(l.lesson_date)) return false;
+            if (l.status === 'cancelled') return false;
+            
+            const existStart = l.start_time;
+            const existEnd = U.addMins(existStart, l.duration || 45);
+            return U.isOverlap(newStart, newEnd, existStart, existEnd);
+          });
+        });
+
+        const conflictNames = computed(() => {
+          const ids = [...new Set(conflicts.value.map(l => l.student_id))];
+          return ids.map(id => U.name(id, store.students));
+        });
+
+        const weeklyDates = computed(() => {
+          if (!form.value.date || !currentPkg.value || !form.value.weekDays.length) return [];
+          const dates = [];
+          const sortedDays = [...form.value.weekDays].sort((a, b) => a - b);
+          const [y, m, d] = form.value.date.split('-').map(Number);
+          let current = new Date(y, m - 1, d);
+          let safety = 0;
+          while (dates.length < currentPkg.value.lesson_count && safety < 100) {
+            safety++;
+            if (sortedDays.includes(current.getDay())) {
+              dates.push(getLocalYYYYMMDD(new Date(current)));
+            }
+            current.setDate(current.getDate() + 1);
+          }
+          return dates;
+        });
+
+        const initializeCustomDates = () => {
+          if (!currentPkg.value) return;
+          form.value.custom_dates = Array.from({ length: currentPkg.value.lesson_count }, () => ({
+            date: form.value.date || getLocalYYYYMMDD(new Date()),
+            time: form.value.time || '10:00'
+          }));
+        };
+
+        const executeReset = () => {
+          form.value = {
+            student_id: '', coach_id: (store.coaches[0] ? store.coaches[0].id : ''), pkg_id: '', method: 'cash', payment_date: new Date().toISOString().split('T')[0],
+            date: '', time: '', mode: 'fixed', participants: [], custom_dates: [], weekDays: [], inv_number: generateInvNumber(), discount: 0,
+            isSharedSlot: false, duration: 45
+          };
+          studentSearch.value = '';
+          pkgCategory.value = 'Private';
+          pkgType.value = '1v1';
+          isResetModalOpen.value = false;
+          Vue.nextTick(() => window.lucide && lucide.createIcons());
+        };
+
+        const openStudentModal = () => {
+          studentForm.value = { name: '', phone: '', gender: '', dob: '', parent_name: '', sameArea: '' };
+          showStudentModal.value = true;
+        };
+
+        const saveStudent = async () => {
+          if (!studentForm.value.name || !studentForm.value.phone) return alert('Name and phone are required');
+          const newStudent = { id: U.id('S'), ...studentForm.value };
+          store.students.unshift(newStudent);
+          await Store.save();
+          selectStudent(newStudent);
+          showStudentModal.value = false;
+        };
+
+        const submitInvoice = async () => {
+          const invId = form.value.inv_number || U.id('INV');
+          const participantIds = isGroup.value ? [...form.value.participants] : [form.value.student_id];
+          
+          store.invoices.unshift({
+            id: invId,
+            student_id: participantIds[0],
+            coach_id: form.value.coach_id,
+            package_id: form.value.pkg_id,
+            payment_method: form.value.method,
+            status: 'paid',
+            total_price: finalTotalPrice.value,
+            discount: form.value.discount || 0,
+            date: form.value.payment_date,
+            participants: isGroup.value ? participantIds : undefined
+          });
+
+          const schedule = [];
+          if (form.value.mode === 'fixed') fixedDates.value.forEach(d => schedule.push({ date: d, time: form.value.time }));
+          else if (form.value.mode === 'weekly') weeklyDates.value.forEach(d => schedule.push({ date: d, time: form.value.time }));
+          else form.value.custom_dates.forEach(s => schedule.push(s));
+
+          schedule.forEach(slot => {
+            participantIds.forEach(sid => {
+              store.lessons.push({
+                id: U.id('L'),
+                invoice_id: invId,
+                student_id: sid,
+                coach_id: form.value.coach_id,
+                lesson_date: slot.date,
+                start_time: slot.time,
+                status: 'scheduled',
+                type: 'normal'
+              });
+            });
+          });
+
+          await Store.save();
+          globalModal.value = { success: true, successMessage: 'Invoice and schedule generated!' };
+        };
+
+        const goHistory = () => window.location.href = '../invoice/index.html';
+
+        onMounted(async () => {
+            await Store.init();
+            form.value.inv_number = generateInvNumber();
+            
+            const renewData = sessionStorage.getItem('renew_invoice');
+            if (renewData) {
+              try {
+                const inv = JSON.parse(renewData);
+                form.value.participants = inv.participants || [inv.student_id];
+                form.value.student_id = form.value.participants[0];
+                form.value.coach_id = inv.coach_id;
+                form.value.pkg_id = inv.package_id;
+                const p = store.packages.find(x => x.id === inv.package_id);
+                if (p) { pkgCategory.value = p.category; pkgType.value = p.type; }
+              } catch(e) {}
+              sessionStorage.removeItem('renew_invoice');
+            }
+            Vue.nextTick(() => window.lucide && lucide.createIcons());
+          });
+
+        watch(() => form.value.mode, (m) => { if (m === 'custom') initializeCustomDates(); });
+        watch(() => form.value.pkg_id, (id) => { if (form.value.mode === 'custom') initializeCustomDates(); });
+        watch(() => form.value.date, (d) => { if (form.value.mode === 'custom') initializeCustomDates(); });
+        watch(() => form.value.time, (t) => { if (form.value.mode === 'custom') initializeCustomDates(); });
+
+        return {
+          store, U, form, studentSearch, showStudentModal, isResetModalOpen, globalModal, studentForm, makeupForm, pkgCategory, pkgType, weekDayOptions,
+          currentPkg, participantLimit, isGroup, selectedCount, filteredPackages, filteredStudents, personalPrice, finalTotalPrice, formErrors, conflicts, conflictNames,
+          formatDateDisplay, fixedDates, weeklyDates, openStudentModal, saveStudent, selectStudent, toggleParticipant, executeReset, submitInvoice, goHistory
+        };
+      }
+    });
+  </script>
+</body>
+
+</html>

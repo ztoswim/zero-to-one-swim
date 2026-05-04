@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "pages/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "assets/$1"
+    },
+    {
+      "src": "/(dashboard|students|coaches|calendar|invoice|create-invoice)(/.*)?",
+      "dest": "server.js"
+    },
+    {
+      "src": "/",
+      "dest": "server.js"
+    }
+  ]
+}

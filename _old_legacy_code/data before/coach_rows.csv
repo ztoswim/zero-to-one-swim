@@ -1,0 +1,4 @@
+createdAt,updatedAt,id,createdById,updatedById,name,nickname,gender,dob,identity_card,contact_number,email,address,emergency_contact_name,emergency_contact_number,start_date,level,bank_name,bank_account,users_id
+2025-04-22 03:15:03.525+00,2025-04-22 14:48:42.264+00,1,1,3,Ng Xuan Peng,Desmond,,,,,,,,,,Special,,,2
+2025-04-22 03:15:57.433+00,2025-04-22 14:48:49.101+00,2,1,3,Lee Chin Meng,Felix,,,,,,,,,,Special,,,1
+2025-04-22 03:20:32.797+00,2025-05-23 06:23:26.948+00,3,1,1,Lau Xin Li,Sindy,,,,,,,,,,LV 3,,,5

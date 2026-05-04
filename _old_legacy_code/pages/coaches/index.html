@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coaches | Swim Academy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; }
+    .coach-card { @apply bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-in; }
+    .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gray-50" data-mobile-action="user-plus" data-mobile-click="openAddModal()">
+<div id="app" v-cloak class="min-h-screen flex">
+  <div class="flex-1 flex flex-col relative min-w-0">
+    <main class="flex-1 overflow-y-scroll w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24">
+      <div class="max-w-[1600px] w-full mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <h1 class="text-5xl font-black text-gray-900 tracking-tighter mb-2">Coach <span class="text-primary-500">Staff</span></h1>
+            <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Managing your elite team</p>
+          </div>
+          <button @click="openAddModal" class="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 font-black flex items-center gap-2">Add New Coach <i data-lucide="user-plus" class="w-5 h-5"></i></button>
+        </div>
+
+        <!-- Coaches Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div v-for="(c, idx) in coachesWithIncome" :key="c.id" class="coach-card group" :style="{ animationDelay: (idx * 0.1) + 's' }">
+            <!-- Decorative Background -->
+            <div class="absolute -right-4 -top-4 text-8xl opacity-5 grayscale pointer-events-none group-hover:rotate-12 transition-transform text-gray-400">
+              <i data-lucide="user-check" class="w-24 h-24"></i>
+            </div>
+            
+            <!-- Header -->
+            <div class="flex justify-between items-start mb-8 relative z-10">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-3xl bg-gray-50 flex items-center justify-center text-gray-400 shadow-sm border border-gray-100 group-hover:scale-110 transition-transform">
+                  <i data-lucide="user"></i>
+                </div>
+                <div>
+                  <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-none">{{ c.name }}</h3>
+                  <div class="flex items-center gap-1.5 mt-2">
+                    <span class="w-2 h-2 rounded-full bg-success"></span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Coach</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Quick Actions -->
+              <div class="flex gap-2">
+                <button @click="editCoach(c)" class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary-50 hover:text-primary-500 hover:border-primary-100 transition-all active:scale-90 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                </button>
+                <button @click="confirmDelete(c)" class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all active:scale-90 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="space-y-4 relative z-10">
+              <div class="flex items-center justify-between p-5 rounded-[2rem] bg-primary-50 border border-primary-100 group-hover:border-primary-300 transition-colors">
+                <div>
+                  <p class="text-[9px] font-black text-primary-400 uppercase tracking-widest mb-1">Monthly Income</p>
+                  <p class="text-3xl font-black text-primary-500 tracking-tighter">RM{{ c.monthIncome }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-[9px] font-black text-primary-400 uppercase tracking-widest mb-1">Sessions</p>
+                  <p class="text-lg font-black text-primary-800">{{ c.monthLessons }}</p>
+                </div>
+              </div>
+              
+              <div class="flex gap-3">
+                <div class="flex-1 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                  <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone</p>
+                  <p class="text-xs font-bold text-gray-700">{{ c.phone }}</p>
+                </div>
+                <div class="flex-1 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-right">
+                  <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Base Cost</p>
+                  <p class="text-xs font-bold text-gray-700">RM{{ c.cost }}/unit</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="coachesWithIncome.length === 0" class="py-32 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+          <div class="text-6xl mb-6 text-gray-200 flex justify-center">
+            <i data-lucide="user-check" class="w-16 h-16"></i>
+          </div>
+          <h3 class="text-xl font-black text-gray-900 uppercase tracking-widest">No Coaches Found</h3>
+          <p class="text-gray-400 font-bold">Start by adding your first team member.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Coach Add/Edit Modal -->
+    <div v-if="showCoachModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal-content modal-lg animate-in">
+        <!-- Header -->
+        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white rounded-t-2xl">
+          <div>
+            <h3 class="text-2xl font-black text-gray-900 tracking-tighter">{{ editingCoach ? 'Edit Profile' : 'Add New Coach' }}</h3>
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{{ editingCoach ? 'Update existing credentials' : 'Register a new team member' }}</p>
+          </div>
+          <button @click="closeModal" class="close-btn" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-8 overflow-y-auto max-h-[70vh] bg-gray-50/50">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left: Basic Info -->
+            <div class="space-y-6">
+              <div class="form-group">
+                <label class="label">Full Name *</label>
+                <input v-model="form.name" class="input-field" placeholder="Coach Name">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                  <label class="label">Nickname</label>
+                  <input v-model="form.nickname" class="input-field" placeholder="Coach Nickname">
+                </div>
+                <div class="form-group">
+                  <label class="label">Gender</label>
+                  <select v-model="form.gender" class="input-field">
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="label">Identity Number *</label>
+                <input v-model="form.ic" class="input-field" placeholder="ID / Passport No">
+              </div>
+              <div class="form-group">
+                <label class="label">Phone Number *</label>
+                <input v-model="form.phone" class="input-field" placeholder="Contact Phone">
+              </div>
+            </div>
+
+            <!-- Right: Professional Info -->
+            <div class="space-y-6">
+              <div class="p-6 bg-primary-50 rounded-3xl border border-primary-100">
+                <h4 class="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-4">Financial Configuration</h4>
+                <div class="form-group">
+                  <label class="label text-primary-700">Cost Per Session (RM) *</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-primary-300">RM</span>
+                    <input v-model.number="form.cost" type="number" class="input-field pl-10 border-primary-200 focus:border-primary-500">
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 gap-4 mt-4">
+                  <div class="form-group">
+                    <label class="label text-primary-700">Bank Name</label>
+                    <input v-model="form.bank_name" class="input-field border-primary-200" placeholder="e.g. Maybank">
+                  </div>
+                  <div class="form-group">
+                    <label class="label text-primary-700">Account Number</label>
+                    <input v-model="form.bank_account" class="input-field border-primary-200" placeholder="0000 0000 0000">
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-6 bg-red-50 rounded-3xl border border-red-100">
+                <h4 class="text-[10px] font-black text-red-500 uppercase tracking-widest mb-4">Emergency Contact</h4>
+                <div class="grid grid-cols-1 gap-4">
+                  <input v-model="form.emergency_name" class="input-field border-red-100" placeholder="Contact Name">
+                  <input v-model="form.emergency_phone" class="input-field border-red-100" placeholder="Contact Phone">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-8 py-6 border-t border-gray-100 flex justify-end gap-4 bg-white rounded-b-2xl">
+          <button @click="closeModal" class="btn btn-secondary px-8 py-3">Discard</button>
+          <button @click="saveCoach" class="btn btn-primary px-10 py-3 shadow-xl shadow-primary-200 flex items-center gap-2">Save Profile <i data-lucide="save" class="w-5 h-5"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation -->
+    <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="showDeleteConfirm = false">
+      <div class="modal-content modal-sm animate-in">
+        <div class="p-8 text-center">
+          <div class="w-20 h-20 bg-red-50 text-red-500 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-red-100">
+            <i data-lucide="alert-triangle" class="w-10 h-10"></i>
+          </div>
+          <h3 class="text-2xl font-black text-gray-900 tracking-tighter mb-2">Remove Coach?</h3>
+          <p class="text-sm text-gray-400 font-medium mb-8">Are you sure you want to remove <span class="text-gray-900 font-black">{{ coachToDelete?.name }}</span> from the staff directory?</p>
+          <div class="flex gap-4">
+            <button @click="showDeleteConfirm = false" class="btn btn-secondary flex-1">Cancel</button>
+            <button @click="executeDelete" class="btn bg-red-500 hover:bg-red-600 text-white flex-1 font-black rounded-2xl shadow-xl shadow-red-100 py-3 flex items-center justify-center gap-2">Confirm <i data-lucide="trash-2" class="w-5 h-5"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <global-modals :modal="modal" :store="store" @success-confirm="modal.success = false"></global-modals>
+  </div>
+</div>
+
+<script src="../../assets/js/utils.js"></script>
+<script src="../../assets/js/components.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/nav.js"></script>
+<script>
+  AppFactory.create({
+    setup() {
+      const { ref, reactive, computed, onMounted } = Vue;
+      const store = Store.data;
+      const showCoachModal = ref(false);
+      const editingCoach = ref(false);
+      const form = reactive({ id: '', name: '', nickname: '', gender: '', ic: '', phone: '', bank_name: '', bank_account: '', emergency_name: '', emergency_phone: '', cost: 50 });
+      const modal = ref({ success: false, successMessage: '' });
+
+      const showDeleteConfirm = ref(false);
+      const coachToDelete = ref(null);
+
+      const openAddModal = () => {
+        editingCoach.value = false;
+        Object.assign(form, { id: U.id('C'), name: '', nickname: '', gender: '', ic: '', phone: '', bank_name: '', bank_account: '', emergency_name: '', emergency_phone: '', cost: 50 });
+        showCoachModal.value = true;
+      };
+
+      const editCoach = (c) => {
+        editingCoach.value = true;
+        Object.assign(form, JSON.parse(JSON.stringify(c)));
+        showCoachModal.value = true;
+      };
+
+      const saveCoach = async () => {
+        if (editingCoach.value) {
+          const idx = store.coaches.findIndex(c => c.id === form.id);
+          if (idx !== -1) store.coaches[idx] = JSON.parse(JSON.stringify(form));
+        } else {
+          store.coaches.unshift(JSON.parse(JSON.stringify(form)));
+        }
+        await Store.save();
+        showCoachModal.value = false;
+        modal.value = { success: true, successMessage: 'Coach profile saved!' };
+      };
+
+      const confirmDelete = (c) => { coachToDelete.value = c; showDeleteConfirm.value = true; };
+      const executeDelete = async () => {
+        if (!coachToDelete.value) return;
+        Store.deleteCoach(coachToDelete.value.id);
+        showDeleteConfirm.value = false;
+        modal.value = { success: true, successMessage: 'Coach and related lessons removed!' };
+      };
+
+      const coachesWithIncome = computed(() => {
+        const currentMonth = new Date().toISOString().slice(0,7);
+        return store.coaches.map(c => {
+          const monthLessons = store.lessons.filter(l => 
+            l.coach_id === c.id && 
+            l.status === 'completed' && 
+            l.lesson_date?.startsWith(currentMonth)
+          ).length;
+          const monthIncome = monthLessons * (c.cost || 70);
+          return { ...c, monthIncome, monthLessons };
+        });
+      });
+
+      onMounted(() => Store.init());
+      return { store, U, coachesWithIncome, showCoachModal, editingCoach, form, openAddModal, editCoach, saveCoach, confirmDelete, executeDelete, showDeleteConfirm, coachToDelete, modal, closeModal: () => showCoachModal.value = false };
+    }
+  });
+</script>
+</body>
+</html>

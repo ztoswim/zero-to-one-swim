@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from "@/db";
-import { students } from "@/db/schema";
+import { students, studentFixedSlots } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
 export async function addStudent(formData: FormData) {
@@ -20,11 +20,15 @@ export async function addStudent(formData: FormData) {
   const startDate = formData.get('startDate') as string;
   const lessonDuration = formData.get('lessonDuration') as string;
   const venueInfo = formData.get('venueInfo') as string;
+  const venueId = formData.get('venueId') as string;
+  const classDay = formData.get('classDay') as string;
+  const classTime = formData.get('classTime') as string;
+  const fixedSlotsJson = formData.get('fixedSlots') as string;
 
   if (!name) return { error: "Name is required" };
 
   try {
-    await db.insert(students).values({
+    const [newStudent] = await db.insert(students).values({
       name,
       gender,
       dob: dob ? dob : null,
@@ -39,10 +43,31 @@ export async function addStudent(formData: FormData) {
       startDate: startDate ? startDate : null,
       lessonDuration: lessonDuration ? parseInt(lessonDuration) : 45,
       venueInfo,
+      venueId: venueId ? venueId : null,
       coachId: coachId === 'none' ? null : coachId,
+      classDay,
+      classTime,
       status: 'active',
-    });
+    }).returning();
+
+    // Handle Fixed Slots
+    if (fixedSlotsJson) {
+      const slots = JSON.parse(fixedSlotsJson);
+      if (slots.length > 0) {
+        await db.insert(studentFixedSlots).values(
+          slots.map((s: any) => ({
+            studentId: newStudent.id,
+            coachId: s.coachId || newStudent.coachId,
+            day: s.day,
+            time: s.time,
+            duration: s.duration || 45,
+          }))
+        );
+      }
+    }
+
     revalidatePath('/students');
+    revalidatePath('/fixed-schedule');
     return { success: true };
   } catch (e) {
     console.error(e);

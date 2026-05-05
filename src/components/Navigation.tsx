@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, FileText, Calendar, Medal } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Calendar, Medal, Clock, MapPin } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Schedule', href: '/schedule', icon: Calendar },
+  { name: 'Fixed Schedule', href: '/fixed-schedule', icon: Clock },
+  { name: 'Locations', href: '/venues', icon: MapPin },
   { name: 'Students', href: '/students', icon: Users },
   { name: 'Coaches', href: '/coaches', icon: Medal },
 ];

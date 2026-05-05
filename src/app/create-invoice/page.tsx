@@ -11,7 +11,10 @@ async function getInitialData() {
   try {
     const studentsData = await db.query.students.findMany({ 
       where: eq(students.status, "active"),
-      orderBy: [desc(students.createdAt)]
+      orderBy: [desc(students.createdAt)],
+      with: {
+        fixedSlots: true
+      }
     });
     const packagesData = await db.query.packages.findMany();
     const coachesData = await db.query.coaches.findMany();

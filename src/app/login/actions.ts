@@ -35,7 +35,7 @@ export async function login(formData: FormData) {
   revalidatePath('/', 'layout');
   
   // Redirect based on role
-  if (userProfile.role === 'admin') {
+  if (userProfile.role === 'admin' || userProfile.role === 'super_admin') {
     redirect('/admin/dashboard');
   } else if (userProfile.role === 'coach') {
     redirect('/coach/dashboard');

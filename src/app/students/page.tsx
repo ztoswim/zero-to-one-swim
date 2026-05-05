@@ -5,16 +5,20 @@ import { desc } from "drizzle-orm";
 import { Users, UserPlus, Phone, MapPin } from "lucide-react";
 
 import { AddStudentDialog } from "./AddStudentDialog";
-import { coaches } from "@/db/schema";
+import { coaches, venues as venuesSchema } from "@/db/schema";
 
 export const dynamic = 'force-dynamic';
 
 async function getInitialData() {
   const studentsData = await db.query.students.findMany({
-    orderBy: [desc(students.createdAt)]
+    orderBy: [desc(students.createdAt)],
+    with: {
+      venue: true
+    }
   });
   const coachesData = await db.query.coaches.findMany();
-  return { students: studentsData, coaches: coachesData };
+  const venuesData = await db.query.venues.findMany();
+  return { students: studentsData, coaches: coachesData, venues: venuesData };
 }
 
 export default async function StudentsPage() {
@@ -30,7 +34,7 @@ export default async function StudentsPage() {
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage Roster</p>
         </div>
         <div className="flex items-center gap-4">
-          <AddStudentDialog coaches={data.coaches} />
+          <AddStudentDialog coaches={data.coaches} venues={data.venues} />
         </div>
       </div>
 
@@ -73,7 +77,7 @@ export default async function StudentsPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
                         <MapPin className="w-3.5 h-3.5 text-primary-500" />
-                        {student.venueInfo || 'General Venue'}
+                        {student.venue?.name || student.venueInfo || 'General Venue'}
                       </div>
                       <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
                         Duration: {student.lessonDuration || '45'} mins

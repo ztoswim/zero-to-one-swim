@@ -80,18 +80,19 @@ export async function middleware(request: NextRequest) {
       .single()
 
     const role = profile?.role
+    const isAdmin = role === 'admin' || role === 'super_admin'
 
     // Redirect root to role dashboard
     if (path === '/') {
-      if (role === 'admin') return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+      if (isAdmin) return NextResponse.redirect(new URL('/admin/dashboard', request.url))
       if (role === 'coach') return NextResponse.redirect(new URL('/coach/dashboard', request.url))
       if (role === 'parent') return NextResponse.redirect(new URL('/parent/dashboard', request.url))
     }
 
-    // Role-based protection (Admin has bypass)
-    if (role === 'admin') return response
+    // Role-based protection (Admin/Super Admin has bypass)
+    if (isAdmin) return response
 
-    if (path.startsWith('/admin') && role !== 'admin') {
+    if (path.startsWith('/admin') && !isAdmin) {
       return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
     if (path.startsWith('/coach') && role !== 'coach') {

@@ -15,10 +15,7 @@ export function AddCoachDialog() {
   const [icValue, setIcValue] = useState('');
 
   const formatIC = (value: string) => {
-    // Remove all non-digits
     const digits = value.replace(/\D/g, '');
-    
-    // Format: 000000-00-0000
     let formatted = '';
     if (digits.length > 0) {
       formatted += digits.substring(0, 6);
@@ -37,33 +34,38 @@ export function AddCoachDialog() {
     setIcValue(formatted);
   };
 
+  // Helper for scrollable select
+  const handleSelectWheel = (e: React.WheelEvent<HTMLSelectElement>, onChange: (val: string) => void) => {
+    e.preventDefault();
+    const select = e.currentTarget;
+    const delta = e.deltaY > 0 ? 1 : -1;
+    const newIndex = Math.max(0, Math.min(select.options.length - 1, select.selectedIndex + delta));
+    if (newIndex !== select.selectedIndex) {
+      onChange(select.options[newIndex].value);
+    }
+  };
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
-
     const formData = new FormData(event.currentTarget);
     const result = await addCoach(formData);
-
     if (result.error) {
       setError(result.error);
       setLoading(false);
     } else {
       setIsOpen(false);
       setLoading(false);
-      setIcValue(''); // Reset
+      setIcValue('');
     }
   }
 
-  // Required mark component
   const Req = () => <span className="text-red-600 ml-1">*</span>;
 
   return (
     <>
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2"
-      >
+      <button onClick={() => setIsOpen(true)} className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">
         Add Coach <Plus className="w-5 h-5" />
       </button>
 
@@ -77,15 +79,11 @@ export function AddCoachDialog() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 1. Personal Details Card */}
             <div className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-200 space-y-5">
               <div className="flex items-center gap-3 border-b-2 border-slate-50 pb-3">
-                <div className="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center">
-                  <User className="w-5 h-5" />
-                </div>
+                <div className="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center"><User className="w-5 h-5" /></div>
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Personal Details</h3>
               </div>
-
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -97,12 +95,16 @@ export function AddCoachDialog() {
                     <input name="nickname" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="Coach Alias" />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Gender <Req /></label>
                     <div className="relative">
-                      <select name="gender" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none appearance-none text-sm">
+                      <select 
+                        name="gender" 
+                        required 
+                        onWheel={(e) => handleSelectWheel(e, (val) => e.currentTarget.value = val)}
+                        className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none appearance-none text-sm"
+                      >
                         <option value="">Select</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -115,31 +117,18 @@ export function AddCoachDialog() {
                     <WheelDateInput value={dob} onChange={setDob} name="dob" />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">IC / Passport <Req /></label>
-                  <input 
-                    name="ic" 
-                    required 
-                    value={icValue}
-                    onChange={handleIcChange}
-                    maxLength={14}
-                    className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none text-sm placeholder:text-slate-300" 
-                    placeholder="000000-00-0000" 
-                  />
+                  <input name="ic" required value={icValue} onChange={handleIcChange} maxLength={14} className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none text-sm placeholder:text-slate-300" placeholder="000000-00-0000" />
                 </div>
               </div>
             </div>
 
-            {/* 2. Contact Details Card */}
             <div className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-200 space-y-5">
               <div className="flex items-center gap-3 border-b-2 border-slate-50 pb-3">
-                <div className="w-10 h-10 rounded-xl bg-success text-white flex items-center justify-center">
-                  <Smartphone className="w-5 h-5" />
-                </div>
+                <div className="w-10 h-10 rounded-xl bg-success text-white flex items-center justify-center"><Smartphone className="w-5 h-5" /></div>
                 <h3 className="text-xl font-black text-slate-900 tracking-tight">Contact Information</h3>
               </div>
-
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -159,13 +148,10 @@ export function AddCoachDialog() {
             </div>
           </div>
 
-          {/* 3. Professional Profile Card */}
           <div className="bg-indigo-50/50 rounded-[2rem] p-6 border-2 border-indigo-100 shadow-sm space-y-5">
             <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100">
-                  <GraduationCap className="w-5 h-5" />
-                </div>
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100"><GraduationCap className="w-5 h-5" /></div>
                 <h3 className="text-xl font-black text-indigo-900 tracking-tight">Professional Profile</h3>
               </div>
               <div className="flex items-center gap-4">
@@ -174,10 +160,7 @@ export function AddCoachDialog() {
                   {['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'].map(c => (
                     <label key={c} className="relative cursor-pointer">
                       <input type="radio" name="color" value={c} className="peer sr-only" defaultChecked={c === '#3b82f6'} />
-                      <div 
-                        className="w-8 h-8 rounded-lg transition-all peer-checked:scale-110 peer-checked:ring-4 ring-indigo-200 border-2 border-white shadow-sm" 
-                        style={{ backgroundColor: c }} 
-                      />
+                      <div className="w-8 h-8 rounded-lg transition-all peer-checked:scale-110 peer-checked:ring-4 ring-indigo-200 border-2 border-white shadow-sm" style={{ backgroundColor: c }} />
                     </label>
                   ))}
                 </div>
@@ -191,7 +174,12 @@ export function AddCoachDialog() {
               <div className="space-y-2">
                 <label className="text-[11px] font-black text-indigo-800 uppercase tracking-wider">Coach Level <Req /></label>
                 <div className="relative">
-                  <select name="level" required className="w-full px-5 py-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-slate-900 outline-none appearance-none text-sm focus:border-indigo-500">
+                  <select 
+                    name="level" 
+                    required 
+                    onWheel={(e) => handleSelectWheel(e, (val) => e.currentTarget.value = val)}
+                    className="w-full px-5 py-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-slate-900 outline-none appearance-none text-sm focus:border-indigo-500"
+                  >
                     <option value="Junior">Junior Coach</option>
                     <option value="Senior">Senior Coach</option>
                     <option value="Head">Head Coach</option>
@@ -202,51 +190,25 @@ export function AddCoachDialog() {
             </div>
           </div>
 
-          {/* 4. Bottom Row: Banking & Emergency */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-blue-50/50 rounded-[2rem] p-5 border-2 border-blue-200 shadow-sm flex items-center gap-6">
-              <div className="flex items-center gap-3 shrink-0">
-                <CreditCard className="w-5 h-5 text-blue-600" />
-                <h4 className="text-sm font-black text-blue-900 uppercase tracking-tight">Bank</h4>
-              </div>
+              <div className="flex items-center gap-3 shrink-0"><CreditCard className="w-5 h-5 text-blue-600" /><h4 className="text-sm font-black text-blue-900 uppercase tracking-tight">Bank</h4></div>
               <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-blue-800 uppercase px-1">Bank Name <Req /></label>
-                  <input name="bankName" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Bank Name" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-blue-800 uppercase px-1">Account No <Req /></label>
-                  <input name="bankAccount" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Account No" />
-                </div>
+                <div className="space-y-1"><label className="text-[10px] font-black text-blue-800 uppercase px-1">Bank Name <Req /></label><input name="bankName" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Bank Name" /></div>
+                <div className="space-y-1"><label className="text-[10px] font-black text-blue-800 uppercase px-1">Account No <Req /></label><input name="bankAccount" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Account No" /></div>
               </div>
             </div>
-
             <div className="bg-red-50/50 rounded-[2.5rem] p-5 border-2 border-red-200 shadow-sm flex items-center gap-6">
-              <div className="flex items-center gap-3 shrink-0">
-                <ShieldAlert className="w-5 h-5 text-red-600" />
-                <h4 className="text-sm font-black text-red-900 uppercase tracking-tight">Emergency</h4>
-              </div>
+              <div className="flex items-center gap-3 shrink-0"><ShieldAlert className="w-5 h-5 text-red-600" /><h4 className="text-sm font-black text-red-900 uppercase tracking-tight">Emergency</h4></div>
               <div className="grid grid-cols-2 gap-4 flex-1">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-red-800 uppercase px-1">Name <Req /></label>
-                  <input name="emergencyName" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Name" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black text-red-800 uppercase px-1">Phone <Req /></label>
-                  <input name="emergencyPhone" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Phone" />
-                </div>
+                <div className="space-y-1"><label className="text-[10px] font-black text-red-800 uppercase px-1">Name <Req /></label><input name="emergencyName" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Name" /></div>
+                <div className="space-y-1"><label className="text-[10px] font-black text-red-800 uppercase px-1">Phone <Req /></label><input name="emergencyPhone" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Phone" /></div>
               </div>
             </div>
           </div>
 
           <div className="flex justify-end pt-2">
-            <button 
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary px-24 h-16 text-lg font-black tracking-tighter shadow-xl shadow-primary-200 rounded-2xl w-full lg:w-auto"
-            >
-              {loading ? 'PROCESSING...' : 'CONFIRM & SAVE COACH'}
-            </button>
+            <button type="submit" disabled={loading} className="btn btn-primary px-24 h-16 text-lg font-black tracking-tighter shadow-xl shadow-primary-200 rounded-2xl w-full lg:w-auto">{loading ? 'PROCESSING...' : 'CONFIRM & SAVE COACH'}</button>
           </div>
         </form>
       </Modal>

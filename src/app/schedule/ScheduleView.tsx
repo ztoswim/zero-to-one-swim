@@ -22,7 +22,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
   // Generate 15 days range (7 back, 7 forward)
   const days = useMemo(() => {
-    const arr = [];
+    const arr: string[] = [];
     const base = new Date(selectedDay);
     for (let i = -7; i <= 7; i++) {
       const d = new Date(base);

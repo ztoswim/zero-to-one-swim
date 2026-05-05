@@ -195,7 +195,7 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormProps> = ({
   const handleSubmit = async () => {
     if (formErrors.length > 0) return;
 
-    const schedule = [];
+    const schedule: { date: string; time: string }[] = [];
     if (form.mode === 'fixed') fixedDates.forEach(d => schedule.push({ date: d, time: form.time }));
     else if (form.mode === 'weekly') weeklyDates.forEach(d => schedule.push({ date: d, time: form.time }));
     else form.customDates.forEach(s => schedule.push(s));

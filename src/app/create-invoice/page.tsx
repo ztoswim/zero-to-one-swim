@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { students, packages, coaches, invoices } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { CreateInvoiceForm } from "./CreateInvoiceForm";
+import { BackButton } from "@/components/BackButton";
 
 export const dynamic = "force-dynamic";
 
@@ -62,12 +63,11 @@ export default async function CreateInvoicePage() {
           </h1>
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Generate invoice and schedule</p>
         </div>
-        <a 
-          href="/" 
+        <BackButton 
           className="btn bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-100 px-8 h-12 shadow-sm font-bold rounded-2xl transition-all"
         >
           Discard & Back
-        </a>
+        </BackButton>
       </div>
 
       {data.error && (

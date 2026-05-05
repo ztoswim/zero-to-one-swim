@@ -12,10 +12,13 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 overflow-hidden">
+      {/* Sidebar for Desktop / Bottom Bar for Mobile */}
       <Navigation />
-      <main className="flex-1 min-w-0 relative">
-        <div className="w-full min-h-screen pb-24 lg:pb-0">
+      
+      <main className="flex-1 min-w-0 relative h-screen overflow-y-auto no-scrollbar scroll-smooth">
+        {/* Added extra padding on mobile for "breath" */}
+        <div className="w-full px-4 py-8 lg:px-8 lg:py-10 pb-28 lg:pb-12">
           {children}
         </div>
       </main>

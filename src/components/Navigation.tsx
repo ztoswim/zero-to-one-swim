@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/pathname';
+import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Users, FileText, Calendar, Medal, Clock, MapPin, LogOut } from 'lucide-react';
 import { useState } from 'react';
 
@@ -29,7 +29,7 @@ export function Navigation() {
 
   return (
     <>
-      {/* DESKTOP SIDEBAR */}
+      {/* DESKTOP SIDEBAR - STAYS THE SAME */}
       <nav className="hidden lg:flex w-72 bg-white border-r border-gray-100 flex-col h-screen sticky top-0">
         <div className="p-8">
           <img src="/logo.png" alt="Zero To One Swim" className="h-12 w-auto object-contain" />
@@ -72,30 +72,36 @@ export function Navigation() {
         </div>
       </nav>
 
-      {/* MOBILE BOTTOM TAB BAR */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-gray-100 px-2 py-2 z-50 flex justify-between items-center safe-area-bottom">
-        {navItems.slice(0, 5).map((item) => { // Show top 5 on mobile
+      {/* MOBILE BOTTOM TAB BAR - SLIMMER & FIXED */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-2xl border-t border-gray-100 px-1 py-1 z-[9999] flex justify-around items-center safe-area-bottom shadow-[0_-8px_30px_rgb(0,0,0,0.04)] h-16">
+        {navItems.slice(0, 5).map((item) => {
           const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
           const Icon = item.icon;
           return (
             <Link
               key={item.name}
               href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 py-2 rounded-xl gap-1 transition-all ${
-                isActive ? 'text-primary-500 scale-110' : 'text-gray-400'
+              className={`flex flex-col items-center justify-center min-w-[64px] h-full transition-all duration-300 ${
+                isActive ? 'text-primary-500' : 'text-gray-400'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'fill-primary-500/10' : ''}`} />
-              <span className="text-[9px] font-black uppercase tracking-tight">{item.name.split(' ')[0]}</span>
+              <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-primary-50' : ''}`}>
+                <Icon className={`w-5 h-5 ${isActive ? 'fill-primary-500/10' : ''}`} />
+              </div>
+              <span className={`text-[8px] font-black uppercase tracking-tighter mt-0.5 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                {item.name.split(' ')[0]}
+              </span>
             </Link>
           );
         })}
         <button 
           onClick={handleLogout}
-          className="flex flex-col items-center justify-center flex-1 py-2 text-red-400"
+          className="flex flex-col items-center justify-center min-w-[64px] h-full text-red-400 active:scale-90 transition-transform"
         >
-          <LogOut className="w-5 h-5" />
-          <span className="text-[9px] font-black uppercase tracking-tight">Out</span>
+          <div className="p-1.5 rounded-xl bg-red-50/50">
+            <LogOut className="w-5 h-5" />
+          </div>
+          <span className="text-[8px] font-black uppercase tracking-tighter mt-0.5 opacity-60">Out</span>
         </button>
       </nav>
     </>

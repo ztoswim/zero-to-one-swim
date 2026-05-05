@@ -48,59 +48,103 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Student Name</label>
-            <input 
-              name="name"
-              required
-              className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-              placeholder="e.g. Liam Smith"
-            />
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Parent Name</label>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Student Full Name *</label>
               <input 
-                name="parentName"
+                name="name"
+                required
                 className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="e.g. John Smith"
+                placeholder="Full legal name"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label>
-              <input 
-                name="phone"
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="+60..."
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Gender</label>
               <select 
                 name="gender"
                 className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Date of Birth</label>
+              <input 
+                name="dob"
+                type="date"
+                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+              />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Assign Coach</label>
-              <select 
-                name="coachId"
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none"
-              >
-                <option value="none">No Coach Assigned</option>
-                {coaches.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Mobile Number *</label>
+              <input 
+                name="phone"
+                required
+                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                placeholder="Primary contact"
+              />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+            <input 
+              name="email"
+              type="email"
+              className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+              placeholder="email@example.com"
+            />
+          </div>
+
+          <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 space-y-6">
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Parental Information</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Guardian Name</label>
+                <input name="parentName" className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="Full name" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Residential Area Tag</label>
+                <input name="sameArea" className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="e.g. Block A / Garden X" />
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 bg-red-50/50 rounded-[2.5rem] border border-red-100/50 space-y-4">
+            <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Emergency Contact</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input name="emergencyName" className="w-full h-14 bg-white border-2 border-red-100/50 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Person" />
+              <input name="emergencyPhone" className="w-full h-14 bg-white border-2 border-red-100/50 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Emergency Phone" />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Home Address</label>
+              <textarea name="address" className="w-full h-32 bg-gray-50 border-2 border-transparent rounded-2xl p-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none resize-none" placeholder="Detailed address..."></textarea>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Internal Notes / Health Issues</label>
+              <textarea name="notes" className="w-full h-32 bg-gray-50 border-2 border-transparent rounded-2xl p-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none resize-none" placeholder="Any allergies, swimming level..."></textarea>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Assign Coach</label>
+            <select 
+              name="coachId"
+              className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none"
+            >
+              <option value="none">No Coach Assigned</option>
+              {coaches.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
           </div>
 
           <button 

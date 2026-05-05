@@ -6,19 +6,33 @@ import { revalidatePath } from "next/cache";
 
 export async function addStudent(formData: FormData) {
   const name = formData.get('name') as string;
-  const phone = formData.get('phone') as string;
-  const parentName = formData.get('parentName') as string;
-  const coachId = formData.get('coachId') as string || null;
   const gender = formData.get('gender') as string;
+  const dob = formData.get('dob') as string;
+  const phone = formData.get('phone') as string;
+  const email = formData.get('email') as string;
+  const parentName = formData.get('parentName') as string;
+  const sameArea = formData.get('sameArea') as string;
+  const emergencyName = formData.get('emergencyName') as string;
+  const emergencyPhone = formData.get('emergencyPhone') as string;
+  const address = formData.get('address') as string;
+  const notes = formData.get('notes') as string;
+  const coachId = formData.get('coachId') as string || null;
 
   if (!name) return { error: "Name is required" };
 
   try {
     await db.insert(students).values({
       name,
-      phone,
-      parentName,
       gender,
+      dob: dob ? dob : null,
+      phone,
+      email,
+      parentName,
+      sameArea,
+      emergencyName,
+      emergencyPhone,
+      address,
+      notes,
       coachId: coachId === 'none' ? null : coachId,
       status: 'active',
     });

@@ -44,14 +44,44 @@ export function AddCoachDialog() {
             </div>
           )}
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
-            <input 
-              name="name"
-              required
-              className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-              placeholder="e.g. Coach Jackson"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name *</label>
+              <input 
+                name="name"
+                required
+                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                placeholder="Coach Name"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nickname</label>
+              <input 
+                name="nickname"
+                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                placeholder="Coach Nickname"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Gender</label>
+              <select name="gender" className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none">
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Identity Number (IC) *</label>
+              <input 
+                name="ic"
+                required
+                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                placeholder="ID / Passport No"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -65,12 +95,39 @@ export function AddCoachDialog() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone</label>
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone *</label>
               <input 
                 name="phone"
+                required
                 className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
                 placeholder="+60..."
               />
+            </div>
+          </div>
+
+          <div className="p-6 bg-primary-50 rounded-3xl border border-primary-100 space-y-4">
+            <h4 className="text-[10px] font-black text-primary-500 uppercase tracking-widest">Financial & Banking</h4>
+            <div className="form-group">
+              <label className="text-[10px] font-black text-primary-700 uppercase tracking-widest ml-1">Cost Per Session (RM) *</label>
+              <input 
+                name="cost"
+                type="number"
+                step="0.01"
+                defaultValue="50.00"
+                className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <input name="bankName" className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="Bank Name" />
+              <input name="bankAccount" className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="Account Number" />
+            </div>
+          </div>
+
+          <div className="p-6 bg-red-50 rounded-3xl border border-red-100 space-y-4">
+            <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Emergency Contact</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <input name="emergencyName" className="w-full h-14 bg-white border-2 border-red-100 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Name" />
+              <input name="emergencyPhone" className="w-full h-14 bg-white border-2 border-red-100 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Phone" />
             </div>
           </div>
 

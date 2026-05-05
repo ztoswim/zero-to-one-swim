@@ -7,6 +7,15 @@ import { Modal } from '@/components/Modal';
 import { addVenueAction, deleteVenueAction, updateVenueAction, addRouteAction, deleteRouteAction } from './actions';
 import { useRouter } from 'next/navigation';
 
+// Custom icons for Google Maps and Waze
+const GoogleMapsLogo = () => (
+  <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" className="w-4 h-4 lg:w-5 lg:h-5" alt="Google Maps" />
+);
+
+const WazeLogo = () => (
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" className="w-4 h-4 lg:w-5 lg:h-5" alt="Waze" />
+);
+
 interface Venue {
   id: string;
   name: string;
@@ -82,7 +91,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto">
+    <div className="max-w-[1400px] mx-auto px-4">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 lg:mb-16 animate-in">
         <div className="flex items-start gap-4">
           <div className="space-y-1">
@@ -121,53 +130,66 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10 animate-in" style={{ animationDelay: '0.1s' }}>
         {filteredVenues.map((venue) => (
-          <div key={venue.id} className="bg-white rounded-[2rem] lg:rounded-[3.5rem] p-6 lg:p-10 border border-gray-50 shadow-sm hover:shadow-2xl hover:shadow-gray-100 transition-all group relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 lg:p-8 lg:opacity-0 lg:group-hover:opacity-100 transition-all flex flex-wrap justify-end gap-2">
-              {venue.googleMapsUrl && (
+          <div key={venue.id} className="bg-white rounded-[2rem] lg:rounded-[3.5rem] p-6 lg:p-10 border border-gray-50 shadow-sm hover:shadow-2xl hover:shadow-gray-100 transition-all group relative flex flex-col overflow-hidden">
+            {/* Action Buttons: Desktop Top-Right, Mobile Flow */}
+            <div className="hidden lg:flex absolute top-0 right-0 p-8 opacity-0 group-hover:opacity-100 transition-all gap-2">
+              {isSuperAdmin && (
+                <>
+                  <button onClick={() => setEditingVenue(venue)} className="w-11 h-11 rounded-xl bg-green-50 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-green-100"><Pencil className="w-4 h-4" /></button>
+                  <button onClick={() => { if(confirm('Delete venue?')) deleteVenueAction(venue.id).then(() => router.refresh()) }} className="w-11 h-11 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-red-100"><Trash2 className="w-4 h-4" /></button>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-start justify-between mb-6 lg:mb-10">
+              <div className="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl lg:rounded-[2rem] bg-primary-50 text-primary-600 flex items-center justify-center shadow-inner group-hover:rotate-6 transition-transform"><MapPin className="w-7 h-7 lg:w-10 lg:h-10" /></div>
+              {isSuperAdmin && (
+                <div className="lg:hidden flex gap-2">
+                   <button onClick={() => setEditingVenue(venue)} className="w-10 h-10 rounded-xl bg-green-50 text-green-500 flex items-center justify-center border border-green-100"><Pencil className="w-4 h-4" /></button>
+                   <button onClick={() => { if(confirm('Delete venue?')) deleteVenueAction(venue.id).then(() => router.refresh()) }} className="w-10 h-10 rounded-xl bg-red-50 text-red-400 flex items-center justify-center border border-red-100"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              )}
+            </div>
+
+            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-6 tracking-tight group-hover:text-primary-600 transition-colors flex-1">{venue.name}</h3>
+            
+            {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
+            <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
+              {venue.googleMapsUrl ? (
                 <a 
                   href={venue.googleMapsUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="h-8 lg:h-11 px-3 lg:px-5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2 shadow-sm border border-blue-100 font-black text-[9px] lg:text-[10px] tracking-widest"
+                  className="h-12 lg:h-14 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-3 border border-gray-100 font-black text-[10px] lg:text-xs tracking-widest uppercase shadow-sm"
                 >
-                  <MapIcon className="w-3.5 h-3.5" /> GOOGLE
+                  <GoogleMapsLogo /> GOOGLE
                 </a>
+              ) : (
+                <div className="h-12 lg:h-14 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-3 border border-gray-50 font-black text-[10px] uppercase tracking-widest cursor-not-allowed">
+                  NO LINK
+                </div>
               )}
-              {venue.wazeUrl && (
+
+              {venue.wazeUrl ? (
                 <a 
                   href={venue.wazeUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="h-8 lg:h-11 px-3 lg:px-5 rounded-xl bg-cyan-50 text-cyan-600 hover:bg-cyan-600 hover:text-white transition-all flex items-center gap-2 shadow-sm border border-cyan-100 font-black text-[9px] lg:text-[10px] tracking-widest"
+                  className="h-12 lg:h-14 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-3 border border-gray-100 font-black text-[10px] lg:text-xs tracking-widest uppercase shadow-sm"
                 >
-                  <Navigation className="w-3.5 h-3.5" /> WAZE
+                  <WazeLogo /> WAZE
                 </a>
-              )}
-              {isSuperAdmin && (
-                <div className="flex gap-2 w-full lg:w-auto justify-end mt-2 lg:mt-0">
-                  <button onClick={() => setEditingVenue(venue)} className="w-8 h-8 lg:w-11 lg:h-11 rounded-xl bg-green-50 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-green-100"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => { if(confirm('Delete venue?')) deleteVenueAction(venue.id).then(() => router.refresh()) }} className="w-8 h-8 lg:w-11 lg:h-11 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-red-100"><Trash2 className="w-4 h-4" /></button>
+              ) : (
+                <div className="h-12 lg:h-14 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-3 border border-gray-50 font-black text-[10px] uppercase tracking-widest cursor-not-allowed">
+                  NO LINK
                 </div>
               )}
-            </div>
-            <div className="w-12 h-12 lg:w-20 lg:h-20 rounded-2xl lg:rounded-[2rem] bg-primary-50 text-primary-600 flex items-center justify-center mb-6 lg:mb-10 shadow-inner group-hover:rotate-6 transition-transform"><MapPin className="w-6 h-6 lg:w-10 lg:h-10" /></div>
-            <h3 className="text-xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors pr-20 lg:pr-0">{venue.name}</h3>
-            <div className="flex gap-2 mt-6 pt-6 border-t border-gray-50">
-               {venue.googleMapsUrl ? (
-                 <span className="shrink-0 text-[8px] lg:text-[10px] font-black text-blue-500 uppercase tracking-widest px-3 py-1.5 bg-blue-50/50 rounded-lg">G-Maps</span>
-               ) : (
-                 <span className="shrink-0 text-[8px] lg:text-[10px] font-black text-gray-300 uppercase tracking-widest px-3 py-1.5 bg-gray-50 rounded-lg disabled">No Link</span>
-               )}
-               {venue.wazeUrl ? (
-                 <span className="shrink-0 text-[8px] lg:text-[10px] font-black text-cyan-500 uppercase tracking-widest px-3 py-1.5 bg-cyan-50/50 rounded-lg">Waze</span>
-               ) : (
-                 <span className="shrink-0 text-[8px] lg:text-[10px] font-black text-gray-300 uppercase tracking-widest px-3 py-1.5 bg-gray-50 rounded-lg disabled">No Link</span>
-               )}
             </div>
           </div>
         ))}
       </div>
 
+      {/* Manual Route Library - Refined */}
       <div className="mt-16 lg:mt-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
         <div className="space-y-8 animate-in" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between">
@@ -176,8 +198,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               <button onClick={() => setIsRouteModalOpen(true)} className="flex items-center gap-2 px-6 py-4 bg-gray-900 text-white rounded-xl lg:rounded-2xl text-[10px] lg:text-xs font-black uppercase tracking-widest hover:bg-primary-600 transition-all shadow-xl shadow-gray-200"><Plus className="w-4 h-4" /> New Record</button>
             )}
           </div>
-          <div className="bg-white rounded-[2rem] lg:rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
-            <table className="w-full text-left">
+          <div className="bg-white rounded-[2rem] lg:rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden overflow-x-auto">
+            <table className="w-full text-left min-w-[500px] lg:min-w-0">
               <thead><tr className="bg-gray-50/50 border-b border-gray-50"><th className="px-6 py-5 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Route Path</th><th className="px-6 py-5 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Est. Time</th><th className="px-6 py-5 text-right"></th></tr></thead>
               <tbody className="divide-y divide-gray-50">
                 {routes.length === 0 && (
@@ -215,7 +237,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         </div>
       </div>
 
-      {/* MODALS UNCHANGED BUT ENSURED TO BE Z-INDEXED ABOVE BOTTOM BAR */}
+      {/* MODALS */}
       <Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
         <form onSubmit={handleAddVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">

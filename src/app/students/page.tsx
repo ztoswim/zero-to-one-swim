@@ -1,15 +1,17 @@
 import { Container } from "@/components/Container";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/db";
+import { students } from "@/db/schema";
+import { desc } from "drizzle-orm";
 import { Users, UserPlus, Phone, MapPin } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
 async function getStudents() {
   try {
-    const students = await prisma.student.findMany({
-      orderBy: { created_at: 'desc' }
+    const data = await db.query.students.findMany({
+      orderBy: [desc(students.createdAt)]
     });
-    return { students };
+    return { students: data };
   } catch (e) {
     return { students: [], error: "Database connection needed." };
   }
@@ -36,7 +38,7 @@ export default async function StudentsPage() {
 
       {data.error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run Prisma migrations.
+          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
         </div>
       )}
 

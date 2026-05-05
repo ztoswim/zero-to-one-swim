@@ -1,5 +1,7 @@
 import { Container } from "@/components/Container";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/db";
+import { lessons } from "@/db/schema";
+import { asc, gte, and } from "drizzle-orm";
 import { Calendar as CalendarIcon, Clock, User, MapPin } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
@@ -8,27 +10,22 @@ async function getSchedule() {
   try {
     const today = new Date();
     today.setHours(0,0,0,0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const lessons = await prisma.lesson.findMany({
-      where: {
-        date: {
-          gte: today,
-        }
-      },
+    const data = await db.query.lessons.findMany({
+      where: gte(lessons.date, today.toISOString().split('T')[0]),
       orderBy: [
-        { date: 'asc' },
-        { time: 'asc' }
+        asc(lessons.date),
+        asc(lessons.time)
       ],
-      include: {
+      with: {
         student: true,
         coach: true,
       },
-      take: 20
+      limit: 20
     });
-    return { lessons };
+    return { lessons: data };
   } catch (e) {
+    console.error(e);
     return { lessons: [], error: "Database connection needed." };
   }
 }
@@ -49,7 +46,7 @@ export default async function SchedulePage() {
 
       {data.error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run Prisma migrations.
+          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
         </div>
       )}
 

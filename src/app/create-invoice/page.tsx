@@ -1,12 +1,14 @@
 import { Container } from "@/components/Container";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/db";
+import { students, packages } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { FileText, Plus, User, Package, Calendar } from "lucide-react";
 
 async function getInvoiceData() {
   try {
-    const students = await prisma.student.findMany({ where: { status: "active" } });
-    const packages = await prisma.package.findMany();
-    return { students, packages };
+    const studentsData = await db.query.students.findMany({ where: eq(students.status, "active") });
+    const packagesData = await db.query.packages.findMany();
+    return { students: studentsData, packages: packagesData };
   } catch (e) {
     return { students: [], packages: [], error: "Database connection needed." };
   }
@@ -28,7 +30,7 @@ export default async function CreateInvoicePage() {
 
       {data.error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run Prisma migrations.
+          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
         </div>
       )}
 

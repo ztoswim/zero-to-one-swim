@@ -1,5 +1,7 @@
 import { Container } from "@/components/Container";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/db";
+import { invoices, lessons, students } from "@/db/schema";
+import { desc, eq, gte, lte, and } from "drizzle-orm";
 import { TrendingUp, Calendar, AlertCircle, User, MessageSquare, CheckCircle, Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -12,51 +14,45 @@ async function getDashboardData() {
     const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     // Fetch this month's invoices for income
-    const monthlyInvoices = await prisma.invoice.findMany({
-      where: {
-        payment_date: {
-          gte: firstDayOfMonth,
-          lte: lastDayOfMonth,
-        },
-        status: "paid",
-      },
+    const monthlyInvoices = await db.query.invoices.findMany({
+      where: and(
+        gte(invoices.paymentDate, firstDayOfMonth.toISOString().split('T')[0]),
+        lte(invoices.paymentDate, lastDayOfMonth.toISOString().split('T')[0]),
+        eq(invoices.status, "paid")
+      ),
     });
 
-    const monthIncome = monthlyInvoices.reduce((sum: any, inv: any) => sum + Number(inv.total_amount || 0), 0);
+    const monthIncome = monthlyInvoices.reduce((sum: any, inv: any) => sum + Number(inv.totalAmount || 0), 0);
     const monthProfit = Math.round(monthIncome * 0.4);
 
     // Total lessons
-    const totalLessons = await prisma.lesson.count();
+    const lessonCountResult = await db.select({ count: lessons.id }).from(lessons);
+    const totalLessons = lessonCountResult.length;
 
     // Low balance alerts
-    const allStudents = await prisma.student.findMany({
-      where: { status: "active" },
-      include: {
+    const allStudents = await db.query.students.findMany({
+      where: eq(students.status, "active"),
+      with: {
         invoices: {
-          where: { status: "paid" },
+          where: eq(invoices.status, "paid"),
         },
         lessons: {
-          where: {
-            status: { in: ["attended", "absent"] }, // equivalent to completed or absent
-          },
+          where: (lessons, { inArray }) => inArray(lessons.status, ["attended", "absent"]),
         },
       },
     });
 
     const lowBalanceList = allStudents.map((s: any) => {
       const used = s.lessons.length;
-      // Note: we assume package provides a certain number of lessons, here we use lessons_remaining directly from invoice as simplified logic or calculate from package.
-      // The legacy code used `session_count` on invoice. We will use `lessons_remaining` or total package lessons.
-      // Let's approximate: 
-      const totalPurchased = s.invoices.reduce((sum: any, inv: any) => sum + inv.lessons_remaining, 0) + used; // rough approximation for legacy logic
-      const rem = totalPurchased - used; // actually just sum of lessons_remaining might be better, but we follow legacy style of tracking `rem`
+      const totalPurchased = s.invoices.reduce((sum: any, inv: any) => sum + inv.lessonsRemaining, 0) + used;
+      const rem = totalPurchased - used;
       
       return { ...s, rem };
     }).filter((s: any) => s.rem <= 2).sort((a: any, b: any) => a.rem - b.rem);
 
     return { monthIncome, monthProfit, totalLessons, lowBalanceList };
   } catch (e) {
-    console.error("Database connection failed or schema not pushed", e);
+    console.error("Database connection failed", e);
     return {
       monthIncome: 0,
       monthProfit: 0,
@@ -89,7 +85,7 @@ export default async function DashboardPage() {
 
       {data.error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run Prisma migrations.
+          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
         </div>
       )}
 

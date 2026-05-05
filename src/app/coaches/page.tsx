@@ -1,15 +1,17 @@
 import { Container } from "@/components/Container";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/db";
+import { coaches } from "@/db/schema";
+import { asc } from "drizzle-orm";
 import { Medal, Plus, Mail, Phone } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
 async function getCoaches() {
   try {
-    const coaches = await prisma.coach.findMany({
-      orderBy: { name: 'asc' }
+    const data = await db.query.coaches.findMany({
+      orderBy: [asc(coaches.name)]
     });
-    return { coaches };
+    return { coaches: data };
   } catch (e) {
     return { coaches: [], error: "Database connection needed." };
   }
@@ -36,7 +38,7 @@ export default async function CoachesPage() {
 
       {data.error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run Prisma migrations.
+          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
         </div>
       )}
 

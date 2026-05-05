@@ -68,8 +68,8 @@ export function AddCoachDialog() {
                     <input name="name" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="Full Name" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Nickname <Req /></label>
-                    <input name="nickname" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="Display Name" />
+                    <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">Display Name <Req /></label>
+                    <input name="nickname" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="Coach Alias" />
                   </div>
                 </div>
 

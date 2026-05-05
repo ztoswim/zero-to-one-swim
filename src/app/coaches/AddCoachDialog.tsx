@@ -108,15 +108,14 @@ export function AddCoachDialog() {
               </div>
             </div>
 
-            {/* Column 2: Contact & Work */}
             <div className="space-y-8 lg:px-10 lg:border-x border-gray-100">
               <div className="flex items-center gap-4 mb-2">
                 <div className="w-12 h-12 rounded-2xl bg-success text-white flex items-center justify-center shadow-lg shadow-success/20">
-                  <Calendar className="w-6 h-6" />
+                  <Phone className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Work & Contact</h4>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Communication & HR</p>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Contact Details</h4>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Communication & Emergency</p>
                 </div>
               </div>
 
@@ -135,6 +134,38 @@ export function AddCoachDialog() {
                 <textarea name="address" className="input-field h-24 resize-none py-4" placeholder="Residential address..."></textarea>
               </div>
 
+              <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100/50 space-y-6">
+                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  Emergency Contact
+                </h5>
+                <div className="space-y-4">
+                  <input name="emergencyName" required className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Contact Name" />
+                  <input name="emergencyPhone" required className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Contact Phone" />
+                </div>
+              </div>
+            </div>
+
+            {/* Column 3: Career & Banking */}
+            <div className="space-y-8">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg shadow-gray-200">
+                  <Plus className="w-6 h-6 rotate-45" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Career & Finance</h4>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Payroll & HR Details</p>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="label">Cost Per Session (RM) <span className="req">*</span></label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400">RM</div>
+                  <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="input-field pl-12" />
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="label">入职日期 Join Date <span className="req">*</span></label>
@@ -147,38 +178,6 @@ export function AddCoachDialog() {
                     <option value="Senior">Senior</option>
                     <option value="Head">Head Coach</option>
                   </select>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="label">Cost Per Session (RM) <span className="req">*</span></label>
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400">RM</div>
-                  <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="input-field pl-12" />
-                </div>
-              </div>
-            </div>
-
-            {/* Column 3: Emergency & Banking */}
-            <div className="space-y-8">
-              <div className="flex items-center gap-4 mb-2">
-                <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg shadow-gray-200">
-                  <Plus className="w-6 h-6 rotate-45" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Finance & Legal</h4>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Payroll & Safety</p>
-                </div>
-              </div>
-
-              <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100/50 space-y-6">
-                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  Emergency Contact
-                </h5>
-                <div className="space-y-4">
-                  <input name="emergencyName" required className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Contact Name" />
-                  <input name="emergencyPhone" required className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Contact Phone" />
                 </div>
               </div>
 

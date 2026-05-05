@@ -128,6 +128,17 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                 <label className="label">地址 Address</label>
                 <textarea name="address" className="input-field h-24 resize-none py-4" placeholder="Full address..."></textarea>
               </div>
+
+              <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100/50 space-y-4">
+                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  Emergency Contact
+                </h5>
+                <div className="grid grid-cols-1 gap-3">
+                  <input name="emergencyName" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Name" />
+                  <input name="emergencyPhone" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Phone" />
+                </div>
+              </div>
             </div>
 
             {/* Column 3: 上课与紧急信息 */}
@@ -138,7 +149,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                 </div>
                 <div>
                   <h4 className="text-xl font-black text-gray-900 tracking-tighter">Enrollment</h4>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Schedule & Emergency</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Schedule Plan</p>
                 </div>
               </div>
 
@@ -163,17 +174,6 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                     <option value="">Select Coach</option>
                     {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
-                </div>
-              </div>
-
-              <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100/50 space-y-4">
-                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  Emergency Contact
-                </h5>
-                <div className="grid grid-cols-1 gap-3">
-                  <input name="emergencyName" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Name" />
-                  <input name="emergencyPhone" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Phone" />
                 </div>
               </div>
 

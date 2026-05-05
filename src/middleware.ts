@@ -55,60 +55,20 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-
-  // Protect routes
   const path = request.nextUrl.pathname
 
+  // 1. Basic Auth Protection
   if (!user && path !== '/login' && !path.startsWith('/_next') && path !== '/unauthorized') {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (user) {
-    // If logged in and on login page, redirect to home
-    if (path === '/login') {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
-
-    // Role-based protection
-    let role = 'coach'; // Default fallback
-    try {
-      const { data: profile } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-      
-      role = profile?.role || 'coach';
-    } catch (e) {
-      console.error('Middleware role fetch error:', e);
-    }
-
-    const isAdmin = role === 'admin' || role === 'super_admin'
-
-    // Redirect root to role dashboard
-    if (path === '/') {
-      if (isAdmin) return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-      if (role === 'coach') return NextResponse.redirect(new URL('/coach/dashboard', request.url))
-      if (role === 'parent') return NextResponse.redirect(new URL('/parent/dashboard', request.url))
-    }
-
-    // Role-based protection (Admin/Super Admin has bypass)
-    if (isAdmin) return response
-
-    // Skip protection for unauthenticated paths
-    if (path === '/unauthorized' || path === '/login') return response
-
-    if (path.startsWith('/admin') && !isAdmin) {
-      return NextResponse.redirect(new URL('/unauthorized', request.url))
-    }
-    if (path.startsWith('/coach') && role !== 'coach') {
-      return NextResponse.redirect(new URL('/unauthorized', request.url))
-    }
-    if (path.startsWith('/parent') && role !== 'parent') {
-      return NextResponse.redirect(new URL('/unauthorized', request.url))
-    }
+  if (user && path === '/login') {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // TODO: Add role-based protection back once 500 is resolved
+  // For now, allow everything if logged in to debug the 500 error
+  
   return response
 }
 

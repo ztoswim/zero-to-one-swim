@@ -48,7 +48,7 @@ export function AddCoachDialog() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 px-4">
             {/* Column 1: Personal Details */}
             <div className="space-y-8">
               <div className="flex items-center gap-4 mb-2">

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
-import { Plus, User, Phone, Mail, CreditCard, ShieldAlert, Briefcase, MapPin, Palette, Award, Smartphone } from 'lucide-react';
+import { Plus, User, Phone, Mail, CreditCard, ShieldAlert, Briefcase, MapPin, Palette, Award, Smartphone, GraduationCap } from 'lucide-react';
 import { WheelDateInput } from '@/components/WheelDateInput';
 import { addCoach } from './actions';
 
@@ -126,23 +126,23 @@ export function AddCoachDialog() {
             </div>
           </div>
 
-          {/* 3. Work & Theme Card - Unified */}
-          <div className="bg-slate-900 rounded-[2rem] p-6 shadow-xl space-y-5 border-2 border-slate-800">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          {/* 3. Professional Profile Card - Light Indigo Style */}
+          <div className="bg-indigo-50/50 rounded-[2rem] p-6 border-2 border-indigo-100 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center">
-                  <Briefcase className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+                  <GraduationCap className="w-5 h-5" />
                 </div>
-                <h3 className="text-xl font-black text-white tracking-tight">Professional Profile</h3>
+                <h3 className="text-xl font-black text-indigo-900 tracking-tight">Professional Profile</h3>
               </div>
               <div className="flex items-center gap-4">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wider">Theme Color Classification</label>
+                <label className="text-[11px] font-black text-indigo-700 uppercase tracking-wider">Theme Classification</label>
                 <div className="flex gap-2">
                   {['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'].map(c => (
                     <label key={c} className="relative cursor-pointer">
                       <input type="radio" name="color" value={c} className="peer sr-only" defaultChecked={c === '#3b82f6'} />
                       <div 
-                        className="w-8 h-8 rounded-lg transition-all peer-checked:scale-110 peer-checked:ring-4 ring-white/20 border border-white/10" 
+                        className="w-8 h-8 rounded-lg transition-all peer-checked:scale-110 peer-checked:ring-4 ring-indigo-200 border-2 border-white shadow-sm" 
                         style={{ backgroundColor: c }} 
                       />
                     </label>
@@ -150,26 +150,26 @@ export function AddCoachDialog() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wider">Joining Date <Req /></label>
+                <label className="text-[11px] font-black text-indigo-800 uppercase tracking-wider">Joining Date <Req /></label>
                 <WheelDateInput value={joinDate} onChange={setJoinDate} name="joinDate" />
               </div>
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wider">Coach Level <Req /></label>
+                <label className="text-[11px] font-black text-indigo-800 uppercase tracking-wider">Coach Level <Req /></label>
                 <div className="relative">
-                  <select name="level" required className="w-full px-5 py-3.5 bg-white/10 border-2 border-white/10 rounded-xl font-bold text-white outline-none appearance-none text-sm focus:border-primary-500">
+                  <select name="level" required className="w-full px-5 py-3.5 bg-white border-2 border-indigo-200 rounded-xl font-bold text-slate-900 outline-none appearance-none text-sm focus:border-indigo-500">
                     <option value="Junior">Junior Coach</option>
                     <option value="Senior">Senior Coach</option>
                     <option value="Head">Head Coach</option>
                   </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40 text-[10px]">▼</div>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-400 text-[10px]">▼</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 4. Bottom Row: Banking & Emergency - Highly Compact */}
+          {/* 4. Bottom Row: Banking & Emergency */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-blue-50/50 rounded-[2rem] p-5 border-2 border-blue-200 shadow-sm flex items-center gap-6">
               <div className="flex items-center gap-3 shrink-0">
@@ -182,7 +182,7 @@ export function AddCoachDialog() {
               </div>
             </div>
 
-            <div className="bg-red-50/50 rounded-[2rem] p-5 border-2 border-red-200 shadow-sm flex items-center gap-6">
+            <div className="bg-red-50/50 rounded-[2.5rem] p-5 border-2 border-red-200 shadow-sm flex items-center gap-6">
               <div className="flex items-center gap-3 shrink-0">
                 <ShieldAlert className="w-5 h-5 text-red-600" />
                 <h4 className="text-sm font-black text-red-900 uppercase tracking-tight">Emergency</h4>
@@ -194,7 +194,7 @@ export function AddCoachDialog() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end">
             <button 
               type="submit"
               disabled={loading}

@@ -67,19 +67,13 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
 
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                    Full Legal Name *
-                  </label>
+                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Full Legal Name *</label>
                   <input name="name" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all" placeholder="Student Name" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Gender *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Gender *</label>
                     <div className="relative">
                       <select name="gender" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none">
                         <option value="">Select</option>
@@ -90,30 +84,21 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Date of Birth *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Date of Birth *</label>
                     <WheelDateInput value={dob} onChange={setDob} name="dob" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Primary Contact No *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Primary Contact No *</label>
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input name="phone" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="+60..." />
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Email Address
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Email Address</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input name="email" type="email" className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="parent@example.com" />

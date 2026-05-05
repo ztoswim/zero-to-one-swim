@@ -64,27 +64,18 @@ export function AddCoachDialog() {
               <div className="space-y-8">
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Full Name *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Full Name *</label>
                     <input name="name" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all placeholder:text-slate-300" placeholder="e.g. John Doe" />
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Nickname *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Nickname *</label>
                     <input name="nickname" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all placeholder:text-slate-300" placeholder="Alias" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Gender *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Gender *</label>
                     <div className="relative">
                       <select name="gender" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none">
                         <option value="">Select</option>
@@ -95,19 +86,13 @@ export function AddCoachDialog() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                      Date of Birth *
-                    </label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Date of Birth *</label>
                     <WheelDateInput value={dob} onChange={setDob} name="dob" />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-600" />
-                    IC / Passport Number *
-                  </label>
+                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider">IC / Passport Number *</label>
                   <input name="ic" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500" placeholder="000000-00-0000" />
                 </div>
 

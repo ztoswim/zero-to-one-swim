@@ -40,6 +40,8 @@ export const students = pgTable("students", {
   emergencyName: text("emergency_name"),
   emergencyPhone: text("emergency_phone"),
   venueInfo: text("venue_info"),
+  startDate: date("start_date"),
+  lessonDuration: integer("lesson_duration").default(45),
   notes: text("notes"),
   coachId: uuid("coach_id").references(() => coaches.id),
   status: text("status").default("active"),

@@ -17,6 +17,9 @@ export async function addStudent(formData: FormData) {
   const address = formData.get('address') as string;
   const notes = formData.get('notes') as string;
   const coachId = formData.get('coachId') as string || null;
+  const startDate = formData.get('startDate') as string;
+  const lessonDuration = formData.get('lessonDuration') as string;
+  const venueInfo = formData.get('venueInfo') as string;
 
   if (!name) return { error: "Name is required" };
 
@@ -33,6 +36,9 @@ export async function addStudent(formData: FormData) {
       emergencyPhone,
       address,
       notes,
+      startDate: startDate ? startDate : null,
+      lessonDuration: lessonDuration ? parseInt(lessonDuration) : 45,
+      venueInfo,
       coachId: coachId === 'none' ? null : coachId,
       status: 'active',
     });

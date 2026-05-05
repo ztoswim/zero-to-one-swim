@@ -40,6 +40,7 @@ export const invoices = pgTable("invoices", {
   invoiceNumber: text("invoice_number").notNull().unique(),
   studentId: uuid("student_id").references(() => students.id, { onDelete: "cascade" }),
   packageId: uuid("package_id").references(() => packages.id),
+  coachId: uuid("coach_id").references(() => coaches.id),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }),
   paymentMethod: text("payment_method"),
   paymentDate: date("payment_date"),
@@ -88,6 +89,10 @@ export const invoicesRelations = relations(invoices, ({ one, many }) => ({
   package: one(packages, {
     fields: [invoices.packageId],
     references: [packages.id],
+  }),
+  coach: one(coaches, {
+    fields: [invoices.coachId],
+    references: [coaches.id],
   }),
   lessons: many(lessons),
 }));

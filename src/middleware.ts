@@ -1,75 +1,9 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-  const path = request.nextUrl.pathname
-
-  // 1. Basic Auth Protection
-  if (!user && path !== '/login' && !path.startsWith('/_next') && path !== '/unauthorized') {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-
-  if (user && path === '/login') {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
-  // TODO: Add role-based protection back once 500 is resolved
-  // For now, allow everything if logged in to debug the 500 error
-  
-  return response
+  // 极简模式：不查 Auth，不查数据库，直接通行
+  // 如果这还报错，说明是 Vercel 环境问题
+  return NextResponse.next()
 }
 
 export const config = {

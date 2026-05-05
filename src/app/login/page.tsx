@@ -8,11 +8,27 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  React.useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
 
     const formData = new FormData(event.currentTarget);
     const result = await login(formData);
@@ -27,10 +43,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md animate-in">
         {/* Logo/Brand */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-black tracking-tighter text-gray-900 mb-2">
-            Zero To One <span className="text-primary-500">Swim</span>
-          </h1>
+        <div className="text-center mb-10 flex flex-col items-center">
+          <img src="/logo.png" alt="Zero To One Swim" className="h-20 w-auto mb-4" />
           <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Management Hub Login</p>
         </div>
 
@@ -50,6 +64,8 @@ export default function LoginPage() {
                   type="email" 
                   name="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@swim.com"
                   className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl pl-12 pr-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
                 />
@@ -81,7 +97,13 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center gap-3 px-1">
-              <input type="checkbox" id="remember" className="w-5 h-5 rounded-lg border-2 border-gray-200 text-primary-500 focus:ring-primary-500" />
+              <input 
+                type="checkbox" 
+                id="remember" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-5 h-5 rounded-lg border-2 border-gray-200 text-primary-500 focus:ring-primary-500" 
+              />
               <label htmlFor="remember" className="text-xs font-bold text-gray-500 cursor-pointer">Remember Me</label>
             </div>
 

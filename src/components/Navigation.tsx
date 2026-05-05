@@ -18,9 +18,7 @@ export function Navigation() {
   return (
     <nav className="w-64 bg-white border-r border-gray-100 flex flex-col h-full sticky top-0">
       <div className="p-8">
-        <h1 className="text-2xl font-black tracking-tighter text-gray-900">
-          Zero To One <span className="text-primary-500">Swim</span>
-        </h1>
+        <img src="/logo.png" alt="Zero To One Swim" className="h-12 w-auto object-contain" />
       </div>
       <div className="flex-1 px-4 space-y-2">
         {navItems.map((item) => {

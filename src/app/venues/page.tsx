@@ -5,41 +5,62 @@ import { VenuesView } from "./VenuesView";
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-async function getInitialData() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
+export const dynamic = 'force-dynamic';
 
-  const { data: { user } } = await supabase.auth.getUser();
-  
+async function getInitialData() {
   let userRole = 'coach';
-  if (user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    userRole = profile?.role || 'coach';
+  
+  try {
+    const cookieStore = await cookies();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseAnonKey) {
+      const supabase = createServerClient(
+        supabaseUrl,
+        supabaseAnonKey,
+        {
+          cookies: {
+            get(name: string) {
+              return cookieStore.get(name)?.value;
+            },
+          },
+        }
+      );
+
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        userRole = profile?.role || 'coach';
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching user role in venues page:', e);
   }
 
-  const venuesData = await db.query.venues.findMany({
-    orderBy: [asc(venues.name)]
-  });
-  const routesData = await db.query.venueRoutes.findMany({
-    with: {
-      fromVenue: true,
-      toVenue: true
-    }
-  });
+  // Fetch venue data with error handling
+  let venuesData = [];
+  let routesData = [];
+  
+  try {
+    venuesData = await db.query.venues.findMany({
+      orderBy: [asc(venues.name)]
+    });
+    routesData = await db.query.venueRoutes.findMany({
+      with: {
+        fromVenue: true,
+        toVenue: true
+      }
+    });
+  } catch (e) {
+    console.error('Database query error in venues page:', e);
+  }
+
   return { venues: venuesData, routes: routesData, userRole };
 }
 

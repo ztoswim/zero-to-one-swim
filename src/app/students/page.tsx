@@ -4,21 +4,25 @@ import { students } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { Users, UserPlus, Phone, MapPin } from "lucide-react";
 
+import { AddStudentDialog } from "./AddStudentDialog";
+import { coaches } from "@/db/schema";
+
 export const dynamic = 'force-dynamic';
 
-async function getStudents() {
+async function getInitialData() {
   try {
-    const data = await db.query.students.findMany({
+    const studentsData = await db.query.students.findMany({
       orderBy: [desc(students.createdAt)]
     });
-    return { students: data };
+    const coachesData = await db.query.coaches.findMany();
+    return { students: studentsData, coaches: coachesData };
   } catch (e) {
-    return { students: [], error: "Database connection needed." };
+    return { students: [], coaches: [], error: "Database connection needed." };
   }
 }
 
 export default async function StudentsPage() {
-  const data = await getStudents();
+  const data = await getInitialData();
 
   return (
     <Container>
@@ -30,9 +34,7 @@ export default async function StudentsPage() {
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage Roster</p>
         </div>
         <div className="flex items-center gap-4">
-          <button className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">
-            Add Student <UserPlus className="w-5 h-5" />
-          </button>
+          <AddStudentDialog coaches={data.coaches} />
         </div>
       </div>
 

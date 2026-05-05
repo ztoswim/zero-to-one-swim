@@ -4,6 +4,8 @@ import { coaches } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { Medal, Plus, Mail, Phone } from "lucide-react";
 
+import { AddCoachDialog } from "./AddCoachDialog";
+
 export const dynamic = 'force-dynamic';
 
 async function getCoaches() {
@@ -30,9 +32,7 @@ export default async function CoachesPage() {
           <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage Staff</p>
         </div>
         <div className="flex items-center gap-4">
-          <button className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">
-            Add Coach <Plus className="w-5 h-5" />
-          </button>
+          <AddCoachDialog />
         </div>
       </div>
 

@@ -2,6 +2,8 @@ import { Container } from "@/components/Container";
 import { prisma } from "@/lib/prisma";
 import { Calendar as CalendarIcon, Clock, User, MapPin } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 async function getSchedule() {
   try {
     const today = new Date();

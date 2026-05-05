@@ -2,6 +2,8 @@ import { Container } from "@/components/Container";
 import { prisma } from "@/lib/prisma";
 import { Users, UserPlus, Phone, MapPin } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 async function getStudents() {
   try {
     const students = await prisma.student.findMany({

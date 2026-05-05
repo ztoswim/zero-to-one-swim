@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { TrendingUp, Calendar, AlertCircle, User, MessageSquare, CheckCircle, Plus } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 async function getDashboardData() {
   try {
     const now = new Date();

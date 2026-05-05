@@ -2,6 +2,8 @@ import { Container } from "@/components/Container";
 import { prisma } from "@/lib/prisma";
 import { Medal, Plus, Mail, Phone } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 async function getCoaches() {
   try {
     const coaches = await prisma.coach.findMany({

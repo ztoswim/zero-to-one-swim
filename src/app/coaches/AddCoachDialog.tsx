@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Calendar } from 'lucide-react';
+import { WheelDateInput } from '@/components/WheelDateInput';
 import { addCoach } from './actions';
 
 export function AddCoachDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dob, setDob] = useState(new Date().toISOString().split('T')[0]);
+  const [joinDate, setJoinDate] = useState(new Date().toISOString().split('T')[0]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,7 +76,7 @@ export function AddCoachDialog() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">出生日期 DOB *</label>
-                  <input name="dob" type="date" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" />
+                  <WheelDateInput value={dob} onChange={setDob} name="dob" className="h-12 text-sm" />
                 </div>
               </div>
 
@@ -120,7 +123,7 @@ export function AddCoachDialog() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">入职日期 Join Date *</label>
-                  <input name="joinDate" type="date" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" />
+                  <WheelDateInput value={joinDate} onChange={setJoinDate} name="joinDate" className="h-12 text-sm" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">等级 Level *</label>

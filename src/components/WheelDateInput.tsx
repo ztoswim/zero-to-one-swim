@@ -6,9 +6,10 @@ interface WheelDateInputProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  name?: string;
 }
 
-export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange, className = '' }) => {
+export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange, className = '', name }) => {
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -66,6 +67,7 @@ export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange,
 
   return (
     <div className={`w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-50 transition-all bg-white font-medium text-gray-900 flex items-center justify-center gap-1 ${className}`}>
+      {name && <input type="hidden" name={name} value={value} />}
       <div className="flex items-center gap-1 font-black text-gray-900 tracking-tighter select-none">
         <input
           className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]"

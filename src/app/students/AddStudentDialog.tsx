@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
-import { UserPlus, Loader2 } from 'lucide-react';
+import { UserPlus, Loader2, Calendar } from 'lucide-react';
+import { WheelDateInput } from '@/components/WheelDateInput';
 import { addStudent } from './actions';
 
 interface AddStudentDialogProps {
@@ -13,6 +14,8 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dob, setDob] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -72,7 +75,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">出生日期 DOB *</label>
-                  <input name="dob" type="date" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" />
+                  <WheelDateInput value={dob} onChange={setDob} name="dob" className="h-12 text-sm" />
                 </div>
               </div>
 
@@ -127,7 +130,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Start Date *</label>
-                    <input name="startDate" type="date" required className="w-full h-10 bg-white border border-primary-100 rounded-lg px-3 font-bold text-sm outline-none" />
+                    <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" className="h-10 text-sm" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Duration *</label>

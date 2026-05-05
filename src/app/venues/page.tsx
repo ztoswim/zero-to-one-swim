@@ -44,8 +44,8 @@ async function getInitialData() {
   }
 
   // Fetch venue data with error handling
-  let venuesData = [];
-  let routesData = [];
+  let venuesData: any[] = [];
+  let routesData: any[] = [];
   
   try {
     venuesData = await db.query.venues.findMany({

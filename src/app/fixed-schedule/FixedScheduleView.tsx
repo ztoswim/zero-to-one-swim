@@ -7,7 +7,7 @@ import { Calendar, User, Clock, MapPin, ChevronLeft, ChevronRight, AlertCircle, 
 interface Coach {
   id: string;
   name: string;
-  color: string;
+  color: string | null;
 }
 
 interface Student {
@@ -91,7 +91,7 @@ export function FixedScheduleView({ coaches, students }: FixedScheduleViewProps)
                     className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm border-2 ${
                       selectedCoachId === coach.id ? 'border-white/20 bg-white/10' : 'border-transparent'
                     }`}
-                    style={selectedCoachId !== coach.id ? { backgroundColor: coach.color } : {}}
+                    style={selectedCoachId !== coach.id ? { backgroundColor: coach.color || '#3b82f6' } : {}}
                   >
                     {selectedCoachId !== coach.id ? coach.name.charAt(0) : <User className="w-5 h-5" />}
                   </div>

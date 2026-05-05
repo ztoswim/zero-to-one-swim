@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
-import { Plus, Loader2, Calendar } from 'lucide-react';
+import { Plus, Loader2, Calendar, Phone, Mail } from 'lucide-react';
 import { WheelDateInput } from '@/components/WheelDateInput';
 import { addCoach } from './actions';
 

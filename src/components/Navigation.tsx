@@ -6,7 +6,7 @@ import { LayoutDashboard, Users, FileText, Calendar, Medal } from 'lucide-react'
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Invoices', href: '/create-invoice', icon: FileText },
+  { name: 'Invoices', href: '/invoices', icon: FileText },
   { name: 'Schedule', href: '/schedule', icon: Calendar },
   { name: 'Students', href: '/students', icon: Users },
   { name: 'Coaches', href: '/coaches', icon: Medal },

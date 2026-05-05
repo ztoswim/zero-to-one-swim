@@ -34,11 +34,30 @@
   .btn-primary {
     @apply bg-primary-500 text-white hover:bg-primary-600 hover:shadow-lg hover:shadow-primary-200 hover:-translate-y-0.5 focus:ring-primary-500;
   }
+  .card {
+    @apply bg-white rounded-[2.5rem] border border-gray-100;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all outline-none bg-white font-medium text-gray-900;
+  }
+  .label {
+    @apply block text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1;
+  }
+  .label .req {
+    @apply text-primary-500 ml-0.5 font-black;
+  }
 }
 
 @layer utilities {
   .animate-in {
     animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

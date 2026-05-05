@@ -66,13 +66,13 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
               </div>
 
               <div className="space-y-1">
-                <label className="label">名字 Student Name <span className="req">*</span></label>
+                <label className="label">Name <span className="req">*</span></label>
                 <input name="name" required className="input-field" placeholder="Full legal name" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="label">性别 Gender <span className="req">*</span></label>
+                  <label className="label">Gender <span className="req">*</span></label>
                   <select name="gender" required className="input-field appearance-none cursor-pointer">
                     <option value="">Select</option>
                     <option value="Male">Male</option>
@@ -80,7 +80,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="label">出生日期 DOB <span className="req">*</span></label>
+                  <label className="label">DOB <span className="req">*</span></label>
                   <WheelDateInput value={dob} onChange={setDob} name="dob" />
                 </div>
               </div>
@@ -103,29 +103,30 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="label">联络号码 Contact No <span className="req">*</span></label>
-                <input name="phone" required className="input-field" placeholder="+60..." />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="label">Contact No <span className="req">*</span></label>
+                  <input name="phone" required className="input-field" placeholder="+60..." />
+                </div>
+                <div className="space-y-1">
+                  <label className="label">Email</label>
+                  <input name="email" type="email" className="input-field" placeholder="email@example.com" />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="label">家长名字 Parent Name</label>
+                  <label className="label">Parent</label>
                   <input name="parentName" className="input-field" placeholder="Guardian" />
                 </div>
                 <div className="space-y-1">
-                  <label className="label">区域 Area</label>
+                  <label className="label">Area</label>
                   <input name="sameArea" className="input-field" placeholder="e.g. Area X" />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="label">邮箱 Email</label>
-                <input name="email" type="email" className="input-field" placeholder="email@example.com" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="label">地址 Address</label>
+                <label className="label">Address</label>
                 <textarea name="address" className="input-field h-24 resize-none py-4" placeholder="Full address..."></textarea>
               </div>
 
@@ -160,7 +161,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                     <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" />
                   </div>
                   <div className="space-y-1">
-                    <label className="label">Duration (m) <span className="req">*</span></label>
+                    <label className="label">Duration <span className="req">*</span></label>
                     <input name="lessonDuration" type="number" required defaultValue="45" className="input-field" />
                   </div>
                 </div>
@@ -169,7 +170,7 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                   <input name="venueInfo" required className="input-field" placeholder="Swimming Pool" />
                 </div>
                 <div className="space-y-1">
-                  <label className="label">Assign Coach <span className="req">*</span></label>
+                  <label className="label">Coach <span className="req">*</span></label>
                   <select name="coachId" required className="input-field appearance-none cursor-pointer">
                     <option value="">Select Coach</option>
                     {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}

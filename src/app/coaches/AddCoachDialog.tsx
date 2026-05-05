@@ -62,18 +62,18 @@ export function AddCoachDialog() {
               </div>
               
               <div className="space-y-1">
-                <label className="label">名字 Name <span className="req">*</span></label>
+                <label className="label">Name <span className="req">*</span></label>
                 <input name="name" required className="input-field" placeholder="Full Name" />
               </div>
               
               <div className="space-y-1">
-                <label className="label">别名 Nickname <span className="req">*</span></label>
+                <label className="label">Nickname <span className="req">*</span></label>
                 <input name="nickname" required className="input-field" placeholder="Display Name" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="label">性别 Gender <span className="req">*</span></label>
+                  <label className="label">Gender <span className="req">*</span></label>
                   <select name="gender" required className="input-field appearance-none cursor-pointer">
                     <option value="">Select</option>
                     <option value="Male">Male</option>
@@ -81,13 +81,13 @@ export function AddCoachDialog() {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="label">出生日期 DOB <span className="req">*</span></label>
+                  <label className="label">DOB <span className="req">*</span></label>
                   <WheelDateInput value={dob} onChange={setDob} name="dob" />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="label">身份证号码 IC <span className="req">*</span></label>
+                <label className="label">IC <span className="req">*</span></label>
                 <input name="ic" required className="input-field" placeholder="ID / Passport No" />
               </div>
 
@@ -119,18 +119,19 @@ export function AddCoachDialog() {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="label">联络号码 Phone <span className="req">*</span></label>
-                <input name="phone" required className="input-field" placeholder="+60..." />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="label">Phone <span className="req">*</span></label>
+                  <input name="phone" required className="input-field" placeholder="+60..." />
+                </div>
+                <div className="space-y-1">
+                  <label className="label">Email</label>
+                  <input name="email" type="email" className="input-field" placeholder="coach@swim.com" />
+                </div>
               </div>
 
               <div className="space-y-1">
-                <label className="label">邮箱 Email</label>
-                <input name="email" type="email" className="input-field" placeholder="coach@swim.com" />
-              </div>
-
-              <div className="space-y-1">
-                <label className="label">地址 Address</label>
+                <label className="label">Address</label>
                 <textarea name="address" className="input-field h-24 resize-none py-4" placeholder="Residential address..."></textarea>
               </div>
 
@@ -168,11 +169,11 @@ export function AddCoachDialog() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="label">入职日期 Join Date <span className="req">*</span></label>
+                  <label className="label">Join Date <span className="req">*</span></label>
                   <WheelDateInput value={joinDate} onChange={setJoinDate} name="joinDate" />
                 </div>
                 <div className="space-y-1">
-                  <label className="label">等级 Level <span className="req">*</span></label>
+                  <label className="label">Level <span className="req">*</span></label>
                   <select name="level" required className="input-field appearance-none cursor-pointer">
                     <option value="Junior">Junior</option>
                     <option value="Senior">Senior</option>

@@ -126,7 +126,7 @@ export function AddCoachDialog() {
             </div>
           </div>
 
-          {/* 3. Professional Profile Card - Light Indigo Style */}
+          {/* 3. Professional Profile Card */}
           <div className="bg-indigo-50/50 rounded-[2rem] p-6 border-2 border-indigo-100 shadow-sm space-y-5">
             <div className="flex items-center justify-between border-b border-indigo-100 pb-3">
               <div className="flex items-center gap-3">
@@ -177,8 +177,14 @@ export function AddCoachDialog() {
                 <h4 className="text-sm font-black text-blue-900 uppercase tracking-tight">Bank</h4>
               </div>
               <div className="grid grid-cols-2 gap-4 flex-1">
-                <input name="bankName" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Bank Name" />
-                <input name="bankAccount" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Account No" />
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-blue-800 uppercase px-1">Bank Name <Req /></label>
+                  <input name="bankName" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Bank Name" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-blue-800 uppercase px-1">Account No <Req /></label>
+                  <input name="bankAccount" required className="w-full px-4 py-2.5 bg-white border-2 border-blue-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Account No" />
+                </div>
               </div>
             </div>
 
@@ -188,13 +194,19 @@ export function AddCoachDialog() {
                 <h4 className="text-sm font-black text-red-900 uppercase tracking-tight">Emergency</h4>
               </div>
               <div className="grid grid-cols-2 gap-4 flex-1">
-                <input name="emergencyName" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Name" />
-                <input name="emergencyPhone" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Phone" />
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-red-800 uppercase px-1">Name <Req /></label>
+                  <input name="emergencyName" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Name" />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-red-800 uppercase px-1">Phone <Req /></label>
+                  <input name="emergencyPhone" required className="w-full px-4 py-2.5 bg-white border-2 border-red-100 rounded-xl font-bold text-slate-900 text-sm" placeholder="Phone" />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-2">
             <button 
               type="submit"
               disabled={loading}

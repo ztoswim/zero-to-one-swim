@@ -13,7 +13,7 @@ const GoogleMapsLogo = () => (
 );
 
 const WazeLogo = () => (
-  <img src="https://www.vectorlogo.zone/logos/waze/waze-icon.svg" className="w-4 h-4 lg:w-5 lg:h-5" alt="Waze" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/1024px-Waze_icon.svg.png" className="w-4 h-4 lg:w-5 lg:h-5 object-contain" alt="Waze" />
 );
 
 interface Venue {

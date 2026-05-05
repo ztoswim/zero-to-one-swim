@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Modal } from '@/components/Modal';
-import { Plus, Loader2, Calendar, Phone, Mail } from 'lucide-react';
+import { Plus, User, Phone, Mail, CreditCard, ShieldAlert, Briefcase, MapPin, Palette, Award } from 'lucide-react';
 import { WheelDateInput } from '@/components/WheelDateInput';
 import { addCoach } from './actions';
 
@@ -40,168 +40,173 @@ export function AddCoachDialog() {
       </button>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add New Coach" size="wide">
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="bg-gray-50/50 -m-8 p-10 space-y-10">
           {error && (
-            <div className="bg-red-50 text-red-500 p-6 rounded-[2rem] text-sm font-black border border-red-100 flex items-center gap-3 animate-in">
-              <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shrink-0">!</div>
+            <div className="bg-red-50 text-red-600 p-6 rounded-3xl text-sm font-bold border border-red-100 flex items-center gap-3">
+              <ShieldAlert className="w-5 h-5 shrink-0" />
               {error}
             </div>
           )}
 
-          <div className="space-y-12 px-2">
-            {/* Top Section: 2 Columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              {/* Left Column: Personal */}
-              <div className="space-y-8">
-                <div className="flex items-center gap-4 mb-2">
-                  <div className="w-12 h-12 rounded-2xl bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-200">
-                    <Plus className="w-6 h-6" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* 1. Basic Information Card */}
+            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center">
+                  <User className="w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-black text-gray-900">Personal Details</h3>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Full Name *</label>
+                    <input name="name" required className="input-field bg-gray-50/50 border-gray-100 focus:bg-white" placeholder="Name" />
                   </div>
-                  <div>
-                    <h4 className="text-xl font-black text-gray-900 tracking-tighter">Coach Info</h4>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Identify & Background</p>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Nickname *</label>
+                    <input name="nickname" required className="input-field bg-gray-50/50 border-gray-100 focus:bg-white" placeholder="Alias" />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Gender *</label>
+                    <select name="gender" required className="input-field bg-gray-50/50 border-gray-100 focus:bg-white appearance-none">
+                      <option value="">Select</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Date of Birth *</label>
+                    <WheelDateInput value={dob} onChange={setDob} name="dob" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-wider">IC / Passport Number *</label>
+                  <input name="ic" required className="input-field bg-gray-50/50 border-gray-100 focus:bg-white" placeholder="000000-00-0000" />
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-gray-400" />
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Profile Theme Color</label>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b'].map(c => (
+                      <label key={c} className="relative cursor-pointer">
+                        <input type="radio" name="color" value={c} className="peer sr-only" defaultChecked={c === '#3b82f6'} />
+                        <div 
+                          className="w-8 h-8 rounded-lg transition-all peer-checked:scale-110 peer-checked:ring-2 ring-offset-2 ring-gray-300" 
+                          style={{ backgroundColor: c }} 
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Employment & Contact Card */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 space-y-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-success/10 text-success flex items-center justify-center">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-xl font-black text-gray-900">Work & Contact</h3>
                 </div>
 
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <label className="label">Name <span className="req">*</span></label>
-                      <input name="name" required className="input-field" placeholder="Full Name" />
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Phone Number *</label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input name="phone" required className="input-field pl-12 bg-gray-50/50 border-gray-100 focus:bg-white" placeholder="+60..." />
+                      </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="label">Nickname <span className="req">*</span></label>
-                      <input name="nickname" required className="input-field" placeholder="Display Name" />
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Email Address</label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input name="email" type="email" className="input-field pl-12 bg-gray-50/50 border-gray-100 focus:bg-white" placeholder="coach@swim.com" />
+                      </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <label className="label">Gender <span className="req">*</span></label>
-                      <select name="gender" required className="input-field appearance-none cursor-pointer">
-                        <option value="">Select</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="label">DOB <span className="req">*</span></label>
-                      <WheelDateInput value={dob} onChange={setDob} name="dob" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="label">IC <span className="req">*</span></label>
-                    <input name="ic" required className="input-field" placeholder="ID / Passport No" />
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="label">Profile Accent Color</label>
-                    <div className="flex flex-wrap gap-2.5">
-                      {['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'].map(c => (
-                        <label key={c} className="relative cursor-pointer group">
-                          <input type="radio" name="color" value={c} className="peer sr-only" defaultChecked={c === '#3b82f6'} />
-                          <div 
-                            className="w-10 h-10 rounded-2xl transition-all peer-checked:scale-110 peer-checked:ring-4 ring-gray-100 group-hover:scale-105 shadow-sm" 
-                            style={{ backgroundColor: c }} 
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 peer-checked:opacity-100 transition-opacity font-black">✓</div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Contact & Employment */}
-              <div className="space-y-8">
-                <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 space-y-6">
-                  <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                    Contact Details
-                  </h5>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <label className="label">Phone <span className="req">*</span></label>
-                      <input name="phone" required className="input-field bg-white" placeholder="+60..." />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="label">Email</label>
-                      <input name="email" type="email" className="input-field bg-white" placeholder="coach@swim.com" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-8 bg-primary-50/50 rounded-[2.5rem] border border-primary-100/50 space-y-6">
-                  <h5 className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
-                    Employment Details
-                  </h5>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-1">
-                      <label className="label">Join Date <span className="req">*</span></label>
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Joining Date *</label>
                       <WheelDateInput value={joinDate} onChange={setJoinDate} name="joinDate" />
                     </div>
-                    <div className="space-y-1">
-                      <label className="label">Level <span className="req">*</span></label>
-                      <select name="level" required className="input-field bg-white appearance-none cursor-pointer">
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Coach Level *</label>
+                      <select name="level" required className="input-field bg-gray-50/50 border-gray-100 focus:bg-white appearance-none">
                         <option value="Junior">Junior</option>
                         <option value="Senior">Senior</option>
                         <option value="Head">Head Coach</option>
                       </select>
                     </div>
                   </div>
-                  <div className="space-y-1">
-                    <label className="label">Cost Per Session (RM) <span className="req">*</span></label>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Session Rate (RM) *</label>
                     <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400">RM</div>
-                      <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="input-field pl-12 bg-white" />
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400 text-sm">RM</div>
+                      <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="input-field pl-12 bg-gray-50/50 border-gray-100 focus:bg-white font-bold" />
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* 3. Banking Card - Refined Color */}
+              <div className="bg-blue-50/50 rounded-[2rem] p-8 border border-blue-100 space-y-6">
+                <div className="flex items-center gap-3">
+                  <CreditCard className="w-5 h-5 text-blue-600" />
+                  <h4 className="text-sm font-black text-blue-900 uppercase tracking-wider">Banking Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input name="bankName" required className="input-field bg-white border-blue-100 focus:border-blue-500" placeholder="Bank Name" />
+                  <input name="bankAccount" required className="input-field bg-white border-blue-100 focus:border-blue-500" placeholder="Account Number" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Bottom Section: Address & Emergency */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 border-t border-gray-200/60">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-gray-400">
+                <MapPin className="w-4 h-4" />
+                <label className="text-xs font-black uppercase tracking-wider">Home Address</label>
+              </div>
+              <textarea name="address" className="input-field h-32 bg-white border-gray-200 resize-none py-4" placeholder="Full residential address..."></textarea>
             </div>
 
-            {/* Bottom Section: Address, Emergency & Banking */}
-            <div className="pt-10 border-t border-gray-100 grid grid-cols-1 lg:grid-cols-3 gap-10">
-              <div className="space-y-2">
-                <label className="label">Full Address</label>
-                <textarea name="address" className="input-field h-32 resize-none py-4" placeholder="Residential address..."></textarea>
+            <div className="bg-red-50/50 rounded-[2rem] p-8 border border-red-100 space-y-6">
+              <div className="flex items-center gap-3">
+                <ShieldAlert className="w-5 h-5 text-red-500" />
+                <h4 className="text-sm font-black text-red-900 uppercase tracking-wider">Emergency Contact</h4>
               </div>
-              <div className="p-8 bg-red-50/50 rounded-[2.5rem] border border-red-100/50 space-y-4">
-                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  Emergency Contact
-                </h5>
-                <div className="space-y-3">
-                  <input name="emergencyName" required className="w-full px-5 py-3 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 outline-none" placeholder="Name" />
-                  <input name="emergencyPhone" required className="w-full px-5 py-3 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 outline-none" placeholder="Phone" />
-                </div>
-              </div>
-              <div className="p-8 bg-gray-900 rounded-[2.5rem] shadow-2xl space-y-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
-                  <Plus className="w-24 h-24" />
-                </div>
-                <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2 relative z-10">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
-                  Banking Details
-                </h5>
-                <div className="space-y-4 relative z-10">
-                  <input name="bankName" required className="w-full px-5 py-3 bg-white/10 border border-white/10 rounded-2xl font-black text-white placeholder:text-gray-500 focus:bg-white/20 focus:border-primary-500 outline-none transition-all" placeholder="Bank Name" />
-                  <input name="bankAccount" required className="w-full px-5 py-3 bg-white/10 border border-white/10 rounded-2xl font-black text-white placeholder:text-gray-500 focus:bg-white/20 focus:border-primary-500 outline-none transition-all" placeholder="Account Number" />
-                </div>
+              <div className="grid grid-cols-2 gap-4">
+                <input name="emergencyName" required className="input-field bg-white border-red-100 focus:border-red-500" placeholder="Contact Person" />
+                <input name="emergencyPhone" required className="input-field bg-white border-red-100 focus:border-red-500" placeholder="Contact Number" />
               </div>
             </div>
+          </div>
 
-            <div className="flex justify-end pt-4">
-              <button 
-                type="submit"
-                disabled={loading}
-                className="btn btn-primary px-16 h-20 text-xl font-black tracking-tighter shadow-2xl shadow-primary-200"
-              >
-                {loading ? 'Processing...' : 'CONFIRM & SAVE PROFILE'}
-              </button>
-            </div>
+          <div className="flex justify-end pt-6">
+            <button 
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary px-20 h-16 text-lg font-black tracking-tighter shadow-xl shadow-primary-200 rounded-2xl"
+            >
+              {loading ? 'SAVING...' : 'COMPLETE REGISTRATION'}
+            </button>
           </div>
         </form>
       </Modal>

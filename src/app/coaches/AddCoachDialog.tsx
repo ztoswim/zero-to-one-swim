@@ -30,6 +30,9 @@ export function AddCoachDialog() {
     }
   }
 
+  // Required mark component
+  const Req = () => <span className="text-red-600 ml-1">*</span>;
+
   return (
     <>
       <button 
@@ -49,7 +52,7 @@ export function AddCoachDialog() {
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {/* 1. Basic Information Card */}
+            {/* 1. Personal Details Card */}
             <div className="bg-white rounded-[2.5rem] p-10 shadow-sm border-2 border-slate-200 space-y-10">
               <div className="flex items-center gap-4 border-b-2 border-slate-100 pb-6">
                 <div className="w-12 h-12 rounded-2xl bg-primary-600 text-white flex items-center justify-center shadow-lg shadow-primary-100">
@@ -64,18 +67,18 @@ export function AddCoachDialog() {
               <div className="space-y-8">
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Full Name *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Full Name <Req /></label>
                     <input name="name" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all placeholder:text-slate-300" placeholder="e.g. John Doe" />
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Nickname *</label>
-                    <input name="nickname" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all placeholder:text-slate-300" placeholder="Alias" />
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Nickname <Req /></label>
+                    <input name="nickname" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all placeholder:text-slate-300" placeholder="Display Name" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Gender *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Gender <Req /></label>
                     <div className="relative">
                       <select name="gender" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none">
                         <option value="">Select</option>
@@ -86,13 +89,13 @@ export function AddCoachDialog() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Date of Birth *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Date of Birth <Req /></label>
                     <WheelDateInput value={dob} onChange={setDob} name="dob" />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider">IC / Passport Number *</label>
+                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider">IC / Passport Number <Req /></label>
                   <input name="ic" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500" placeholder="000000-00-0000" />
                 </div>
 
@@ -132,14 +135,14 @@ export function AddCoachDialog() {
                 <div className="space-y-8">
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Phone *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Phone Number <Req /></label>
                       <div className="relative">
                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input name="phone" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="+60..." />
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Email</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Email Address</label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input name="email" type="email" className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="coach@swim.com" />
@@ -149,11 +152,11 @@ export function AddCoachDialog() {
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Joining Date *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Joining Date <Req /></label>
                       <WheelDateInput value={joinDate} onChange={setJoinDate} name="joinDate" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Level *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Coach Level <Req /></label>
                       <div className="relative">
                         <select name="level" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none">
                           <option value="Junior">Junior</option>
@@ -166,7 +169,7 @@ export function AddCoachDialog() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Session Rate (RM) *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Session Rate (RM) <Req /></label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-400 text-sm">RM</div>
                       <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-black text-slate-900 outline-none focus:border-primary-500 pl-12" />
@@ -175,7 +178,7 @@ export function AddCoachDialog() {
                 </div>
               </div>
 
-              {/* 3. Banking Card - Strong Border */}
+              {/* 3. Banking Card */}
               <div className="bg-blue-50/50 rounded-[2.5rem] p-10 border-2 border-blue-200 shadow-sm space-y-8">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-100">
@@ -185,11 +188,11 @@ export function AddCoachDialog() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-blue-800 uppercase">Bank Name</label>
+                    <label className="text-[10px] font-black text-blue-800 uppercase">Bank Name <Req /></label>
                     <input name="bankName" required className="w-full px-6 py-3 bg-white border-2 border-blue-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-blue-500" placeholder="Bank" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-blue-800 uppercase">Account No</label>
+                    <label className="text-[10px] font-black text-blue-800 uppercase">Account No <Req /></label>
                     <input name="bankAccount" required className="w-full px-6 py-3 bg-white border-2 border-blue-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-blue-500" placeholder="Number" />
                   </div>
                 </div>
@@ -216,11 +219,11 @@ export function AddCoachDialog() {
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-red-800 uppercase">Contact Person</label>
+                  <label className="text-[10px] font-black text-red-800 uppercase">Contact Person <Req /></label>
                   <input name="emergencyName" required className="w-full px-6 py-3 bg-white border-2 border-red-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-red-500" placeholder="Name" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-red-800 uppercase">Phone Number</label>
+                  <label className="text-[10px] font-black text-red-800 uppercase">Phone Number <Req /></label>
                   <input name="emergencyPhone" required className="w-full px-6 py-3 bg-white border-2 border-red-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-red-500" placeholder="Phone" />
                 </div>
               </div>

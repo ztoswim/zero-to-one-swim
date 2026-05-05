@@ -34,6 +34,9 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
     }
   }
 
+  // Required mark component
+  const Req = () => <span className="text-red-600 ml-1">*</span>;
+
   return (
     <>
       <button 
@@ -67,13 +70,17 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
 
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Full Legal Name *</label>
+                  <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    Full Legal Name <Req />
+                  </label>
                   <input name="name" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-50 transition-all" placeholder="Student Name" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Gender *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                      Gender <Req />
+                    </label>
                     <div className="relative">
                       <select name="gender" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none">
                         <option value="">Select</option>
@@ -84,21 +91,27 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Date of Birth *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                      Date of Birth <Req />
+                    </label>
                     <WheelDateInput value={dob} onChange={setDob} name="dob" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Primary Contact No *</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                      Primary Contact No <Req />
+                    </label>
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input name="phone" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="+60..." />
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Email Address</label>
+                    <label className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                      Email Address
+                    </label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       <input name="email" type="email" className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none focus:border-primary-500 pl-12" placeholder="parent@example.com" />
@@ -138,22 +151,22 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Start Date *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Start Date <Req /></label>
                       <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Duration (min) *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Duration (min) <Req /></label>
                       <input name="lessonDuration" type="number" required defaultValue="45" className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-black text-slate-900 outline-none" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Venue *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Venue <Req /></label>
                       <input name="venueInfo" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none" placeholder="Pool Location" />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Assigned Coach *</label>
+                      <label className="text-xs font-black text-slate-700 uppercase tracking-wider">Assigned Coach <Req /></label>
                       <div className="relative">
                         <select name="coachId" required className="w-full px-6 py-4 bg-white border-2 border-slate-300 rounded-2xl font-bold text-slate-900 outline-none appearance-none">
                           <option value="">Select Coach</option>
@@ -195,12 +208,12 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
               </div>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-red-800 uppercase">Contact Person</label>
-                  <input name="emergencyName" required className="w-full px-6 py-3 bg-white border-2 border-red-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-red-500" placeholder="Name" />
+                  <label className="text-[10px] font-black text-slate-700 uppercase">Contact Person</label>
+                  <input name="emergencyName" className="w-full px-6 py-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-slate-400" placeholder="Name" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-red-800 uppercase">Phone Number</label>
-                  <input name="emergencyPhone" required className="w-full px-6 py-3 bg-white border-2 border-red-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-red-500" placeholder="Phone" />
+                  <label className="text-[10px] font-black text-slate-700 uppercase">Phone Number</label>
+                  <input name="emergencyPhone" className="w-full px-6 py-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-slate-900 outline-none focus:border-slate-400" placeholder="Phone" />
                 </div>
               </div>
             </div>

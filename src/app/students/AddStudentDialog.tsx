@@ -44,124 +44,145 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
       </button>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add New Student" size="wide">
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {error && (
-            <div className="bg-red-50 text-red-500 p-4 rounded-2xl text-xs font-bold border border-red-100">
-              ⚠️ {error}
+            <div className="bg-red-50 text-red-500 p-6 rounded-[2rem] text-sm font-black border border-red-100 flex items-center gap-3 animate-in">
+              <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shrink-0">!</div>
+              {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Column 1: 个人信息 */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center font-black">1</div>
-                <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest">Personal Info</h4>
+            <div className="space-y-8">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-200">
+                  <UserPlus className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Student Profile</h4>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Basic Identification</p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">名字 Student Name *</label>
-                <input name="name" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="Full legal name" />
+              <div className="space-y-1">
+                <label className="label">名字 Student Name <span className="req">*</span></label>
+                <input name="name" required className="input-field" placeholder="Full legal name" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">性别 Gender *</label>
-                  <select name="gender" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none">
+                <div className="space-y-1">
+                  <label className="label">性别 Gender <span className="req">*</span></label>
+                  <select name="gender" required className="input-field appearance-none cursor-pointer">
                     <option value="">Select</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">出生日期 DOB *</label>
-                  <WheelDateInput value={dob} onChange={setDob} name="dob" className="h-12 text-sm" />
+                <div className="space-y-1">
+                  <label className="label">出生日期 DOB <span className="req">*</span></label>
+                  <WheelDateInput value={dob} onChange={setDob} name="dob" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Internal Notes / Health Issues</label>
-                <textarea name="notes" className="w-full h-32 bg-gray-50 border-2 border-transparent rounded-xl p-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none resize-none" placeholder="Allergies, swimming level..."></textarea>
+              <div className="space-y-1">
+                <label className="label">Health / Level Notes</label>
+                <textarea name="notes" className="input-field h-32 resize-none py-4" placeholder="Allergies, swimming level..."></textarea>
               </div>
             </div>
 
             {/* Column 2: 联络信息 */}
-            <div className="space-y-6 px-0 lg:px-8 lg:border-x border-gray-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center font-black">2</div>
-                <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest">Contact Details</h4>
+            <div className="space-y-8 lg:px-10 lg:border-x border-gray-100">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-success text-white flex items-center justify-center shadow-lg shadow-success/20">
+                  <Phone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Contact Details</h4>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Communication & Address</p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">联络号码 Contact No *</label>
-                <input name="phone" required className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="+60..." />
+              <div className="space-y-1">
+                <label className="label">联络号码 Contact No <span className="req">*</span></label>
+                <input name="phone" required className="input-field" placeholder="+60..." />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">家长名字 Parent Name</label>
-                  <input name="parentName" className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="Guardian" />
+                <div className="space-y-1">
+                  <label className="label">家长名字 Parent Name</label>
+                  <input name="parentName" className="input-field" placeholder="Guardian" />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">区域 Area</label>
-                  <input name="sameArea" className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="e.g. Area X" />
+                <div className="space-y-1">
+                  <label className="label">区域 Area</label>
+                  <input name="sameArea" className="input-field" placeholder="e.g. Area X" />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">邮箱 Email</label>
-                <input name="email" type="email" className="w-full h-12 bg-gray-50 border-2 border-transparent rounded-xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="email@example.com" />
+              <div className="space-y-1">
+                <label className="label">邮箱 Email</label>
+                <input name="email" type="email" className="input-field" placeholder="email@example.com" />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">地址 Address</label>
-                <textarea name="address" className="w-full h-24 bg-gray-50 border-2 border-transparent rounded-xl p-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none resize-none" placeholder="Full address..."></textarea>
+              <div className="space-y-1">
+                <label className="label">地址 Address</label>
+                <textarea name="address" className="input-field h-24 resize-none py-4" placeholder="Full address..."></textarea>
               </div>
             </div>
 
             {/* Column 3: 上课与紧急信息 */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center font-black">3</div>
-                <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest">Lesson & Emergency</h4>
+            <div className="space-y-8">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-gray-900 text-white flex items-center justify-center shadow-lg shadow-gray-200">
+                  <Calendar className="w-6 h-6" />
+                </div>
+                <div>
+                  <h4 className="text-xl font-black text-gray-900 tracking-tighter">Enrollment</h4>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Schedule & Emergency</p>
+                </div>
               </div>
 
-              <div className="p-5 bg-primary-50 rounded-2xl border border-primary-100 space-y-4">
+              <div className="p-8 bg-primary-50/50 rounded-[2.5rem] border border-primary-100/50 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Start Date *</label>
-                    <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" className="h-10 text-sm" />
+                    <label className="label">Start Date <span className="req">*</span></label>
+                    <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Duration *</label>
-                    <input name="lessonDuration" type="number" required defaultValue="45" className="w-full h-10 bg-white border border-primary-100 rounded-lg px-3 font-bold text-sm outline-none" />
+                    <label className="label">Duration (m) <span className="req">*</span></label>
+                    <input name="lessonDuration" type="number" required defaultValue="45" className="input-field" />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Venue *</label>
-                  <input name="venueInfo" required className="w-full h-10 bg-white border border-primary-100 rounded-lg px-3 font-bold text-sm outline-none" placeholder="Swimming Pool" />
+                  <label className="label">Venue <span className="req">*</span></label>
+                  <input name="venueInfo" required className="input-field" placeholder="Swimming Pool" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-black text-primary-500 uppercase tracking-widest">Assign Coach *</label>
-                  <select name="coachId" required className="w-full h-10 bg-white border border-primary-100 rounded-lg px-3 font-bold text-sm outline-none appearance-none">
+                  <label className="label">Assign Coach <span className="req">*</span></label>
+                  <select name="coachId" required className="input-field appearance-none cursor-pointer">
                     <option value="">Select Coach</option>
                     {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
               </div>
 
-              <div className="p-5 bg-red-50 rounded-2xl border border-red-100 space-y-3">
-                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Emergency</h5>
-                <input name="emergencyName" className="w-full h-10 bg-white border border-red-100 rounded-lg px-3 font-bold text-sm outline-none" placeholder="Name" />
-                <input name="emergencyPhone" className="w-full h-10 bg-white border border-red-100 rounded-lg px-3 font-bold text-sm outline-none" placeholder="Phone" />
+              <div className="p-8 bg-red-50/50 rounded-[2rem] border border-red-100/50 space-y-4">
+                <h5 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                  Emergency Contact
+                </h5>
+                <div className="grid grid-cols-1 gap-3">
+                  <input name="emergencyName" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Name" />
+                  <input name="emergencyPhone" className="w-full px-5 py-3.5 bg-white border border-red-100 rounded-2xl font-bold text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-50 outline-none transition-all" placeholder="Phone" />
+                </div>
               </div>
 
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full h-16 bg-primary-500 text-white rounded-2xl font-black text-lg shadow-xl shadow-primary-200 hover:bg-primary-600 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:translate-y-0"
+                className="btn btn-primary w-full h-20 text-xl font-black tracking-tighter"
               >
-                {loading ? 'Adding...' : 'Enroll Student'}
+                {loading ? 'Processing...' : 'ENROLL STUDENT'}
               </button>
             </div>
           </div>

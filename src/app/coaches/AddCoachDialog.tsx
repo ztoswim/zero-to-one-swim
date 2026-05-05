@@ -12,6 +12,30 @@ export function AddCoachDialog() {
   const [error, setError] = useState<string | null>(null);
   const [dob, setDob] = useState(new Date().toISOString().split('T')[0]);
   const [joinDate, setJoinDate] = useState(new Date().toISOString().split('T')[0]);
+  const [icValue, setIcValue] = useState('');
+
+  const formatIC = (value: string) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '');
+    
+    // Format: 000000-00-0000
+    let formatted = '';
+    if (digits.length > 0) {
+      formatted += digits.substring(0, 6);
+      if (digits.length > 6) {
+        formatted += '-' + digits.substring(6, 8);
+        if (digits.length > 8) {
+          formatted += '-' + digits.substring(8, 12);
+        }
+      }
+    }
+    return formatted;
+  };
+
+  const handleIcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatIC(e.target.value);
+    setIcValue(formatted);
+  };
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,6 +51,7 @@ export function AddCoachDialog() {
     } else {
       setIsOpen(false);
       setLoading(false);
+      setIcValue(''); // Reset
     }
   }
 
@@ -93,7 +118,15 @@ export function AddCoachDialog() {
 
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">IC / Passport <Req /></label>
-                  <input name="ic" required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none text-sm" placeholder="000000-00-0000" />
+                  <input 
+                    name="ic" 
+                    required 
+                    value={icValue}
+                    onChange={handleIcChange}
+                    maxLength={14}
+                    className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none text-sm placeholder:text-slate-300" 
+                    placeholder="000000-00-0000" 
+                  />
                 </div>
               </div>
             </div>

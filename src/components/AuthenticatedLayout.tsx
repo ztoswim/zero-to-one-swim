@@ -12,10 +12,10 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
       <Navigation />
-      <main className="flex-1 flex flex-col relative min-w-0">
-        <div className="flex-1 overflow-y-auto w-full px-4 py-6 md:px-8 md:py-8 bg-gray-50 pb-24 h-screen">
+      <main className="flex-1 min-w-0 relative">
+        <div className="w-full min-h-screen pb-24 lg:pb-0">
           {children}
         </div>
       </main>

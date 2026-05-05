@@ -33,47 +33,73 @@ export default async function CoachesPage() {
       </div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in" style={{ animationDelay: '0.1s' }}>
-        {data.coaches.map((coach: any) => (
-          <div key={coach.id} className="bg-white rounded-[2rem] p-6 border border-gray-50 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 text-gray-900 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
-              <Medal className="w-24 h-24 rotate-12" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-4 mb-6">
-                <div 
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl text-white shadow-lg"
-                  style={{ backgroundColor: coach.color || '#3b82f6', '--tw-shadow-color': coach.color || '#3b82f6' } as React.CSSProperties}
-                >
-                  {coach.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="font-black text-xl text-gray-900 leading-none">{coach.name}</h3>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mt-1 block">Head Coach</span>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                {coach.phone && (
-                  <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
-                      <Phone className="w-4 h-4" />
+      <div className="bg-white rounded-[2.5rem] border border-gray-50 shadow-sm overflow-hidden animate-in" style={{ animationDelay: '0.1s' }}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-50">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Coach Information</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Contact Details</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">HR Details</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Financial</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {data.coaches.map((coach: any) => (
+                <tr key={coach.id} className="group hover:bg-gray-50/50 transition-all">
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-4">
+                      <div 
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg text-white shadow-lg shrink-0"
+                        style={{ backgroundColor: coach.color || '#3b82f6' }}
+                      >
+                        {coach.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-black text-gray-900 text-base leading-none mb-1">{coach.name}</div>
+                        <div className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{coach.nickname || 'No Nickname'}</div>
+                      </div>
                     </div>
-                    {coach.phone}
-                  </div>
-                )}
-                {coach.email && (
-                  <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
-                      <Mail className="w-4 h-4" />
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-sm font-bold text-gray-600">
+                        <Phone className="w-3.5 h-3.5 text-gray-300" />
+                        {coach.phone}
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400">
+                        <Mail className="w-3.5 h-3.5 text-gray-300" />
+                        {coach.email || '-'}
+                      </div>
                     </div>
-                    {coach.email}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="space-y-1">
+                      <div className="inline-flex items-center px-2.5 py-0.5 rounded-lg bg-primary-50 text-primary-600 text-[10px] font-black uppercase tracking-widest mb-1">
+                        {coach.level || 'Junior'}
+                      </div>
+                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
+                        Joined: {coach.joinDate || '-'}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div>
+                      <div className="text-sm font-black text-gray-900">RM {coach.cost || '0.00'}</div>
+                      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Per Session</div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <button className="p-3 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary-50 hover:text-primary-500 transition-all">
+                      <Plus className="w-5 h-5 rotate-45" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </Container>
   );

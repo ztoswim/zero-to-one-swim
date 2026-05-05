@@ -164,12 +164,6 @@ export function AddStudentDialog({ coaches }: AddStudentDialogProps) {
           </div>
         </form>
       </Modal>
-ter gap-3"
-          >
-            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "Save Student"}
-          </button>
-        </form>
-      </Modal>
     </>
   );
 }

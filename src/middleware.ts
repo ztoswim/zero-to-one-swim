@@ -70,16 +70,19 @@ export async function middleware(request: NextRequest) {
     }
 
     // Role-based protection
-    // We fetch the profile from Supabase Database (Public schema)
-    // Note: This requires RLS to be set up or using service role (not recommended in middleware)
-    // For now, we fetch using the user's own session
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+    let role = 'coach'; // Default fallback
+    try {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+      
+      role = profile?.role || 'coach';
+    } catch (e) {
+      console.error('Middleware role fetch error:', e);
+    }
 
-    const role = profile?.role
     const isAdmin = role === 'admin' || role === 'super_admin'
 
     // Redirect root to role dashboard
@@ -91,6 +94,9 @@ export async function middleware(request: NextRequest) {
 
     // Role-based protection (Admin/Super Admin has bypass)
     if (isAdmin) return response
+
+    // Skip protection for unauthenticated paths
+    if (path === '/unauthorized' || path === '/login') return response
 
     if (path.startsWith('/admin') && !isAdmin) {
       return NextResponse.redirect(new URL('/unauthorized', request.url))

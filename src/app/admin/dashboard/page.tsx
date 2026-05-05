@@ -1,7 +1,31 @@
 import { Container } from "@/components/Container";
 import { logout } from "@/app/login/actions";
+import { db } from "@/db";
+import { students, invoices } from "@/db/schema";
+import { sql, count, sum, eq } from "drizzle-orm";
 
-export default function AdminDashboard() {
+export const dynamic = "force-dynamic";
+
+async function getAdminStats() {
+  try {
+    const studentsCount = await db.select({ value: count() }).from(students).where(eq(students.status, 'active'));
+    const invoicesCount = await db.select({ value: count() }).from(invoices);
+    const revenueSum = await db.select({ value: sum(invoices.totalAmount) }).from(invoices);
+
+    return {
+      students: studentsCount[0]?.value || 0,
+      invoices: invoicesCount[0]?.value || 0,
+      revenue: revenueSum[0]?.value || 0
+    };
+  } catch (e) {
+    console.error("Error fetching stats:", e);
+    return { students: 0, invoices: 0, revenue: 0 };
+  }
+}
+
+export default async function AdminDashboard() {
+  const stats = await getAdminStats();
+
   return (
     <Container>
       <div className="py-20 animate-in">
@@ -12,16 +36,16 @@ export default function AdminDashboard() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/50">
-            <h3 className="text-2xl font-black mb-2">Total Invoices</h3>
-            <p className="text-5xl font-black text-primary-500 tracking-tighter">128</p>
+            <h3 className="text-2xl font-black mb-2 text-gray-400 uppercase tracking-widest text-xs">Total Invoices</h3>
+            <p className="text-6xl font-black text-primary-500 tracking-tighter">{stats.invoices}</p>
           </div>
           <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/50">
-            <h3 className="text-2xl font-black mb-2">Active Students</h3>
-            <p className="text-5xl font-black text-primary-500 tracking-tighter">45</p>
+            <h3 className="text-2xl font-black mb-2 text-gray-400 uppercase tracking-widest text-xs">Active Students</h3>
+            <p className="text-6xl font-black text-primary-500 tracking-tighter">{stats.students}</p>
           </div>
           <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/50">
-            <h3 className="text-2xl font-black mb-2">Revenue</h3>
-            <p className="text-5xl font-black text-primary-500 tracking-tighter">RM12k</p>
+            <h3 className="text-2xl font-black mb-2 text-gray-400 uppercase tracking-widest text-xs">Total Revenue</h3>
+            <p className="text-6xl font-black text-primary-500 tracking-tighter">RM{Number(stats.revenue).toLocaleString()}</p>
           </div>
         </div>
 

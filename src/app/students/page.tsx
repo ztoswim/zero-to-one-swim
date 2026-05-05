@@ -10,15 +10,11 @@ import { coaches } from "@/db/schema";
 export const dynamic = 'force-dynamic';
 
 async function getInitialData() {
-  try {
-    const studentsData = await db.query.students.findMany({
-      orderBy: [desc(students.createdAt)]
-    });
-    const coachesData = await db.query.coaches.findMany();
-    return { students: studentsData, coaches: coachesData };
-  } catch (e) {
-    return { students: [], coaches: [], error: "Database connection needed." };
-  }
+  const studentsData = await db.query.students.findMany({
+    orderBy: [desc(students.createdAt)]
+  });
+  const coachesData = await db.query.coaches.findMany();
+  return { students: studentsData, coaches: coachesData };
 }
 
 export default async function StudentsPage() {
@@ -38,11 +34,6 @@ export default async function StudentsPage() {
         </div>
       </div>
 
-      {data.error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in" style={{ animationDelay: '0.1s' }}>
         {data.students.map((student: any) => (

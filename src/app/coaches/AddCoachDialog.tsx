@@ -37,97 +37,116 @@ export function AddCoachDialog() {
       </button>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Add New Coach">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {error && (
             <div className="bg-red-50 text-red-500 p-4 rounded-2xl text-xs font-bold border border-red-100">
               ⚠️ {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name *</label>
-              <input 
-                name="name"
-                required
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="Coach Name"
-              />
+          {/* 1. 个人信息 */}
+          <div className="space-y-6">
+            <h4 className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">1. 个人信息 Personal Details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">名字 Name *</label>
+                <input name="name" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="Full Name" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">别名 Nickname (Display Name) *</label>
+                <input name="nickname" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="Coach Nickname" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">性别 Gender *</label>
+                <select name="gender" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none">
+                  <option value="">Select</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">出生日期 Date of Birth *</label>
+                <input name="dob" type="date" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" />
+              </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Nickname</label>
-              <input 
-                name="nickname"
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="Coach Nickname"
-              />
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">身份证号码 IC *</label>
+              <input name="ic" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="ID / Passport No" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Gender</label>
-              <select name="gender" className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none appearance-none">
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+          {/* 2. 联络信息 */}
+          <div className="space-y-6">
+            <h4 className="text-[10px] font-black text-primary-500 uppercase tracking-[0.2em]">2. 联络信息 Contact Info</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">联络号码 Contact Number *</label>
+                <input name="phone" required className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="+60..." />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">邮箱 Email</label>
+                <input name="email" type="email" className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none" placeholder="coach@swim.com" />
+              </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Identity Number (IC) *</label>
-              <input 
-                name="ic"
-                required
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="ID / Passport No"
-              />
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">地址 Address</label>
+              <textarea name="address" className="w-full h-24 bg-gray-50 border-2 border-transparent rounded-2xl p-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none resize-none" placeholder="Residential address..."></textarea>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
-              <input 
-                name="email"
-                type="email"
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="coach@swim.com"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone *</label>
-              <input 
-                name="phone"
-                required
-                className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
-                placeholder="+60..."
-              />
+          {/* 3. 紧急联络信息 */}
+          <div className="p-8 bg-red-50/50 rounded-[2.5rem] border border-red-100/50 space-y-6">
+            <h4 className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">3. 紧急联络信息 Emergency Contact</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-red-400 uppercase tracking-widest ml-1">姓名 Name *</label>
+                <input name="emergencyName" required className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Person" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-red-400 uppercase tracking-widest ml-1">联络号码 Phone *</label>
+                <input name="emergencyPhone" required className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Emergency Phone" />
+              </div>
             </div>
           </div>
 
-          <div className="p-6 bg-primary-50 rounded-3xl border border-primary-100 space-y-4">
-            <h4 className="text-[10px] font-black text-primary-500 uppercase tracking-widest">Financial & Banking</h4>
-            <div className="form-group">
-              <label className="text-[10px] font-black text-primary-700 uppercase tracking-widest ml-1">Cost Per Session (RM) *</label>
-              <input 
-                name="cost"
-                type="number"
-                step="0.01"
-                defaultValue="50.00"
-                className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none"
-              />
+          {/* 4. 上班信息 */}
+          <div className="p-8 bg-primary-50/50 rounded-[2.5rem] border border-primary-100/50 space-y-6">
+            <h4 className="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em]">4. 上班信息 Work Info</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">开始上班日期 Join Date *</label>
+                <input name="joinDate" type="date" required className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">等级 Level *</label>
+                <select name="level" required className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none appearance-none">
+                  <option value="">Select Level</option>
+                  <option value="Junior">Junior</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Head">Head Coach</option>
+                </select>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input name="bankName" className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="Bank Name" />
-              <input name="bankAccount" className="w-full h-14 bg-white border-2 border-primary-200 rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" placeholder="Account Number" />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-primary-400 uppercase tracking-widest ml-1">Cost Per Session (RM) *</label>
+              <input name="cost" type="number" step="0.01" required defaultValue="50.00" className="w-full h-14 bg-white border-2 border-transparent rounded-2xl px-4 font-bold text-gray-900 focus:border-primary-500 transition-all outline-none" />
             </div>
           </div>
 
-          <div className="p-6 bg-red-50 rounded-3xl border border-red-100 space-y-4">
-            <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Emergency Contact</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <input name="emergencyName" className="w-full h-14 bg-white border-2 border-red-100 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Name" />
-              <input name="emergencyPhone" className="w-full h-14 bg-white border-2 border-red-100 rounded-2xl px-4 font-bold text-gray-900 focus:border-red-500 transition-all outline-none" placeholder="Contact Phone" />
+          {/* 5. 银行信息 */}
+          <div className="p-8 bg-gray-900 rounded-[2.5rem] text-white space-y-6">
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">5. 银行信息 Bank Info</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">银行名字 Bank Name *</label>
+                <input name="bankName" required className="w-full h-14 bg-white/10 border-2 border-transparent rounded-2xl px-4 font-bold text-white focus:border-primary-500 transition-all outline-none" placeholder="e.g. Maybank" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">银行户口 Account No *</label>
+                <input name="bankAccount" required className="w-full h-14 bg-white/10 border-2 border-transparent rounded-2xl px-4 font-bold text-white focus:border-primary-500 transition-all outline-none" placeholder="0000 0000 0000" />
+              </div>
             </div>
           </div>
 

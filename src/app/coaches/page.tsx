@@ -9,14 +9,10 @@ import { AddCoachDialog } from "./AddCoachDialog";
 export const dynamic = 'force-dynamic';
 
 async function getCoaches() {
-  try {
-    const data = await db.query.coaches.findMany({
-      orderBy: [asc(coaches.name)]
-    });
-    return { coaches: data };
-  } catch (e) {
-    return { coaches: [], error: "Database connection needed." };
-  }
+  const data = await db.query.coaches.findMany({
+    orderBy: [asc(coaches.name)]
+  });
+  return { coaches: data };
 }
 
 export default async function CoachesPage() {
@@ -36,11 +32,6 @@ export default async function CoachesPage() {
         </div>
       </div>
 
-      {data.error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8 font-bold border border-red-100">
-          ⚠️ {data.error} Please set DATABASE_URL in .env and run database push.
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in" style={{ animationDelay: '0.1s' }}>
         {data.coaches.map((coach: any) => (

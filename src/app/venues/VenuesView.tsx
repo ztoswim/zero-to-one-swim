@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Container } from '@/components/Container';
 import { MapPin, Plus, Trash2, Search, Map as MapIcon, Clock, Navigation, ExternalLink, ShieldCheck, Pencil } from 'lucide-react';
 import { Modal } from '@/components/Modal';
-import { addVenueAction, deleteVenueAction, updateVenueAction, addRouteAction, deleteRouteAction } from './actions';
+import { addVenueAction, deleteVenueAction, updateVenueAction, addRouteAction, deleteRouteAction } from '@/app/venues/actions';
 import { useRouter } from 'next/navigation';
 
 // Custom icons for Google Maps and Waze

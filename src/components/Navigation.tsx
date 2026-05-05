@@ -52,6 +52,15 @@ export function Navigation() {
             <p className="text-xs text-gray-400">Manage Hub</p>
           </div>
         </div>
+        <button 
+          onClick={async () => {
+            const { logout } = await import('@/app/login/actions');
+            await logout();
+          }}
+          className="mt-4 w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-red-400 hover:bg-red-50 hover:text-red-600 transition-all"
+        >
+          <span>Sign Out</span>
+        </button>
       </div>
     </nav>
   );

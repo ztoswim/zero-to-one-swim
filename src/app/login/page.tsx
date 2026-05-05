@@ -1,0 +1,111 @@
+'use client';
+
+import React, { useState } from 'react';
+import { login } from './actions';
+import { Eye, EyeOff, Lock, Mail, Loader2 } from 'lucide-react';
+
+export default function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    const result = await login(formData);
+
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="w-full max-w-md animate-in">
+        {/* Logo/Brand */}
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-black tracking-tighter text-gray-900 mb-2">
+            Zero To One <span className="text-primary-500">Swim</span>
+          </h1>
+          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Management Hub Login</p>
+        </div>
+
+        <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-10 border border-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 text-red-500 p-4 rounded-2xl text-xs font-bold border border-red-100 flex items-center gap-2 animate-pulse">
+                <span>⚠️ {error}</span>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-primary-500 transition-colors" />
+                <input 
+                  type="email" 
+                  name="email"
+                  required
+                  placeholder="admin@swim.com"
+                  className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl pl-12 pr-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Password</label>
+                <a href="#" className="text-[10px] font-black text-primary-500 uppercase tracking-widest hover:underline">Forgot?</a>
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-primary-500 transition-colors" />
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="password"
+                  required
+                  placeholder="••••••••"
+                  className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl pl-12 pr-12 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
+                />
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 px-1">
+              <input type="checkbox" id="remember" className="w-5 h-5 rounded-lg border-2 border-gray-200 text-primary-500 focus:ring-primary-500" />
+              <label htmlFor="remember" className="text-xs font-bold text-gray-500 cursor-pointer">Remember Me</label>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full h-16 bg-primary-500 text-white rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl shadow-primary-200 hover:bg-primary-600 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-3"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  Authenticating...
+                </>
+              ) : (
+                "Access Dashboard"
+              )}
+            </button>
+          </form>
+        </div>
+
+        <p className="text-center mt-8 text-xs font-bold text-gray-400">
+          Trouble logging in? <a href="mailto:support@swim.com" className="text-primary-500 hover:underline">Contact Support</a>
+        </p>
+      </div>
+    </div>
+  );
+}

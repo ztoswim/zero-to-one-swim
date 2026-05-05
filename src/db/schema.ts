@@ -1,6 +1,15 @@
 import { pgTable, uuid, text, timestamp, integer, decimal, date, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey(), // Linked to auth.users.id
+  email: text("email").notNull().unique(),
+  fullName: text("full_name"),
+  phone: text("phone"),
+  role: text("role", { enum: ["admin", "coach", "parent"] }).notNull().default("parent"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 export const coaches = pgTable("coaches", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),

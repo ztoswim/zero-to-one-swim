@@ -164,58 +164,58 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               </p>
             )}
             
-            {/* NAVIGATION BUTTONS: Integrated Split-Button Design */}
+            {/* NAVIGATION BUTTONS: Fused Pill Design */}
             <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
                 {venue.googleMapsUrl ? (
-                    <div className="flex-1 flex items-center gap-1.5 h-12">
+                    <div className="flex items-center h-12 bg-gray-50 border border-gray-100 rounded-full p-1 group/pill hover:shadow-md transition-all shadow-sm">
                       <a 
                         href={venue.googleMapsUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="flex-1 h-full rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                        className="flex-1 h-full flex items-center justify-center gap-2 px-4 text-gray-900 hover:text-blue-600 transition-colors font-black text-[9px] tracking-widest uppercase"
                       >
                         <GoogleMapsLogo /> GOOGLE
                       </a>
                       {venue.googleEmbedCode && (
                         <button 
                           onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
-                          className="w-12 h-12 rounded-full bg-blue-500 text-white flex flex-col items-center justify-center shadow-lg shadow-blue-100 active:scale-90 transition-all group/live"
+                          className="w-10 h-10 rounded-full bg-blue-500 text-white flex flex-col items-center justify-center shadow-lg shadow-blue-200 active:scale-90 transition-all group/live"
                           title="Live Preview"
                         >
-                          <MapIcon className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
-                          <span className="text-[6px] font-black mt-0.5">LIVE</span>
+                          <MapIcon className="w-3.5 h-3.5 group-hover/live:scale-110 transition-transform" />
+                          <span className="text-[5px] font-black leading-none mt-0.5">LIVE</span>
                         </button>
                       )}
                     </div>
                 ) : (
-  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
+                  <div className="h-12 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
                     NO LINK
                   </div>
                 )}
 
                 {venue.wazeUrl ? (
-                    <div className="flex-1 flex items-center gap-1.5 h-12">
-      <a 
+                    <div className="flex items-center h-12 bg-gray-50 border border-gray-100 rounded-full p-1 group/pill hover:shadow-md transition-all shadow-sm">
+                      <a 
                         href={venue.wazeUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="flex-1 h-full rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                        className="flex-1 h-full flex items-center justify-center gap-2 px-4 text-gray-900 hover:text-cyan-600 transition-colors font-black text-[9px] tracking-widest uppercase"
                       >
                         <WazeLogo /> WAZE
                       </a>
                       {venue.wazeEmbedCode && (
                         <button 
                           onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
-                          className="w-12 h-12 rounded-full bg-cyan-400 text-white flex flex-col items-center justify-center shadow-lg shadow-cyan-100 active:scale-90 transition-all group/live"
+                          className="w-10 h-10 rounded-full bg-cyan-400 text-white flex flex-col items-center justify-center shadow-lg shadow-cyan-200 active:scale-90 transition-all group/live"
                           title="Live Preview"
                         >
-                          <Navigation className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
-                          <span className="text-[6px] font-black mt-0.5">LIVE</span>
+                          <Navigation className="w-3.5 h-3.5 group-hover/live:scale-110 transition-transform" />
+                          <span className="text-[5px] font-black leading-none mt-0.5">LIVE</span>
                         </button>
                       )}
-                  </div>
+                    </div>
                 ) : (
-                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
+                  <div className="h-12 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
                     NO LINK
                   </div>
                 )}

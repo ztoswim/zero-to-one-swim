@@ -432,9 +432,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 className="input-field h-14"
               >
                 <option value="">Select From</option>
-                {initialVenues.map(v => (
-                  <option key={v.id} value={v.id}>{v.name}</option>
-                ))}
+                {initialVenues
+                  .filter(v => {
+                    // Only show venues that have at least one missing destination
+                    const otherVenues = initialVenues.filter(ov => ov.id !== v.id);
+                    return otherVenues.some(ov => !routes.some(r => r.fromVenueId === v.id && r.toVenueId === ov.id));
+                  })
+                  .map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))
+                }
               </select>
             </div>
             <div className="space-y-2">

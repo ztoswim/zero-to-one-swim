@@ -56,7 +56,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const [routeFrom, setRouteFrom] = useState('');
   const [routeTo, setRouteTo] = useState('');
 
-  const isSuperAdmin = userRole === 'super_admin';
+  const isSuperAdmin = userRole === 'super_admin' || userRole === 'admin';
 
   const filteredVenues = initialVenues.filter(v => 
     v.name.toLowerCase().includes(search.toLowerCase())

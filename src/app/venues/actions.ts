@@ -106,3 +106,40 @@ export async function deleteRouteAction(id: string) {
     return { error: "Failed to delete route" };
   }
 }
+
+export async function resolveVenueCoordinatesAction(url: string) {
+  if (!url) return { error: "URL is required" };
+
+  try {
+    // Follow redirects to get the final URL
+    const response = await fetch(url, { 
+      method: 'GET',
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    
+    const finalUrl = response.url;
+    
+    // Regex for various patterns
+    const googleMatch = finalUrl.match(/@([\d.-]+),([\d.-]+)/) || finalUrl.match(/q=([\d.-]+),([\d.-]+)/);
+    const wazeMatch = finalUrl.match(/ll=([\d.-]+)%2C([\d.-]+)/) || finalUrl.match(/ll=([\d.-]+),([\d.-]+)/) || finalUrl.match(/latlng=([\d.-]+)%2C([\d.-]+)/);
+    
+    const match = wazeMatch || googleMatch;
+    
+    if (match) {
+      return { 
+        success: true, 
+        lat: match[1], 
+        lng: match[2],
+        resolvedUrl: finalUrl 
+      };
+    }
+
+    return { error: "Could not extract coordinates from the resolved link" };
+  } catch (error) {
+    console.error("Link resolution error:", error);
+    return { error: "Failed to resolve link" };
+  }
+}

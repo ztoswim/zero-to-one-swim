@@ -4,7 +4,14 @@ import React, { useState, useMemo } from 'react';
 import { Container } from '@/components/Container';
 import { MapPin, Plus, Trash2, Search, Map as MapIcon, Clock, Navigation, ExternalLink, ShieldCheck, Pencil } from 'lucide-react';
 import { Modal } from '@/components/Modal';
-import { addVenueAction, deleteVenueAction, updateVenueAction, addRouteAction, deleteRouteAction } from '@/app/venues/actions';
+import { 
+  addVenueAction, 
+  updateVenueAction, 
+  addRouteAction, 
+  deleteVenueAction, 
+  deleteRouteAction,
+  resolveVenueCoordinatesAction 
+} from '@/app/venues/actions';
 import { useRouter } from 'next/navigation';
 
 // Custom icons for Google Maps and Waze
@@ -51,6 +58,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const [trafficVenue, setTrafficVenue] = useState<Venue | null>(null);
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const [search, setSearch] = useState('');
 
   const isSuperAdmin = userRole === 'super_admin';
@@ -59,30 +67,26 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Helper to extract lat/lng from Waze or Google Maps URLs
+  // Helper to extract lat/lng using server-side resolver
   const [extractedCoords, setExtractedCoords] = useState<{lat: string, lng: string} | null>(null);
 
-  const autoFillCoordinates = (url: string, currentTarget: HTMLFormElement) => {
-    if (!url) {
+  const autoFillCoordinates = async (url: string, currentTarget: HTMLFormElement) => {
+    if (!url || url.length < 10) {
       setExtractedCoords(null);
       return;
     }
     
-    // Priority 1: Destination-specific patterns (q= for Google, ll= for Waze)
-    // Priority 2: Map center patterns (@ for Google)
-    const googleMatch = url.match(/q=([\d.-]+)%2C([\d.-]+)/) || url.match(/q=([\d.-]+),([\d.-]+)/) || url.match(/@([\d.-]+),([\d.-]+)/);
-    const wazeMatch = url.match(/ll=([\d.-]+)%2C([\d.-]+)/) || url.match(/ll=([\d.-]+),([\d.-]+)/) || url.match(/latlng=([\d.-]+)%2C([\d.-]+)/);
+    setAnalyzing(true);
+    const result = await resolveVenueCoordinatesAction(url);
     
-    const match = wazeMatch || googleMatch;
-    if (match) {
-      const lat = match[1];
-      const lng = match[2];
+    if (result.success && result.lat && result.lng) {
       const latInput = currentTarget.querySelector('input[name="lat"]') as HTMLInputElement;
       const lngInput = currentTarget.querySelector('input[name="lng"]') as HTMLInputElement;
-      if (latInput) latInput.value = lat;
-      if (lngInput) lngInput.value = lng;
-      setExtractedCoords({ lat, lng });
+      if (latInput) latInput.value = result.lat;
+      if (lngInput) lngInput.value = result.lng;
+      setExtractedCoords({ lat: result.lat, lng: result.lng });
     }
+    setAnalyzing(false);
   };
 
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
@@ -343,7 +347,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
-               {extractedCoords && (
+               {analyzing && (
+                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl">
+                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                   <p className="text-[10px] font-bold text-blue-700 uppercase tracking-tight italic">
+                     Analyzing link coordinates...
+                   </p>
+                 </div>
+               )}
+
+               {extractedCoords && !analyzing && (
                  <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                    <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">
@@ -381,7 +394,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
-               {extractedCoords && (
+               {analyzing && (
+                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl">
+                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                   <p className="text-[10px] font-bold text-blue-700 uppercase tracking-tight italic">
+                     Analyzing link coordinates...
+                   </p>
+                 </div>
+               )}
+
+               {extractedCoords && !analyzing && (
                  <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                    <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">

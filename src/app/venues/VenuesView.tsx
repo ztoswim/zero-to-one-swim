@@ -187,17 +187,15 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                         </button>
                       )}
                     </div>
-                  </div>
                 ) : (
-                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
+  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
                     NO LINK
                   </div>
                 )}
 
                 {venue.wazeUrl ? (
-                  <div className="flex flex-col gap-3">
                     <div className="flex-1 flex items-center gap-1.5 h-12">
-                      <a 
+      <a 
                         href={venue.wazeUrl} 
                         target="_blank" 
                         rel="noopener noreferrer" 
@@ -215,7 +213,6 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                           <span className="text-[6px] font-black mt-0.5">LIVE</span>
                         </button>
                       )}
-                    </div>
                   </div>
                 ) : (
                   <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">

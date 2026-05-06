@@ -86,7 +86,6 @@ export async function addRouteAction(formData: FormData) {
       fromVenueId,
       toVenueId,
       durationMinutes: duration,
-      distanceKm: distance || null,
     });
     revalidatePath('/venues');
     return { success: true };

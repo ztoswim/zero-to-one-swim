@@ -34,7 +34,6 @@ interface Route {
   fromVenueId: string;
   toVenueId: string;
   durationMinutes: number;
-  distanceKm: string | null;
   fromVenue: Venue;
   toVenue: Venue;
 }

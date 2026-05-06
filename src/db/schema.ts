@@ -76,7 +76,6 @@ export const venueRoutes = pgTable("venue_routes", {
   fromVenueId: uuid("from_venue_id").references(() => venues.id, { onDelete: "cascade" }).notNull(),
   toVenueId: uuid("to_venue_id").references(() => venues.id, { onDelete: "cascade" }).notNull(),
   durationMinutes: integer("duration_minutes").notNull(),
-  distanceKm: decimal("distance_km", { precision: 5, scale: 1 }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

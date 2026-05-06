@@ -314,29 +314,37 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 )}
                 {routes.map(route => (
                   <tr key={route.id} className="group hover:bg-slate-50/50 transition-all border-b border-gray-100/50 last:border-0 relative">
-                    <td className="px-8 py-7">
-                      {/* Hover Accent Line */}
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 opacity-0 group-hover:opacity-100 transition-all rounded-r-full" />
-                      
+                    <td className="px-8 py-9">
                       <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-4">
-                          <span className="text-gray-400 font-bold text-sm tracking-tight">{route.fromVenue?.name}</span>
-                          <div className="w-8 h-[2px] bg-gray-100 rounded-full relative">
-                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
-                          </div>
-                          <span className="text-gray-900 font-black text-sm lg:text-base tracking-tight">{route.toVenue?.name}</span>
+                        {/* FROM VENUE */}
+                        <div className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full border-2 border-gray-300 shrink-0" />
+                          <span className="text-gray-400 font-bold text-sm tracking-tight truncate max-w-[150px]">{route.fromVenue?.name}</span>
+                        </div>
+                        
+                        {/* DIRECTIONAL CONNECTOR */}
+                        <div className="flex items-center gap-3 flex-1 min-w-[80px]">
+                          <div className="flex-1 h-[1px] border-t-2 border-dashed border-gray-100" />
+                          <Navigation className="w-3.5 h-3.5 text-primary-500 rotate-90 shrink-0" />
+                          <div className="flex-1 h-[1px] border-t-2 border-dashed border-gray-100" />
+                        </div>
+
+                        {/* TO VENUE */}
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-4 h-4 text-primary-500 shrink-0" />
+                          <span className="text-gray-900 font-black text-sm lg:text-[17px] tracking-tight truncate max-w-[200px]">{route.toVenue?.name}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-7">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-gray-100 text-primary-600 rounded-lg font-black text-[10px] lg:text-xs uppercase tracking-widest shadow-sm">
-                        <Clock className="w-3 h-3 opacity-40" />
-                        {route.durationMinutes} min
+                    <td className="px-8 py-9">
+                      <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-primary-500 text-white rounded-2xl font-black text-xs lg:text-sm shadow-lg shadow-primary-200">
+                        <Clock className="w-3.5 h-3.5" />
+                        {route.durationMinutes}m
                       </div>
                     </td>
-                    <td className="px-8 py-7 text-right">
+                    <td className="px-8 py-9 text-right">
                       {isSuperAdmin && (
-                        <button onClick={() => { if(confirm('Delete record?')) deleteRouteAction(route.id).then(() => router.refresh()) }} className="w-9 h-9 rounded-xl text-gray-200 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center ml-auto opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => { if(confirm('Delete record?')) deleteRouteAction(route.id).then(() => router.refresh()) }} className="w-11 h-11 rounded-2xl text-gray-200 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center ml-auto opacity-0 group-hover:opacity-100 shadow-sm border border-gray-50"><Trash2 className="w-4.5 h-4.5" /></button>
                       )}
                     </td>
                   </tr>

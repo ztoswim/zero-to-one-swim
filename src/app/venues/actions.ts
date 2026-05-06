@@ -8,8 +8,6 @@ import { revalidatePath } from "next/cache";
 export async function addVenueAction(formData: FormData) {
   const name = formData.get('name') as string;
   const address = formData.get('address') as string;
-  const contactPerson = formData.get('contactPerson') as string;
-  const contactPhone = formData.get('contactPhone') as string;
   
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;

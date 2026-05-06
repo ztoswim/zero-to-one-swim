@@ -42,7 +42,6 @@ export async function addStudent(formData: FormData) {
       notes,
       startDate: startDate ? startDate : null,
       lessonDuration: lessonDuration ? parseInt(lessonDuration) : 45,
-      venueInfo,
       venueId: venueId ? venueId : null,
       coachId: coachId === 'none' ? null : coachId,
       classDay,

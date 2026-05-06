@@ -77,7 +77,7 @@ export default async function StudentsPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
                         <MapPin className="w-3.5 h-3.5 text-primary-500" />
-                        {student.venue?.name || student.venueInfo || 'General Venue'}
+                        {student.venue?.name || 'General Venue'}
                       </div>
                       <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
                         Duration: {student.lessonDuration || '45'} mins

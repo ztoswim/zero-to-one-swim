@@ -43,7 +43,6 @@ export const students = pgTable("students", {
   sameArea: text("same_area"),
   emergencyName: text("emergency_name"),
   emergencyPhone: text("emergency_phone"),
-  venueInfo: text("venue_info"),
   venueId: uuid("venue_id").references(() => venues.id),
   startDate: date("start_date"),
   lessonDuration: integer("lesson_duration").default(45),
@@ -59,15 +58,10 @@ export const venues = pgTable("venues", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   address: text("address"),
-  googlePlaceId: text("google_place_id"),
-  lat: decimal("lat", { precision: 10, scale: 7 }),
-  lng: decimal("lng", { precision: 10, scale: 7 }),
   googleMapsUrl: text("google_maps_url"),
   wazeUrl: text("waze_url"),
   googleEmbedCode: text("google_embed_code"),
   wazeEmbedCode: text("waze_embed_code"),
-  contactPerson: text("contact_person"),
-  contactPhone: text("contact_phone"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 

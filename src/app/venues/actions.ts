@@ -13,6 +13,7 @@ export async function addVenueAction(formData: FormData) {
   
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
+  const embedCode = formData.get('embedCode') as string;
 
   if (!name) return { error: "Name is required" };
 
@@ -22,6 +23,7 @@ export async function addVenueAction(formData: FormData) {
       address,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
+      embedCode: embedCode || null,
     });
     revalidatePath('/venues');
     return { success: true };
@@ -46,6 +48,7 @@ export async function updateVenueAction(id: string, formData: FormData) {
   const name = formData.get('name') as string;
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
+  const embedCode = formData.get('embedCode') as string;
 
   if (!name) return { error: "Name is required" };
 
@@ -54,6 +57,7 @@ export async function updateVenueAction(id: string, formData: FormData) {
       name,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
+      embedCode: embedCode || null,
     }).where(eq(venues.id, id));
     
     revalidatePath('/venues');

@@ -261,13 +261,13 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       >
         <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
           {trafficVenue?.wazeUrl ? (
-            <div className="absolute inset-0 -top-[72px] -bottom-[10px]">
+            <div className="absolute -top-[80px] -bottom-[40px] left-0 right-0">
                <iframe
                 src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
                 width="100%"
-                height="calc(100% + 82px)"
+                height="calc(100% + 120px)"
                 allowFullScreen
-                className="w-full h-full"
+                className="w-full h-full border-none"
               />
             </div>
           ) : (

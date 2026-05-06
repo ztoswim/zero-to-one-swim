@@ -259,15 +259,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         title={`Live Traffic: ${trafficVenue?.name}`}
         size="large"
       >
-        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-gray-100 border-4 border-white shadow-inner">
+        <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
           {trafficVenue?.wazeUrl ? (
-            <iframe
-              src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
-              width="100%"
-              height="100%"
-              allowFullScreen
-              className="w-full h-full"
-            />
+            <div className="absolute inset-0 -top-[50px] bottom-0">
+               <iframe
+                src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
+                width="100%"
+                height="calc(100% + 50px)"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 font-bold uppercase tracking-widest text-xs">
               No Waze Link Provided

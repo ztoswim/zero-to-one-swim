@@ -31,9 +31,8 @@ interface Venue {
   name: string;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
-  embedCode: string | null;
-  lat: string | null;
-  lng: string | null;
+  googleEmbed: string | null;
+  wazeEmbed: string | null;
 }
 
 interface Route {
@@ -57,9 +56,9 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const [isVenueModalOpen, setIsVenueModalOpen] = useState(false);
   const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
   const [trafficVenue, setTrafficVenue] = useState<Venue | null>(null);
+  const [trafficType, setTrafficType] = useState<'waze' | 'google' | null>(null);
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
   const [search, setSearch] = useState('');
 
   const isSuperAdmin = userRole === 'super_admin';
@@ -68,27 +67,9 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Helper to extract lat/lng using server-side resolver
-  const [extractedCoords, setExtractedCoords] = useState<{lat: string, lng: string} | null>(null);
-
-  const autoFillCoordinates = async (url: string, currentTarget: HTMLFormElement) => {
-    if (!url || url.length < 10) {
-      setExtractedCoords(null);
-      return;
-    }
-    
-    setAnalyzing(true);
-    const result = await resolveVenueCoordinatesAction(url);
-    
-    if (result.success && result.lat && result.lng) {
-      const latInput = currentTarget.querySelector('input[name="lat"]') as HTMLInputElement;
-      const lngInput = currentTarget.querySelector('input[name="lng"]') as HTMLInputElement;
-      if (latInput) latInput.value = result.lat;
-      if (lngInput) lngInput.value = result.lng;
-      setExtractedCoords({ lat: result.lat, lng: result.lng });
-    }
-    setAnalyzing(false);
-  };
+  const filteredVenues = initialVenues.filter(v => 
+    v.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -192,46 +173,23 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             
             {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
             <div className="space-y-3 pt-6 border-t border-gray-50">
-              {venue.wazeUrl && (
+              {venue.wazeEmbed && (
                 <button 
-                  onClick={() => setTrafficVenue(venue)}
-                  className="w-full h-12 rounded-2xl bg-primary-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-primary-100 hover:bg-primary-600 active:scale-95"
+                  onClick={() => { setTrafficVenue(venue); setTrafficType('waze'); }}
+                  className="w-full h-12 rounded-2xl bg-cyan-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-cyan-100 hover:bg-cyan-600 active:scale-95"
                 >
-                  <Clock className="w-4 h-4" /> View Live Traffic
+                  <Navigation className="w-4 h-4" /> View Live Traffic
                 </button>
               )}
-              
-              <div className="grid grid-cols-2 gap-3">
-                {venue.googleMapsUrl ? (
-                  <a 
-                    href={venue.googleMapsUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="h-12 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
-                  >
-                    <GoogleMapsLogo /> GOOGLE
-                  </a>
-                ) : (
-                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
-                    NO LINK
-                  </div>
-                )}
 
-                {venue.wazeUrl ? (
-                  <a 
-                    href={venue.wazeUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="h-12 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
-                  >
-                    <WazeLogo /> WAZE
-                  </a>
-                ) : (
-                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
-                    NO LINK
-                  </div>
-                )}
-              </div>
+              {venue.googleEmbed && (
+                <button 
+                  onClick={() => { setTrafficVenue(venue); setTrafficType('google'); }}
+                  className="w-full h-12 rounded-2xl bg-primary-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-primary-100 hover:bg-primary-600 active:scale-95"
+                >
+                  <MapIcon className="w-4 h-4" /> View Map
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -288,46 +246,31 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       {/* MODALS */}
       <Modal 
         isOpen={!!trafficVenue} 
-        onClose={() => setTrafficVenue(null)} 
-        title={`Live Traffic: ${trafficVenue?.name}`}
+        onClose={() => { setTrafficVenue(null); setTrafficType(null); }} 
+        title={trafficType === 'waze' ? `Live Traffic: ${trafficVenue?.name}` : `Location Map: ${trafficVenue?.name}`}
         size="large"
       >
         <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
-          {trafficVenue?.embedCode ? (
+          {trafficType === 'waze' && trafficVenue?.wazeEmbed ? (
             <div 
               className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
-              dangerouslySetInnerHTML={{ __html: trafficVenue.embedCode }}
+              dangerouslySetInnerHTML={{ __html: trafficVenue.wazeEmbed }}
             />
-          ) : trafficVenue?.lat && trafficVenue?.lng ? (
-            <div className="absolute -top-[80px] -bottom-[60px] left-0 right-0">
-               <iframe
-                src={`https://embed.waze.com/iframe?zoom=16&lat=${trafficVenue.lat}&lon=${trafficVenue.lng}&ct=livemap&pin=1`}
-                width="100%"
-                height="calc(100% + 140px)"
-                allowFullScreen
-                className="w-full h-full border-none"
-              />
-            </div>
-          ) : trafficVenue?.wazeUrl ? (
-            <div className="absolute -top-[80px] -bottom-[60px] left-0 right-0">
-               <iframe
-                src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
-                width="100%"
-                height="calc(100% + 140px)"
-                allowFullScreen
-                className="w-full h-full border-none"
-              />
-            </div>
+          ) : trafficType === 'google' && trafficVenue?.googleEmbed ? (
+            <div 
+              className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
+              dangerouslySetInnerHTML={{ __html: trafficVenue.googleEmbed }}
+            />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 font-bold uppercase tracking-widest text-xs">
-              No Location Data Available
+              No Embed Data Available
             </div>
           )}
         </div>
         <div className="mt-4 p-4 bg-primary-50 rounded-xl border border-primary-100">
            <p className="text-[10px] lg:text-xs font-bold text-primary-700 leading-relaxed">
              <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>
-             Showing real-time traffic updates. You can interact with the map to explore the surrounding areas.
+             Showing {trafficType === 'waze' ? 'real-time traffic' : 'venue location'}. You can interact with the map to explore.
            </p>
         </div>
       </Modal>
@@ -340,46 +283,19 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
              </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Google Maps Link
-                  </label>
-                  <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <Navigation className="w-3 h-3" /> Waze Link
-                  </label>
-                  <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
-               </div>
-
-               {analyzing && (
-                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl">
-                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                   <p className="text-[10px] font-bold text-blue-700 uppercase tracking-tight italic">
-                     Analyzing link coordinates...
-                   </p>
+               <div className="space-y-4 pt-4 border-t border-gray-100">
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                      <MapIcon className="w-3 h-3" /> Google Maps Embed Code
+                    </label>
+                    <textarea name="googleEmbed" placeholder="Paste Google iframe code..." className="input-field min-h-[80px] py-3 border-blue-100 focus:border-blue-500 font-mono text-[10px]" />
                  </div>
-               )}
-
-               {extractedCoords && !analyzing && (
-                 <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
-                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                   <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">
-                     Auto-Detected: {extractedCoords.lat}, {extractedCoords.lng}
-                   </p>
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                      <Navigation className="w-3 h-3" /> Waze Embed Code
+                    </label>
+                    <textarea name="wazeEmbed" placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
                  </div>
-               )}
-
-               <input type="hidden" name="lat" />
-               <input type="hidden" name="lng" />
-
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-primary-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Custom Map Embed Code (Advanced Overwrite)
-                  </label>
-                  <textarea name="embedCode" placeholder="Paste <iframe> code here for 100% precision..." className="input-field min-h-[100px] py-4 border-primary-100 focus:border-primary-500 font-mono text-[10px]" />
-                  <p className="text-[9px] text-gray-400 italic ml-1">Tip: Use this if the automatic location detection is off.</p>
                </div>
              </div>
           </div>
@@ -395,45 +311,19 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
              </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Google Maps Link
-                  </label>
-                  <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <Navigation className="w-3 h-3" /> Waze Link
-                  </label>
-                  <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
-               </div>
-
-               {analyzing && (
-                 <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-100 rounded-xl">
-                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                   <p className="text-[10px] font-bold text-blue-700 uppercase tracking-tight italic">
-                     Analyzing link coordinates...
-                   </p>
+               <div className="space-y-4 pt-4 border-t border-gray-100">
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                      <MapIcon className="w-3 h-3" /> Google Maps Embed Code
+                    </label>
+                    <textarea name="googleEmbed" defaultValue={editingVenue?.googleEmbed || ''} placeholder="Paste Google iframe code..." className="input-field min-h-[80px] py-3 border-blue-100 focus:border-blue-500 font-mono text-[10px]" />
                  </div>
-               )}
-
-               {extractedCoords && !analyzing && (
-                 <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
-                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                   <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">
-                     Auto-Detected: {extractedCoords.lat}, {extractedCoords.lng}
-                   </p>
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                      <Navigation className="w-3 h-3" /> Waze Embed Code
+                    </label>
+                    <textarea name="wazeEmbed" defaultValue={editingVenue?.wazeEmbed || ''} placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
                  </div>
-               )}
-
-               <input type="hidden" name="lat" defaultValue={editingVenue?.lat || ''} />
-               <input type="hidden" name="lng" defaultValue={editingVenue?.lng || ''} />
-
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-primary-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Custom Map Embed Code (Advanced Overwrite)
-                  </label>
-                  <textarea name="embedCode" defaultValue={editingVenue?.embedCode || ''} placeholder="Paste <iframe> code here for 100% precision..." className="input-field min-h-[100px] py-4 border-primary-100 focus:border-primary-500 font-mono text-[10px]" />
                </div>
              </div>
           </div>

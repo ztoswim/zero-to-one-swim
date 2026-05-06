@@ -59,6 +59,23 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Helper to extract lat/lng from Waze or Google Maps URLs
+  const autoFillCoordinates = (url: string, currentTarget: HTMLFormElement) => {
+    if (!url) return;
+    // Waze patterns: ll=1.5138,103.8240 or latlng=1.5138%2C103.8240
+    const wazeMatch = url.match(/ll=([\d.-]+)%2C([\d.-]+)/) || url.match(/ll=([\d.-]+),([\d.-]+)/) || url.match(/latlng=([\d.-]+)%2C([\d.-]+)/);
+    // Google Maps patterns: @1.5138,103.8240 or q=1.5138,103.8240
+    const googleMatch = url.match(/@([\d.-]+),([\d.-]+)/) || url.match(/q=([\d.-]+),([\d.-]+)/);
+    
+    const match = wazeMatch || googleMatch;
+    if (match) {
+      const latInput = currentTarget.querySelector('input[name="lat"]') as HTMLInputElement;
+      const lngInput = currentTarget.querySelector('input[name="lng"]') as HTMLInputElement;
+      if (latInput && !latInput.value) latInput.value = match[1];
+      if (lngInput && !lngInput.value) lngInput.value = match[2];
+    }
+  };
+
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -308,13 +325,13 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
                     <MapIcon className="w-3 h-3" /> Google Maps Link
                   </label>
-                  <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+                  <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
                <div className="space-y-2">
                   <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
                     <Navigation className="w-3 h-3" /> Waze Link
                   </label>
-                  <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
+                  <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
                <div className="grid grid-cols-2 gap-4">
@@ -345,13 +362,13 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
                     <MapIcon className="w-3 h-3" /> Google Maps Link
                   </label>
-                  <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+                  <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
                <div className="space-y-2">
                   <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
                     <Navigation className="w-3 h-3" /> Waze Link
                   </label>
-                  <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
+                  <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
                <div className="grid grid-cols-2 gap-4">

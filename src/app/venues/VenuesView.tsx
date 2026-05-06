@@ -179,11 +179,12 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                     {venue.googleEmbedCode && (
                       <button 
                         onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
-                        className="w-11 flex flex-col items-center justify-center bg-gray-100/50 hover:bg-blue-500 text-gray-400 hover:text-white transition-all active:scale-95 relative"
+                        className="w-12 flex flex-col items-center justify-center bg-gray-100/80 hover:bg-blue-500 text-gray-400 hover:text-white transition-all active:scale-95 relative"
                         title="Live Preview"
                       >
-                        <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-                        <MapIcon className="w-4 h-4" />
+                        <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                        <MapIcon className="w-3.5 h-3.5 mb-0.5" />
+                        <span className="text-[7px] font-black tracking-tighter leading-none">LIVE</span>
                       </button>
                     )}
                   </div>
@@ -206,11 +207,12 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                     {venue.wazeEmbedCode && (
                       <button 
                         onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
-                        className="w-11 flex flex-col items-center justify-center bg-gray-100/50 hover:bg-cyan-400 text-gray-400 hover:text-white transition-all active:scale-95 relative"
+                        className="w-12 flex flex-col items-center justify-center bg-gray-100/80 hover:bg-cyan-400 text-gray-400 hover:text-white transition-all active:scale-95 relative"
                         title="Live Preview"
                       >
-                        <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-                        <Navigation className="w-4 h-4" />
+                        <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                        <Navigation className="w-3.5 h-3.5 mb-0.5" />
+                        <span className="text-[7px] font-black tracking-tighter leading-none">LIVE</span>
                       </button>
                     )}
                   </div>

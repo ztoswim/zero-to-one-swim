@@ -507,15 +507,35 @@ function TravelTimeCalculator({ venues, routes, onWheel }: { venues: Venue[], ro
         <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">From</label><div className="relative"><select value={from} onChange={(e) => setFrom(e.target.value)} onWheel={onWheel} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm wheel-control"><option value="" className="text-gray-900">Starting Point</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
         <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">To</label><div className="relative"><select value={to} onChange={(e) => setTo(e.target.value)} onWheel={onWheel} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm wheel-control"><option value="" className="text-gray-900">Destination</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
       </div>
-      <div className="min-h-[100px] flex items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] p-8 bg-black/20">
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
         {matchedRoute ? (
-          <div className="flex items-center gap-10 animate-in zoom-in-95">
-            <div><div className="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Time</div><div className="text-4xl lg:text-5xl font-black text-white tracking-tighter">{matchedRoute.durationMinutes}<span className="text-xs ml-1 opacity-50">MINS</span></div></div>
-            {matchedRoute.distanceKm && (<><div className="w-px h-12 bg-white/10"></div><div><div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Dist</div><div className="text-2xl lg:text-3xl font-black text-white">{matchedRoute.distanceKm}<span className="text-xs ml-1 opacity-50">KM</span></div></div></>)}
+          <div className="bg-white rounded-[2.5rem] p-8 lg:p-10 shadow-2xl shadow-black/5 border border-white/10">
+            <div className="grid grid-cols-2 gap-4 mb-8 px-4 border-b border-gray-50 pb-4">
+               <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">Route Path</span>
+               <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Est. Time</span>
+            </div>
+            <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-4 overflow-hidden">
+                 <span className="text-gray-400 font-bold truncate max-w-[120px] lg:max-w-[200px]">{matchedRoute.fromVenue.name}</span>
+                 <Navigation className="w-4 h-4 text-primary-500 rotate-90 shrink-0" />
+                 <span className="text-gray-900 font-black truncate max-w-[120px] lg:max-w-[200px]">{matchedRoute.toVenue.name}</span>
+              </div>
+              <div className="flex items-center gap-2 px-6 py-3 bg-primary-50 text-primary-600 rounded-2xl font-black shadow-inner shrink-0">
+                <Clock className="w-4 h-4" />
+                <span className="text-lg">{matchedRoute.durationMinutes}m</span>
+              </div>
+            </div>
           </div>
         ) : (
-          <div className="text-center">
-            {(!from || !to) ? (<p className="text-gray-500 font-bold uppercase tracking-widest text-[9px]">Select routes</p>) : (<p className="text-primary-400 font-bold uppercase tracking-widest text-[9px]">No records</p>)}
+          <div className="min-h-[140px] flex items-center justify-center border-2 border-dashed border-white/10 rounded-[2.5rem] bg-black/10">
+            {(!from || !to) ? (
+              <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px]">Select starting point & destination</p>
+            ) : (
+              <div className="text-center px-6">
+                <p className="text-primary-400 font-black uppercase tracking-[0.2em] text-[10px] mb-2">No records found</p>
+                <p className="text-gray-500 text-[9px] font-medium uppercase tracking-widest">Please record this commute path</p>
+              </div>
+            )}
           </div>
         )}
       </div>

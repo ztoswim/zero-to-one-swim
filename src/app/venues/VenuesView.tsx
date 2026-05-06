@@ -164,10 +164,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             />
           </div>
           {isSuperAdmin && (
-            <button onClick={() => setIsVenueModalOpen(true)} className="w-12 h-12 lg:w-auto lg:h-14 lg:px-8 bg-primary-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-primary-200 flex items-center justify-center gap-2 font-black transition-transform active:scale-95">
-              <Plus className="w-6 h-6" />
-              <span className="hidden lg:inline">Add</span>
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => setIsRouteModalOpen(true)} className="h-12 lg:h-14 px-5 lg:px-8 bg-blue-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-blue-100 flex items-center justify-center gap-2 font-black transition-transform active:scale-95 text-sm lg:text-base">
+                <Clock className="w-5 h-5" />
+                <span className="hidden sm:inline">Add Record</span>
+              </button>
+              <button onClick={() => setIsVenueModalOpen(true)} className="w-12 h-12 lg:w-auto lg:h-14 lg:px-8 bg-primary-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-primary-200 flex items-center justify-center gap-2 font-black transition-transform active:scale-95">
+                <Plus className="w-6 h-6" />
+                <span className="hidden lg:inline">Add Venue</span>
+              </button>
+            </div>
           )}
         </div>
       </div>

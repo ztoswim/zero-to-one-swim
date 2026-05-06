@@ -334,16 +334,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Latitude (Lat)</label>
-                    <input name="lat" placeholder="e.g. 1.5138" className="input-field h-12" />
-                 </div>
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Longitude (Lng)</label>
-                    <input name="lng" placeholder="e.g. 103.8240" className="input-field h-12" />
-                 </div>
-               </div>
+               <input type="hidden" name="lat" />
+               <input type="hidden" name="lng" />
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE LOCATION'}</button>
@@ -371,16 +363,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Latitude (Lat)</label>
-                    <input name="lat" defaultValue={editingVenue?.lat || ''} placeholder="e.g. 1.5138" className="input-field h-12" />
-                 </div>
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Longitude (Lng)</label>
-                    <input name="lng" defaultValue={editingVenue?.lng || ''} placeholder="e.g. 103.8240" className="input-field h-12" />
-                 </div>
-               </div>
+               <input type="hidden" name="lat" defaultValue={editingVenue?.lat || ''} />
+               <input type="hidden" name="lng" defaultValue={editingVenue?.lng || ''} />
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'UPDATING...' : 'UPDATE LOCATION'}</button>

@@ -52,6 +52,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
+  const [routeFrom, setRouteFrom] = useState('');
+  const [routeTo, setRouteTo] = useState('');
 
   const isSuperAdmin = userRole === 'super_admin';
 
@@ -416,11 +418,45 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         </form>
       </Modal>
 
-      <Modal isOpen={isRouteModalOpen} onClose={() => setIsRouteModalOpen(false)} title="Add Commute Record" size="default">
+      <Modal isOpen={isRouteModalOpen} onClose={() => { setIsRouteModalOpen(false); setRouteFrom(''); setRouteTo(''); }} title="Add Commute Record" size="default">
         <form onSubmit={handleAddRoute} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">From</label><select name="fromVenueId" required onWheel={handleWheel} className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">To</label><select name="toVenueId" required onWheel={handleWheel} className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">From</label>
+              <select 
+                name="fromVenueId" 
+                required 
+                value={routeFrom}
+                onChange={(e) => setRouteFrom(e.target.value)}
+                onWheel={(e) => { handleWheel(e); setRouteFrom(e.currentTarget.value); }} 
+                className="input-field h-14"
+              >
+                <option value="">Select From</option>
+                {initialVenues.map(v => (
+                  <option key={v.id} value={v.id}>{v.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">To</label>
+              <select 
+                name="toVenueId" 
+                required 
+                value={routeTo}
+                onChange={(e) => setRouteTo(e.target.value)}
+                onWheel={(e) => { handleWheel(e); setRouteTo(e.currentTarget.value); }}
+                className="input-field h-14"
+              >
+                <option value="">Select To</option>
+                {initialVenues
+                  .filter(v => v.id !== routeFrom) // Don't allow same venue
+                  .filter(v => !routes.some(r => r.fromVenueId === routeFrom && r.toVenueId === v.id)) // Filter out existing routes
+                  .map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))
+                }
+              </select>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" onWheel={handleWheel} className="input-field h-14 font-black" /></div>

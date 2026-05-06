@@ -164,22 +164,23 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               </p>
             )}
             
-            {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
+            {/* NAVIGATION BUTTONS: Integrated Split-Button Design */}
             <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
                 {venue.googleMapsUrl ? (
-                  <div className="flex gap-1">
+                  <div className="flex h-12 rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden group/btn shadow-sm hover:shadow-md transition-all">
                     <a 
                       href={venue.googleMapsUrl} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="flex-1 h-12 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                      className="flex-1 flex items-center justify-center gap-2 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-colors font-black text-[9px] tracking-widest uppercase border-r border-gray-100"
                     >
                       <GoogleMapsLogo /> GOOGLE
                     </a>
                     {venue.googleEmbedCode && (
                       <button 
                         onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
-                        className="w-10 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-100 active:scale-95 transition-transform"
+                        className="w-11 flex items-center justify-center bg-white hover:bg-blue-500 text-gray-400 hover:text-white transition-all active:scale-95"
+                        title="Live Preview"
                       >
                         <MapIcon className="w-4 h-4" />
                       </button>
@@ -192,19 +193,20 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 )}
 
                 {venue.wazeUrl ? (
-                  <div className="flex gap-1">
+                  <div className="flex h-12 rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden group/btn shadow-sm hover:shadow-md transition-all">
                     <a 
                       href={venue.wazeUrl} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="flex-1 h-12 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                      className="flex-1 flex items-center justify-center gap-2 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-colors font-black text-[9px] tracking-widest uppercase border-r border-gray-100"
                     >
                       <WazeLogo /> WAZE
                     </a>
                     {venue.wazeEmbedCode && (
                       <button 
                         onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
-                        className="w-10 h-12 rounded-2xl bg-cyan-400 text-white flex items-center justify-center shadow-lg shadow-cyan-100 active:scale-95 transition-transform"
+                        className="w-11 flex items-center justify-center bg-white hover:bg-cyan-400 text-gray-400 hover:text-white transition-all active:scale-95"
+                        title="Live Preview"
                       >
                         <Navigation className="w-4 h-4" />
                       </button>

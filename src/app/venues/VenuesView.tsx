@@ -63,7 +63,11 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   );
 
   const handleWheel = (e: React.WheelEvent<HTMLSelectElement | HTMLInputElement>) => {
+    // Stop the event from bubbling up to the window/document
+    e.stopPropagation();
+    // Prevent the default browser scroll behavior
     e.preventDefault();
+    
     const target = e.currentTarget;
     const delta = e.deltaY > 0 ? 1 : -1;
     

@@ -56,7 +56,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const [routeFrom, setRouteFrom] = useState('');
   const [routeTo, setRouteTo] = useState('');
 
-  const isSuperAdmin = userRole === 'super_admin' || userRole === 'admin';
+  const isSuperAdmin = userRole === 'super_admin';
 
   const filteredVenues = initialVenues.filter(v => 
     v.name.toLowerCase().includes(search.toLowerCase())
@@ -164,16 +164,10 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             />
           </div>
           {isSuperAdmin && (
-            <div className="flex gap-2">
-              <button onClick={() => setIsRouteModalOpen(true)} className="h-12 lg:h-14 px-5 lg:px-8 bg-blue-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-blue-100 flex items-center justify-center gap-2 font-black transition-transform active:scale-95 text-sm lg:text-base">
-                <Clock className="w-5 h-5" />
-                <span className="hidden sm:inline">Add Record</span>
-              </button>
-              <button onClick={() => setIsVenueModalOpen(true)} className="w-12 h-12 lg:w-auto lg:h-14 lg:px-8 bg-primary-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-primary-200 flex items-center justify-center gap-2 font-black transition-transform active:scale-95">
-                <Plus className="w-6 h-6" />
-                <span className="hidden lg:inline">Add Venue</span>
-              </button>
-            </div>
+            <button onClick={() => setIsVenueModalOpen(true)} className="w-12 h-12 lg:w-auto lg:h-14 lg:px-8 bg-primary-500 text-white rounded-2xl lg:rounded-3xl shadow-xl shadow-primary-200 flex items-center justify-center gap-2 font-black transition-transform active:scale-95">
+              <Plus className="w-6 h-6" />
+              <span className="hidden lg:inline">Add</span>
+            </button>
           )}
         </div>
       </div>
@@ -226,11 +220,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                       Missing {missing.length} OUTGOING connections
                     </span>
                     
-                    {/* Tooltip on hover */}
-                    <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-900 text-white text-[8px] font-bold rounded-lg opacity-0 group-hover/audit:opacity-100 transition-all pointer-events-none z-20 shadow-xl">
-                      Required OUTGOING routes to:
-                      <div className="mt-1 text-primary-300">
-                        {missing.map(m => m.name).join(' • ')}
+                    {/* Tooltip on hover: Redesigned with arrow paths */}
+                    <div className="absolute bottom-full left-0 mb-3 w-64 p-4 bg-white border border-gray-100 text-gray-900 text-[10px] font-bold rounded-2xl opacity-0 group-hover/audit:opacity-100 transition-all pointer-events-none z-20 shadow-2xl shadow-amber-200/20">
+                      <div className="text-[9px] text-amber-600 uppercase tracking-widest mb-3 pb-2 border-b border-amber-50">Pending Outbound Routes</div>
+                      <div className="space-y-2.5">
+                        {missing.map(m => (
+                          <div key={m.id} className="flex items-center gap-3">
+                            <span className="text-gray-400 font-medium truncate max-w-[80px]">{venue.name}</span>
+                            <Navigation className="w-2.5 h-2.5 text-primary-500 rotate-90 shrink-0" />
+                            <span className="text-gray-900 font-black truncate flex-1">{m.name}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>

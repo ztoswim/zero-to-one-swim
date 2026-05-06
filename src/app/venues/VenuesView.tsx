@@ -273,9 +273,9 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         isOpen={!!previewEmbed} 
         onClose={() => setPreviewEmbed(null)} 
         title={previewEmbed?.title || 'Live Map'}
-        size="large"
+        size="xl"
       >
-        <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
+        <div className="w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
           <div 
             className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
             dangerouslySetInnerHTML={{ __html: previewEmbed?.code || '' }}

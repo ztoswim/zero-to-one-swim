@@ -308,7 +308,9 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
              Showing {trafficType === 'waze' ? 'real-time traffic' : 'venue location'}. You can interact with the map to explore.
            </p>
         </div>
-<Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
+      </Modal>
+
+      <Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
         <form onSubmit={handleAddVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">
               <div className="space-y-2">

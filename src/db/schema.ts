@@ -57,7 +57,6 @@ export const students = pgTable("students", {
 export const venues = pgTable("venues", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  address: text("address"),
   googleMapsUrl: text("google_maps_url"),
   wazeUrl: text("waze_url"),
   googleEmbedCode: text("google_embed_code"),

@@ -22,7 +22,6 @@ const WazeLogo = () => (
 interface Venue {
   id: string;
   name: string;
-  address: string | null;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
   googleEmbedCode: string | null;
@@ -196,11 +195,6 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
 
             <div className="flex-1">
               <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
-              {venue.address && (
-                <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <MapPin className="w-3 h-3 text-primary-500" /> {venue.address}
-                </p>
-              )}
               
               {/* DATA COMPLETENESS AUDIT: Uni-directional check */}
               {(() => {
@@ -386,29 +380,27 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
                 <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
              </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <MapIcon className="w-3 h-3" /> Google Maps Link
+                </label>
+                <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+             </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Navigation className="w-3 h-3" /> Waze Link
+                </label>
+                <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
+             </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Google Maps Link
-                  </label>
-                  <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <Navigation className="w-3 h-3" /> Waze Link
-                  </label>
-                  <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
-               </div>
-               <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
-                    <textarea name="googleEmbedCode" placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
-                    <textarea name="wazeEmbedCode" placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
-                  </div>
-               </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
+                  <textarea name="googleEmbedCode" placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
+                  <textarea name="wazeEmbedCode" placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
+                </div>
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE LOCATION'}</button>
@@ -422,29 +414,27 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
                 <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
              </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <MapIcon className="w-3 h-3" /> Google Maps Link
+                </label>
+                <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+             </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <Navigation className="w-3 h-3" /> Waze Link
+                </label>
+                <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
+             </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <MapIcon className="w-3 h-3" /> Google Maps Link
-                  </label>
-                  <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
-               </div>
-               <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                    <Navigation className="w-3 h-3" /> Waze Link
-                  </label>
-                  <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
-               </div>
-               <div className="grid grid-cols-1 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
-                    <textarea name="googleEmbedCode" defaultValue={editingVenue?.googleEmbedCode || ''} placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
-                    <textarea name="wazeEmbedCode" defaultValue={editingVenue?.wazeEmbedCode || ''} placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
-                  </div>
-               </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
+                  <textarea name="googleEmbedCode" defaultValue={editingVenue?.googleEmbedCode || ''} placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
+                  <textarea name="wazeEmbedCode" defaultValue={editingVenue?.wazeEmbedCode || ''} placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
+                </div>
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'UPDATING...' : 'UPDATE LOCATION'}</button>

@@ -7,7 +7,6 @@ import { revalidatePath } from "next/cache";
 
 export async function addVenueAction(formData: FormData) {
   const name = formData.get('name') as string;
-  const address = formData.get('address') as string;
   
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
@@ -19,7 +18,6 @@ export async function addVenueAction(formData: FormData) {
   try {
     await db.insert(venues).values({
       name,
-      address,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
       googleEmbedCode: googleEmbedCode || null,

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Container } from '@/components/Container';
 import { MapPin, Plus, Trash2, Search, Map as MapIcon, Clock, Navigation, ExternalLink, ShieldCheck, Pencil, AlertTriangle } from 'lucide-react';
 import { Modal } from '@/components/Modal';
@@ -63,11 +63,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   );
 
   const handleWheel = (e: React.WheelEvent<HTMLSelectElement | HTMLInputElement>) => {
-    // Stop the event from bubbling up to the window/document
-    e.stopPropagation();
-    // Prevent the default browser scroll behavior
-    e.preventDefault();
-    
+    // Logic remains for value switching
     const target = e.currentTarget;
     const delta = e.deltaY > 0 ? 1 : -1;
     
@@ -75,7 +71,6 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       const newIndex = Math.max(0, Math.min(target.options.length - 1, target.selectedIndex + delta));
       if (newIndex !== target.selectedIndex) {
         target.selectedIndex = newIndex;
-        // Trigger a synthetic change event if needed for state-bound selects
         const event = new Event('change', { bubbles: true });
         target.dispatchEvent(event);
       }
@@ -88,6 +83,19 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       target.dispatchEvent(event);
     }
   };
+
+  // NATIVE SCROLL PREVENTION: Force non-passive behavior
+  useEffect(() => {
+    const handleNativeWheel = (e: WheelEvent) => {
+      // If pointing at a wheel-control element, kill the page scroll
+      if ((e.target as HTMLElement).closest('.wheel-control')) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('wheel', handleNativeWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleNativeWheel);
+  }, []);
 
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -429,7 +437,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 value={routeFrom}
                 onChange={(e) => setRouteFrom(e.target.value)}
                 onWheel={(e) => { handleWheel(e); setRouteFrom(e.currentTarget.value); }} 
-                className="input-field h-14"
+                className="input-field h-14 wheel-control"
               >
                 <option value="">Select From</option>
                 {initialVenues
@@ -452,7 +460,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 value={routeTo}
                 onChange={(e) => setRouteTo(e.target.value)}
                 onWheel={(e) => { handleWheel(e); setRouteTo(e.currentTarget.value); }}
-                className="input-field h-14"
+                className="input-field h-14 wheel-control"
               >
                 <option value="">Select To</option>
                 {initialVenues
@@ -466,8 +474,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" onWheel={handleWheel} className="input-field h-14 font-black" /></div>
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Distance (km)</label><input name="distance" type="number" step="0.1" onWheel={handleWheel} className="input-field h-14 font-black" /></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" onWheel={handleWheel} className="input-field h-14 font-black wheel-control" /></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Distance (km)</label><input name="distance" type="number" step="0.1" onWheel={handleWheel} className="input-field h-14 font-black wheel-control" /></div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE ROUTE'}</button>
         </form>

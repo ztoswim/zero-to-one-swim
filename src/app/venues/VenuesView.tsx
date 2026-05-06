@@ -67,10 +67,6 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filteredVenues = initialVenues.filter(v => 
-    v.name.toLowerCase().includes(search.toLowerCase())
-  );
-
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);

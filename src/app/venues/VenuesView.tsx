@@ -60,19 +60,28 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   );
 
   // Helper to extract lat/lng from Waze or Google Maps URLs
+  const [extractedCoords, setExtractedCoords] = useState<{lat: string, lng: string} | null>(null);
+
   const autoFillCoordinates = (url: string, currentTarget: HTMLFormElement) => {
-    if (!url) return;
-    // Waze patterns: ll=1.5138,103.8240 or latlng=1.5138%2C103.8240
+    if (!url) {
+      setExtractedCoords(null);
+      return;
+    }
+    
+    // Priority 1: Destination-specific patterns (q= for Google, ll= for Waze)
+    // Priority 2: Map center patterns (@ for Google)
+    const googleMatch = url.match(/q=([\d.-]+)%2C([\d.-]+)/) || url.match(/q=([\d.-]+),([\d.-]+)/) || url.match(/@([\d.-]+),([\d.-]+)/);
     const wazeMatch = url.match(/ll=([\d.-]+)%2C([\d.-]+)/) || url.match(/ll=([\d.-]+),([\d.-]+)/) || url.match(/latlng=([\d.-]+)%2C([\d.-]+)/);
-    // Google Maps patterns: @1.5138,103.8240 or q=1.5138,103.8240
-    const googleMatch = url.match(/@([\d.-]+),([\d.-]+)/) || url.match(/q=([\d.-]+),([\d.-]+)/);
     
     const match = wazeMatch || googleMatch;
     if (match) {
+      const lat = match[1];
+      const lng = match[2];
       const latInput = currentTarget.querySelector('input[name="lat"]') as HTMLInputElement;
       const lngInput = currentTarget.querySelector('input[name="lng"]') as HTMLInputElement;
-      if (latInput && !latInput.value) latInput.value = match[1];
-      if (lngInput && !lngInput.value) lngInput.value = match[2];
+      if (latInput) latInput.value = lat;
+      if (lngInput) lngInput.value = lng;
+      setExtractedCoords({ lat, lng });
     }
   };
 
@@ -334,6 +343,15 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
 
+               {extractedCoords && (
+                 <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                   <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">
+                     Auto-Detected: {extractedCoords.lat}, {extractedCoords.lng}
+                   </p>
+                 </div>
+               )}
+
                <input type="hidden" name="lat" />
                <input type="hidden" name="lng" />
              </div>
@@ -362,6 +380,15 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   </label>
                   <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" onChange={(e) => autoFillCoordinates(e.target.value, e.currentTarget.form!)} />
                </div>
+
+               {extractedCoords && (
+                 <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                   <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-tight">
+                     Auto-Detected: {extractedCoords.lat}, {extractedCoords.lng}
+                   </p>
+                 </div>
+               )}
 
                <input type="hidden" name="lat" defaultValue={editingVenue?.lat || ''} />
                <input type="hidden" name="lng" defaultValue={editingVenue?.lng || ''} />

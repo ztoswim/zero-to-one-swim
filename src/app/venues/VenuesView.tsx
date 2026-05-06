@@ -183,10 +183,39 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             <div className="flex-1">
               <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
               {venue.address && (
-                <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-primary-500" /> {venue.address}
                 </p>
               )}
+              
+              {/* DATA COMPLETENESS AUDIT */}
+              {(() => {
+                const missing = initialVenues
+                  .filter(v => v.id !== venue.id)
+                  .filter(v => !routes.some(r => 
+                    (r.fromVenueId === venue.id && r.toVenueId === v.id) || 
+                    (r.fromVenueId === v.id && r.toVenueId === venue.id)
+                  ));
+                
+                if (missing.length === 0) return null;
+                
+                return (
+                  <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-100 rounded-xl mb-6 group/audit cursor-help relative" title={`Missing routes to: ${missing.map(m => m.name).join(', ')}`}>
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-[9px] font-black text-amber-600 uppercase tracking-widest">
+                      Missing {missing.length} connections
+                    </span>
+                    
+                    {/* Tooltip on hover */}
+                    <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-900 text-white text-[8px] font-bold rounded-lg opacity-0 group-hover/audit:opacity-100 transition-all pointer-events-none z-20 shadow-xl">
+                      Required routes to:
+                      <div className="mt-1 text-primary-300">
+                        {missing.map(m => m.name).join(' • ')}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
             
             {/* NAVIGATION BUTTONS: Fused Pill Design */}

@@ -24,6 +24,8 @@ interface Venue {
   name: string;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
+  lat: string | null;
+  lng: string | null;
 }
 
 interface Route {
@@ -260,7 +262,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         size="large"
       >
         <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
-          {trafficVenue?.wazeUrl ? (
+          {trafficVenue?.lat && trafficVenue?.lng ? (
+            <div className="absolute -top-[80px] -bottom-[60px] left-0 right-0">
+               <iframe
+                src={`https://embed.waze.com/iframe?zoom=16&lat=${trafficVenue.lat}&lon=${trafficVenue.lng}&ct=livemap&pin=1`}
+                width="100%"
+                height="calc(100% + 140px)"
+                allowFullScreen
+                className="w-full h-full border-none"
+              />
+            </div>
+          ) : trafficVenue?.wazeUrl ? (
             <div className="absolute -top-[80px] -bottom-[60px] left-0 right-0">
                <iframe
                 src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
@@ -272,7 +284,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             </div>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-400 font-bold uppercase tracking-widest text-xs">
-              No Waze Link Provided
+              No Location Data Available
             </div>
           )}
         </div>
@@ -304,6 +316,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   </label>
                   <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
                </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Latitude (Lat)</label>
+                    <input name="lat" placeholder="e.g. 1.5138" className="input-field h-12" />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Longitude (Lng)</label>
+                    <input name="lng" placeholder="e.g. 103.8240" className="input-field h-12" />
+                 </div>
+               </div>
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE LOCATION'}</button>
@@ -329,6 +352,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                     <Navigation className="w-3 h-3" /> Waze Link
                   </label>
                   <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Latitude (Lat)</label>
+                    <input name="lat" defaultValue={editingVenue?.lat || ''} placeholder="e.g. 1.5138" className="input-field h-12" />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Longitude (Lng)</label>
+                    <input name="lng" defaultValue={editingVenue?.lng || ''} placeholder="e.g. 103.8240" className="input-field h-12" />
+                 </div>
                </div>
              </div>
           </div>

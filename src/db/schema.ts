@@ -64,6 +64,8 @@ export const venues = pgTable("venues", {
   lng: decimal("lng", { precision: 10, scale: 7 }),
   googleMapsUrl: text("google_maps_url"),
   wazeUrl: text("waze_url"),
+  googleEmbedCode: text("google_embed_code"),
+  wazeEmbedCode: text("waze_embed_code"),
   contactPerson: text("contact_person"),
   contactPhone: text("contact_phone"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),

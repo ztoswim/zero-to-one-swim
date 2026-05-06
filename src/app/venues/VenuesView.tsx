@@ -22,6 +22,7 @@ const WazeLogo = () => (
 interface Venue {
   id: string;
   name: string;
+  address: string | null;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
   googleEmbedCode: string | null;
@@ -326,12 +327,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       </div>
 
       {/* MODALS */}
-      <Modal 
-        isOpen={!!previewEmbed} 
-        onClose={() => setPreviewEmbed(null)} 
-        title={previewEmbed?.title || 'Live Map'}
-        size="xl"
-      >
+      <Modal isOpen={!!previewEmbed} onClose={() => setPreviewEmbed(null)} title={previewEmbed?.title || 'Map Preview'} size="wide">
         <div className="w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
           <div 
             className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"

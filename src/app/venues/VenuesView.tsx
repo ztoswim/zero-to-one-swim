@@ -59,6 +59,29 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleWheel = (e: React.WheelEvent<HTMLSelectElement | HTMLInputElement>) => {
+    e.preventDefault();
+    const target = e.currentTarget;
+    const delta = e.deltaY > 0 ? 1 : -1;
+    
+    if (target instanceof HTMLSelectElement) {
+      const newIndex = Math.max(0, Math.min(target.options.length - 1, target.selectedIndex + delta));
+      if (newIndex !== target.selectedIndex) {
+        target.selectedIndex = newIndex;
+        // Trigger a synthetic change event if needed for state-bound selects
+        const event = new Event('change', { bubbles: true });
+        target.dispatchEvent(event);
+      }
+    } else if (target instanceof HTMLInputElement && target.type === 'number') {
+      const step = parseFloat(target.step) || 1;
+      const currentVal = parseFloat(target.value) || 0;
+      const newVal = currentVal - (delta * step);
+      target.value = newVal.toString();
+      const event = new Event('input', { bubbles: true });
+      target.dispatchEvent(event);
+    }
+  };
+
   async function handleAddVenue(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -267,7 +290,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
           <div className="relative z-10">
             <h2 className="text-3xl lg:text-5xl font-black mb-3 tracking-tighter">Route <span className="text-primary-500">Estimator</span></h2>
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mb-12">Lookup travel time from records</p>
-            <TravelTimeCalculator venues={initialVenues} routes={routes} />
+            <TravelTimeCalculator venues={initialVenues} routes={routes} onWheel={handleWheel} />
           </div>
         </div>
       </div>
@@ -368,12 +391,12 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       <Modal isOpen={isRouteModalOpen} onClose={() => setIsRouteModalOpen(false)} title="Add Commute Record" size="default">
         <form onSubmit={handleAddRoute} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">From</label><select name="fromVenueId" required className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">To</label><select name="toVenueId" required className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">From</label><select name="fromVenueId" required onWheel={handleWheel} className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">To</label><select name="toVenueId" required onWheel={handleWheel} className="input-field h-14">{initialVenues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" className="input-field h-14 font-black" /></div>
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Distance (km)</label><input name="distance" type="number" step="0.1" className="input-field h-14 font-black" /></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" onWheel={handleWheel} className="input-field h-14 font-black" /></div>
+            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Distance (km)</label><input name="distance" type="number" step="0.1" onWheel={handleWheel} className="input-field h-14 font-black" /></div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE ROUTE'}</button>
         </form>
@@ -382,7 +405,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   );
 }
 
-function TravelTimeCalculator({ venues, routes }: { venues: Venue[], routes: Route[] }) {
+function TravelTimeCalculator({ venues, routes, onWheel }: { venues: Venue[], routes: Route[], onWheel: (e: React.WheelEvent<HTMLSelectElement | HTMLInputElement>) => void }) {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
 
@@ -394,21 +417,11 @@ function TravelTimeCalculator({ venues, routes }: { venues: Venue[], routes: Rou
     );
   }, [from, to, routes]);
 
-  const handleSelectWheel = (e: React.WheelEvent<HTMLSelectElement>, onChange: (val: string) => void) => {
-    e.preventDefault();
-    const select = e.currentTarget;
-    const delta = e.deltaY > 0 ? 1 : -1;
-    const newIndex = Math.max(0, Math.min(select.options.length - 1, select.selectedIndex + delta));
-    if (newIndex !== select.selectedIndex) {
-      onChange(select.options[newIndex].value);
-    }
-  };
-
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">From</label><div className="relative"><select value={from} onChange={(e) => setFrom(e.target.value)} onWheel={(e) => handleSelectWheel(e, setFrom)} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm"><option value="" className="text-gray-900">Starting Point</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
-        <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">To</label><div className="relative"><select value={to} onChange={(e) => setTo(e.target.value)} onWheel={(e) => handleSelectWheel(e, setTo)} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm"><option value="" className="text-gray-900">Destination</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
+        <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">From</label><div className="relative"><select value={from} onChange={(e) => setFrom(e.target.value)} onWheel={onWheel} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm"><option value="" className="text-gray-900">Starting Point</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
+        <div className="space-y-3"><label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1">To</label><div className="relative"><select value={to} onChange={(e) => setTo(e.target.value)} onWheel={onWheel} className="w-full px-6 py-4 bg-white/5 border-2 border-white/10 rounded-2xl font-black text-white outline-none focus:border-primary-500 transition-all appearance-none text-sm"><option value="" className="text-gray-900">Destination</option>{venues.map(v => <option key={v.id} value={v.id} className="text-gray-900">{v.name}</option>)}</select><div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/30 text-[10px]">▼</div></div></div>
       </div>
       <div className="min-h-[100px] flex items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] p-8 bg-black/20">
         {matchedRoute ? (

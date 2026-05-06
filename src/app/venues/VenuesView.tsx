@@ -165,7 +165,14 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               )}
             </div>
 
-            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-6 tracking-tight group-hover:text-primary-600 transition-colors flex-1">{venue.name}</h3>
+            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
+            {venue.address && (
+              <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                <MapPin className="w-3 h-3 text-primary-400" /> {venue.address}
+              </p>
+            )}
+            
+            <div className="flex-1" />
             
             {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
             <div className="space-y-3 pt-6 border-t border-gray-50">
@@ -186,6 +193,38 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                   <MapIcon className="w-4 h-4" /> View Map
                 </button>
               )}
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                {venue.googleMapsUrl ? (
+                  <a 
+                    href={venue.googleMapsUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="h-10 rounded-xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[8px] tracking-widest uppercase"
+                  >
+                    <GoogleMapsLogo /> GOOGLE
+                  </a>
+                ) : (
+                  <div className="h-10 rounded-xl bg-gray-50 text-gray-200 flex items-center justify-center gap-2 border border-gray-50 font-black text-[8px] uppercase tracking-widest cursor-not-allowed">
+                    NO LINK
+                  </div>
+                )}
+
+                {venue.wazeUrl ? (
+                  <a 
+                    href={venue.wazeUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="h-10 rounded-xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[8px] tracking-widest uppercase"
+                  >
+                    <WazeLogo /> WAZE
+                  </a>
+                ) : (
+                  <div className="h-10 rounded-xl bg-gray-50 text-gray-200 flex items-center justify-center gap-2 border border-gray-50 font-black text-[8px] uppercase tracking-widest cursor-not-allowed">
+                    NO LINK
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -269,15 +308,17 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
              Showing {trafficType === 'waze' ? 'real-time traffic' : 'venue location'}. You can interact with the map to explore.
            </p>
         </div>
-      </Modal>
-
-      <Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
+<Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
         <form onSubmit={handleAddVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">
-             <div className="space-y-2">
-                <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
-                <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
-             </div>
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
+                 <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Address</label>
+                 <input name="address" placeholder="Full address..." className="input-field h-14" />
+              </div>
              <div className="grid grid-cols-1 gap-4">
                <div className="space-y-4 pt-4 border-t border-gray-100">
                  <div className="space-y-2">
@@ -292,6 +333,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                     </label>
                     <textarea name="wazeEmbed" placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
                  </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Google Maps URL</label>
+                      <input name="googleMapsUrl" placeholder="https://maps.google.com..." className="input-field h-12" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Waze URL</label>
+                      <input name="wazeUrl" placeholder="https://waze.com/ul..." className="input-field h-12" />
+                    </div>
+                 </div>
                </div>
              </div>
           </div>
@@ -302,10 +353,14 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       <Modal isOpen={!!editingVenue} onClose={() => setEditingVenue(null)} title="Edit Swim Venue" size="default">
         <form onSubmit={handleUpdateVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">
-             <div className="space-y-2">
-                <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
-                <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
-             </div>
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
+                 <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
+              </div>
+              <div className="space-y-2">
+                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Address</label>
+                 <input name="address" defaultValue={editingVenue?.address || ''} placeholder="Full address..." className="input-field h-14" />
+              </div>
              <div className="grid grid-cols-1 gap-4">
                <div className="space-y-4 pt-4 border-t border-gray-100">
                  <div className="space-y-2">
@@ -319,6 +374,16 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                       <Navigation className="w-3 h-3" /> Waze Embed Code
                     </label>
                     <textarea name="wazeEmbed" defaultValue={editingVenue?.wazeEmbed || ''} placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Google Maps URL</label>
+                      <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="https://maps.google.com..." className="input-field h-12" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Waze URL</label>
+                      <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="https://waze.com/ul..." className="input-field h-12" />
+                    </div>
                  </div>
                </div>
              </div>

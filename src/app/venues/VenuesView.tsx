@@ -499,9 +499,8 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Duration (mins)</label><input name="duration" type="number" required step="5" onWheel={handleWheel} className="input-field h-14 font-black wheel-control" /></div>
-            <div className="space-y-2"><label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Distance (km)</label><input name="distance" type="number" step="0.1" onWheel={handleWheel} className="input-field h-14 font-black wheel-control" /></div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE ROUTE'}</button>
         </form>
@@ -529,9 +528,14 @@ function TravelTimeCalculator({ venues, routes, onWheel }: { venues: Venue[], ro
       </div>
       <div className="min-h-[100px] flex items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] p-8 bg-black/20">
         {matchedRoute ? (
-          <div className="flex items-center gap-10 animate-in zoom-in-95">
-            <div><div className="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Time</div><div className="text-4xl lg:text-5xl font-black text-white tracking-tighter">{matchedRoute.durationMinutes}<span className="text-xs ml-1 opacity-50">MINS</span></div></div>
-            {matchedRoute.distanceKm && (<><div className="w-px h-12 bg-white/10"></div><div><div className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Dist</div><div className="text-2xl lg:text-3xl font-black text-white">{matchedRoute.distanceKm}<span className="text-xs ml-1 opacity-50">KM</span></div></div></>)}
+          <div className="animate-in zoom-in-95">
+            <div className="text-center">
+              <div className="text-[10px] font-black text-primary-500 uppercase tracking-widest mb-1">Estimated Travel Time</div>
+              <div className="text-5xl lg:text-7xl font-black text-white tracking-tighter italic">
+                {matchedRoute.durationMinutes}
+                <span className="text-sm lg:text-base ml-2 opacity-50 not-italic">MINUTES</span>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="text-center">

@@ -179,11 +179,10 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                       {venue.googleEmbedCode && (
                         <button 
                           onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
-                          className="w-10 h-10 rounded-full bg-blue-500 text-white flex flex-col items-center justify-center shadow-lg shadow-blue-200 active:scale-90 transition-all group/live cursor-pointer"
+                          className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-200 active:scale-90 transition-all group/live cursor-pointer"
                           title="Live Preview"
                         >
-                          <MapIcon className="w-3.5 h-3.5 group-hover/live:scale-110 transition-transform" />
-                          <span className="text-[5px] font-black leading-none mt-0.5">LIVE</span>
+                          <MapIcon className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
                         </button>
                       )}
                     </div>
@@ -206,11 +205,10 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                       {venue.wazeEmbedCode && (
                         <button 
                           onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
-                          className="w-10 h-10 rounded-full bg-cyan-400 text-white flex flex-col items-center justify-center shadow-lg shadow-cyan-200 active:scale-90 transition-all group/live cursor-pointer"
+                          className="w-10 h-10 rounded-full bg-cyan-400 text-white flex items-center justify-center shadow-lg shadow-cyan-200 active:scale-90 transition-all group/live cursor-pointer"
                           title="Live Preview"
                         >
-                          <Navigation className="w-3.5 h-3.5 group-hover/live:scale-110 transition-transform" />
-                          <span className="text-[5px] font-black leading-none mt-0.5">LIVE</span>
+                          <Navigation className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
                         </button>
                       )}
                     </div>

@@ -13,6 +13,7 @@ export async function addVenueAction(formData: FormData) {
   
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
+  const embedCode = formData.get('embedCode') as string;
   const lat = formData.get('lat') as string;
   const lng = formData.get('lng') as string;
 
@@ -24,6 +25,7 @@ export async function addVenueAction(formData: FormData) {
       address,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
+      embedCode: embedCode || null,
       lat: lat || null,
       lng: lng || null,
     });
@@ -50,6 +52,7 @@ export async function updateVenueAction(id: string, formData: FormData) {
   const name = formData.get('name') as string;
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
+  const embedCode = formData.get('embedCode') as string;
   const lat = formData.get('lat') as string;
   const lng = formData.get('lng') as string;
 
@@ -60,6 +63,7 @@ export async function updateVenueAction(id: string, formData: FormData) {
       name,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
+      embedCode: embedCode || null,
       lat: lat || null,
       lng: lng || null,
     }).where(eq(venues.id, id));

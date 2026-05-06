@@ -31,6 +31,7 @@ interface Venue {
   name: string;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
+  embedCode: string | null;
   lat: string | null;
   lng: string | null;
 }
@@ -292,7 +293,12 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
         size="large"
       >
         <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
-          {trafficVenue?.lat && trafficVenue?.lng ? (
+          {trafficVenue?.embedCode ? (
+            <div 
+              className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
+              dangerouslySetInnerHTML={{ __html: trafficVenue.embedCode }}
+            />
+          ) : trafficVenue?.lat && trafficVenue?.lng ? (
             <div className="absolute -top-[80px] -bottom-[60px] left-0 right-0">
                <iframe
                 src={`https://embed.waze.com/iframe?zoom=16&lat=${trafficVenue.lat}&lon=${trafficVenue.lng}&ct=livemap&pin=1`}
@@ -367,6 +373,14 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
 
                <input type="hidden" name="lat" />
                <input type="hidden" name="lng" />
+
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-primary-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3 h-3" /> Custom Map Embed Code (Advanced Overwrite)
+                  </label>
+                  <textarea name="embedCode" placeholder="Paste <iframe> code here for 100% precision..." className="input-field min-h-[100px] py-4 border-primary-100 focus:border-primary-500 font-mono text-[10px]" />
+                  <p className="text-[9px] text-gray-400 italic ml-1">Tip: Use this if the automatic location detection is off.</p>
+               </div>
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'SAVING...' : 'SAVE LOCATION'}</button>
@@ -414,6 +428,13 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
 
                <input type="hidden" name="lat" defaultValue={editingVenue?.lat || ''} />
                <input type="hidden" name="lng" defaultValue={editingVenue?.lng || ''} />
+
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-primary-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3 h-3" /> Custom Map Embed Code (Advanced Overwrite)
+                  </label>
+                  <textarea name="embedCode" defaultValue={editingVenue?.embedCode || ''} placeholder="Paste <iframe> code here for 100% precision..." className="input-field min-h-[100px] py-4 border-primary-100 focus:border-primary-500 font-mono text-[10px]" />
+               </div>
              </div>
           </div>
           <button type="submit" disabled={loading} className="btn btn-primary w-full py-5 text-xl font-black shadow-xl shadow-primary-200 mt-4 rounded-3xl">{loading ? 'UPDATING...' : 'UPDATE LOCATION'}</button>

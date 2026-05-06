@@ -314,37 +314,37 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 )}
                 {routes.map(route => (
                   <tr key={route.id} className="group hover:bg-slate-50/50 transition-all border-b border-gray-100/50 last:border-0 relative">
-                    <td className="px-8 py-9">
-                      <div className="flex items-center gap-6">
-                        {/* FROM VENUE */}
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full border-2 border-gray-300 shrink-0" />
-                          <span className="text-gray-400 font-bold text-sm tracking-tight truncate max-w-[150px]">{route.fromVenue?.name}</span>
+                    <td className="px-8 py-8">
+                      <div className="flex items-start gap-6">
+                        {/* THE VERTICAL PATH VISUAL */}
+                        <div className="flex flex-col items-center py-1 shrink-0">
+                          <div className="w-2.5 h-2.5 rounded-full border-2 border-gray-300 bg-white" />
+                          <div className="w-px flex-1 border-l-2 border-dashed border-gray-200 my-1 min-h-[20px]" />
+                          <MapPin className="w-3.5 h-3.5 text-primary-500" />
                         </div>
                         
-                        {/* DIRECTIONAL CONNECTOR */}
-                        <div className="flex items-center gap-3 flex-1 min-w-[80px]">
-                          <div className="flex-1 h-[1px] border-t-2 border-dashed border-gray-100" />
-                          <Navigation className="w-3.5 h-3.5 text-primary-500 rotate-90 shrink-0" />
-                          <div className="flex-1 h-[1px] border-t-2 border-dashed border-gray-100" />
-                        </div>
-
-                        {/* TO VENUE */}
-                        <div className="flex items-center gap-3">
-                          <MapPin className="w-4 h-4 text-primary-500 shrink-0" />
-                          <span className="text-gray-900 font-black text-sm lg:text-[17px] tracking-tight truncate max-w-[200px]">{route.toVenue?.name}</span>
+                        {/* THE EXPLICIT TEXT LABELS */}
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center gap-3">
+                            <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest w-8">From</span>
+                            <span className="text-gray-500 font-bold text-sm truncate max-w-[250px]">{route.fromVenue?.name}</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[8px] font-black text-primary-500 uppercase tracking-widest w-8">To</span>
+                            <span className="text-gray-900 font-black text-base lg:text-lg tracking-tighter truncate max-w-[300px]">{route.toVenue?.name}</span>
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-9">
-                      <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-primary-500 text-white rounded-2xl font-black text-xs lg:text-sm shadow-lg shadow-primary-200">
-                        <Clock className="w-3.5 h-3.5" />
+                    <td className="px-8 py-8 align-middle">
+                      <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-gray-900 text-white rounded-2xl font-black text-xs lg:text-base shadow-xl shadow-gray-200">
+                        <Clock className="w-4 h-4 text-primary-500" />
                         {route.durationMinutes}m
                       </div>
                     </td>
-                    <td className="px-8 py-9 text-right">
+                    <td className="px-8 py-8 text-right align-middle">
                       {isSuperAdmin && (
-                        <button onClick={() => { if(confirm('Delete record?')) deleteRouteAction(route.id).then(() => router.refresh()) }} className="w-11 h-11 rounded-2xl text-gray-200 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center ml-auto opacity-0 group-hover:opacity-100 shadow-sm border border-gray-50"><Trash2 className="w-4.5 h-4.5" /></button>
+                        <button onClick={() => { if(confirm('Delete record?')) deleteRouteAction(route.id).then(() => router.refresh()) }} className="w-12 h-12 rounded-2xl text-gray-200 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center ml-auto opacity-0 group-hover:opacity-100 shadow-sm border border-gray-50"><Trash2 className="w-5 h-5" /></button>
                       )}
                     </td>
                   </tr>

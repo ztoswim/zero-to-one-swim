@@ -13,8 +13,6 @@ export async function addVenueAction(formData: FormData) {
   
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
-  const googleEmbed = formData.get('googleEmbed') as string;
-  const wazeEmbed = formData.get('wazeEmbed') as string;
 
   if (!name) return { error: "Name is required" };
 
@@ -24,8 +22,6 @@ export async function addVenueAction(formData: FormData) {
       address,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
-      googleEmbed: googleEmbed || null,
-      wazeEmbed: wazeEmbed || null,
     });
     revalidatePath('/venues');
     return { success: true };
@@ -50,8 +46,6 @@ export async function updateVenueAction(id: string, formData: FormData) {
   const name = formData.get('name') as string;
   const googleMapsUrl = formData.get('googleMapsUrl') as string;
   const wazeUrl = formData.get('wazeUrl') as string;
-  const googleEmbed = formData.get('googleEmbed') as string;
-  const wazeEmbed = formData.get('wazeEmbed') as string;
 
   if (!name) return { error: "Name is required" };
 
@@ -60,8 +54,6 @@ export async function updateVenueAction(id: string, formData: FormData) {
       name,
       googleMapsUrl: googleMapsUrl || null,
       wazeUrl: wazeUrl || null,
-      googleEmbed: googleEmbed || null,
-      wazeEmbed: wazeEmbed || null,
     }).where(eq(venues.id, id));
     
     revalidatePath('/venues');
@@ -104,42 +96,5 @@ export async function deleteRouteAction(id: string) {
   } catch (e) {
     console.error(e);
     return { error: "Failed to delete route" };
-  }
-}
-
-export async function resolveVenueCoordinatesAction(url: string) {
-  if (!url) return { error: "URL is required" };
-
-  try {
-    // Follow redirects to get the final URL
-    const response = await fetch(url, { 
-      method: 'GET',
-      redirect: 'follow',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
-    
-    const finalUrl = response.url;
-    
-    // Regex for various patterns
-    const googleMatch = finalUrl.match(/@([\d.-]+),([\d.-]+)/) || finalUrl.match(/q=([\d.-]+),([\d.-]+)/);
-    const wazeMatch = finalUrl.match(/ll=([\d.-]+)%2C([\d.-]+)/) || finalUrl.match(/ll=([\d.-]+),([\d.-]+)/) || finalUrl.match(/latlng=([\d.-]+)%2C([\d.-]+)/);
-    
-    const match = wazeMatch || googleMatch;
-    
-    if (match) {
-      return { 
-        success: true, 
-        lat: match[1], 
-        lng: match[2],
-        resolvedUrl: finalUrl 
-      };
-    }
-
-    return { error: "Could not extract coordinates from the resolved link" };
-  } catch (error) {
-    console.error("Link resolution error:", error);
-    return { error: "Failed to resolve link" };
   }
 }

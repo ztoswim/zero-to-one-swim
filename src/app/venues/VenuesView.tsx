@@ -4,14 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Container } from '@/components/Container';
 import { MapPin, Plus, Trash2, Search, Map as MapIcon, Clock, Navigation, ExternalLink, ShieldCheck, Pencil } from 'lucide-react';
 import { Modal } from '@/components/Modal';
-import { 
-  addVenueAction, 
-  updateVenueAction, 
-  addRouteAction, 
-  deleteVenueAction, 
-  deleteRouteAction,
-  resolveVenueCoordinatesAction 
-} from '@/app/venues/actions';
+import { addVenueAction, deleteVenueAction, updateVenueAction, addRouteAction, deleteRouteAction } from '@/app/venues/actions';
 import { useRouter } from 'next/navigation';
 
 // Custom icons for Google Maps and Waze
@@ -31,8 +24,6 @@ interface Venue {
   name: string;
   googleMapsUrl: string | null;
   wazeUrl: string | null;
-  googleEmbed: string | null;
-  wazeEmbed: string | null;
 }
 
 interface Route {
@@ -55,8 +46,6 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const router = useRouter();
   const [isVenueModalOpen, setIsVenueModalOpen] = useState(false);
   const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
-  const [trafficVenue, setTrafficVenue] = useState<Venue | null>(null);
-  const [trafficType, setTrafficType] = useState<'waze' | 'google' | null>(null);
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -165,47 +154,21 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               )}
             </div>
 
-            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
-            {venue.address && (
-              <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <MapPin className="w-3 h-3 text-primary-400" /> {venue.address}
-              </p>
-            )}
-            
-            <div className="flex-1" />
+            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-6 tracking-tight group-hover:text-primary-600 transition-colors flex-1">{venue.name}</h3>
             
             {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
-            <div className="space-y-3 pt-6 border-t border-gray-50">
-              {venue.wazeEmbed && (
-                <button 
-                  onClick={() => { setTrafficVenue(venue); setTrafficType('waze'); }}
-                  className="w-full h-12 rounded-2xl bg-cyan-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-cyan-100 hover:bg-cyan-600 active:scale-95"
-                >
-                  <Navigation className="w-4 h-4" /> View Live Traffic
-                </button>
-              )}
-
-              {venue.googleEmbed && (
-                <button 
-                  onClick={() => { setTrafficVenue(venue); setTrafficType('google'); }}
-                  className="w-full h-12 rounded-2xl bg-primary-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-primary-100 hover:bg-primary-600 active:scale-95"
-                >
-                  <MapIcon className="w-4 h-4" /> View Map
-                </button>
-              )}
-
-              <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
                 {venue.googleMapsUrl ? (
                   <a 
                     href={venue.googleMapsUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="h-10 rounded-xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[8px] tracking-widest uppercase"
+                    className="h-12 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
                   >
                     <GoogleMapsLogo /> GOOGLE
                   </a>
                 ) : (
-                  <div className="h-10 rounded-xl bg-gray-50 text-gray-200 flex items-center justify-center gap-2 border border-gray-50 font-black text-[8px] uppercase tracking-widest cursor-not-allowed">
+                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
                     NO LINK
                   </div>
                 )}
@@ -215,16 +178,15 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                     href={venue.wazeUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="h-10 rounded-xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[8px] tracking-widest uppercase"
+                    className="h-12 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
                   >
                     <WazeLogo /> WAZE
                   </a>
                 ) : (
-                  <div className="h-10 rounded-xl bg-gray-50 text-gray-200 flex items-center justify-center gap-2 border border-gray-50 font-black text-[8px] uppercase tracking-widest cursor-not-allowed">
+                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
                     NO LINK
                   </div>
                 )}
-              </div>
             </div>
           </div>
         ))}
@@ -279,72 +241,25 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       </div>
 
       {/* MODALS */}
-      <Modal 
-        isOpen={!!trafficVenue} 
-        onClose={() => { setTrafficVenue(null); setTrafficType(null); }} 
-        title={trafficType === 'waze' ? `Live Traffic: ${trafficVenue?.name}` : `Location Map: ${trafficVenue?.name}`}
-        size="large"
-      >
-        <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-100 border-4 border-white shadow-2xl relative">
-          {trafficType === 'waze' && trafficVenue?.wazeEmbed ? (
-            <div 
-              className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
-              dangerouslySetInnerHTML={{ __html: trafficVenue.wazeEmbed }}
-            />
-          ) : trafficType === 'google' && trafficVenue?.googleEmbed ? (
-            <div 
-              className="w-full h-full [&>iframe]:w-full [&>iframe]:h-full"
-              dangerouslySetInnerHTML={{ __html: trafficVenue.googleEmbed }}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 font-bold uppercase tracking-widest text-xs">
-              No Embed Data Available
-            </div>
-          )}
-        </div>
-        <div className="mt-4 p-4 bg-primary-50 rounded-xl border border-primary-100">
-           <p className="text-[10px] lg:text-xs font-bold text-primary-700 leading-relaxed">
-             <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>
-             Showing {trafficType === 'waze' ? 'real-time traffic' : 'venue location'}. You can interact with the map to explore.
-           </p>
-        </div>
-      </Modal>
-
       <Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
         <form onSubmit={handleAddVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">
-              <div className="space-y-2">
-                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
-                 <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
-              </div>
-              <div className="space-y-2">
-                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Address</label>
-                 <input name="address" placeholder="Full address..." className="input-field h-14" />
-              </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
+                <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
+             </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-4 pt-4 border-t border-gray-100">
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <MapIcon className="w-3 h-3" /> Google Maps Embed Code
-                    </label>
-                    <textarea name="googleEmbed" placeholder="Paste Google iframe code..." className="input-field min-h-[80px] py-3 border-blue-100 focus:border-blue-500 font-mono text-[10px]" />
-                 </div>
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <Navigation className="w-3 h-3" /> Waze Embed Code
-                    </label>
-                    <textarea name="wazeEmbed" placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
-                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Google Maps URL</label>
-                      <input name="googleMapsUrl" placeholder="https://maps.google.com..." className="input-field h-12" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Waze URL</label>
-                      <input name="wazeUrl" placeholder="https://waze.com/ul..." className="input-field h-12" />
-                    </div>
-                 </div>
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3 h-3" /> Google Maps Link
+                  </label>
+                  <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+               </div>
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Navigation className="w-3 h-3" /> Waze Link
+                  </label>
+                  <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
                </div>
              </div>
           </div>
@@ -355,38 +270,22 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       <Modal isOpen={!!editingVenue} onClose={() => setEditingVenue(null)} title="Edit Swim Venue" size="default">
         <form onSubmit={handleUpdateVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">
-              <div className="space-y-2">
-                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
-                 <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
-              </div>
-              <div className="space-y-2">
-                 <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Address</label>
-                 <input name="address" defaultValue={editingVenue?.address || ''} placeholder="Full address..." className="input-field h-14" />
-              </div>
+             <div className="space-y-2">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Venue Name *</label>
+                <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
+             </div>
              <div className="grid grid-cols-1 gap-4">
-               <div className="space-y-4 pt-4 border-t border-gray-100">
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <MapIcon className="w-3 h-3" /> Google Maps Embed Code
-                    </label>
-                    <textarea name="googleEmbed" defaultValue={editingVenue?.googleEmbed || ''} placeholder="Paste Google iframe code..." className="input-field min-h-[80px] py-3 border-blue-100 focus:border-blue-500 font-mono text-[10px]" />
-                 </div>
-                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <Navigation className="w-3 h-3" /> Waze Embed Code
-                    </label>
-                    <textarea name="wazeEmbed" defaultValue={editingVenue?.wazeEmbed || ''} placeholder="Paste Waze iframe code..." className="input-field min-h-[80px] py-3 border-cyan-100 focus:border-cyan-500 font-mono text-[10px]" />
-                 </div>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Google Maps URL</label>
-                      <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="https://maps.google.com..." className="input-field h-12" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Waze URL</label>
-                      <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="https://waze.com/ul..." className="input-field h-12" />
-                    </div>
-                 </div>
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3 h-3" /> Google Maps Link
+                  </label>
+                  <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
+               </div>
+               <div className="space-y-2">
+                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Navigation className="w-3 h-3" /> Waze Link
+                  </label>
+                  <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
                </div>
              </div>
           </div>

@@ -231,59 +231,53 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               })()}
             </div>
             
-            {/* NAVIGATION BUTTONS: Fused Pill Design */}
+            {/* NAVIGATION BUTTONS: Capsule + Circle Design */}
             <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
-                {venue.googleMapsUrl ? (
-                    <div className="flex items-center h-12 bg-gray-50 border border-gray-100 rounded-full p-1 group/pill hover:shadow-md transition-all shadow-sm">
-                      <a 
-                        href={venue.googleMapsUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="flex-1 h-full flex items-center justify-center gap-2 px-4 text-gray-900 hover:text-blue-600 transition-colors font-black text-[9px] tracking-widest uppercase"
-                      >
-                        <GoogleMapsLogo /> GOOGLE
-                      </a>
-                      {venue.googleEmbedCode && (
-                        <button 
-                          onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
-                          className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-200 active:scale-90 transition-all group/live cursor-pointer"
-                          title="Live Preview"
-                        >
-                          <MapIcon className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
-                        </button>
-                      )}
-                    </div>
-                ) : (
-                  <div className="h-12 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
-                    NO LINK
+              {/* Google Button Group */}
+              <div className="flex items-center bg-white rounded-full border border-gray-100 shadow-sm p-1 group/btn hover:border-blue-200 transition-all">
+                <a 
+                  href={venue.googleMapsUrl || '#'} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`flex-1 flex items-center gap-3 px-4 py-2 ${!venue.googleMapsUrl && 'opacity-30 pointer-events-none'}`}
+                >
+                  <div className="w-6 h-6 overflow-hidden shrink-0">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" alt="G" className="w-full h-full object-contain" />
                   </div>
+                  <span className="text-[10px] font-black text-gray-700 uppercase tracking-widest">Google</span>
+                </a>
+                {venue.googleEmbedCode && (
+                  <button 
+                    onClick={() => setPreviewEmbed({ code: venue.googleEmbedCode!, title: `Google Live: ${venue.name}` })}
+                    className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-200 hover:scale-110 transition-all shrink-0"
+                  >
+                    <MapIcon className="w-4 h-4" />
+                  </button>
                 )}
+              </div>
 
-                {venue.wazeUrl ? (
-                    <div className="flex items-center h-12 bg-gray-50 border border-gray-100 rounded-full p-1 group/pill hover:shadow-md transition-all shadow-sm">
-                      <a 
-                        href={venue.wazeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="flex-1 h-full flex items-center justify-center gap-2 px-4 text-gray-900 hover:text-cyan-600 transition-colors font-black text-[9px] tracking-widest uppercase"
-                      >
-                        <WazeLogo /> WAZE
-                      </a>
-                      {venue.wazeEmbedCode && (
-                        <button 
-                          onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
-                          className="w-10 h-10 rounded-full bg-cyan-400 text-white flex items-center justify-center shadow-lg shadow-cyan-200 active:scale-90 transition-all group/live cursor-pointer"
-                          title="Live Preview"
-                        >
-                          <Navigation className="w-4 h-4 group-hover/live:scale-110 transition-transform" />
-                        </button>
-                      )}
-                    </div>
-                ) : (
-                  <div className="h-12 rounded-full bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
-                    NO LINK
+              {/* Waze Button Group */}
+              <div className="flex items-center bg-white rounded-full border border-gray-100 shadow-sm p-1 group/btn hover:border-cyan-200 transition-all">
+                <a 
+                  href={venue.wazeUrl || '#'} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={`flex-1 flex items-center gap-3 px-4 py-2 ${!venue.wazeUrl && 'opacity-30 pointer-events-none'}`}
+                >
+                  <div className="w-6 h-6 overflow-hidden shrink-0">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" alt="W" className="w-full h-full object-contain" />
                   </div>
+                  <span className="text-[10px] font-black text-gray-700 uppercase tracking-widest">Waze</span>
+                </a>
+                {venue.wazeEmbedCode && (
+                  <button 
+                    onClick={() => setPreviewEmbed({ code: venue.wazeEmbedCode!, title: `Waze Live: ${venue.name}` })}
+                    className="w-10 h-10 rounded-full bg-cyan-500 text-white flex items-center justify-center shadow-lg shadow-cyan-200 hover:scale-110 transition-all shrink-0"
+                  >
+                    <Navigation className="w-4 h-4" />
+                  </button>
                 )}
+              </div>
             </div>
           </div>
         ))}
@@ -381,24 +375,28 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <input name="name" required placeholder="e.g. Park City Swimming Pool" className="input-field h-14" />
              </div>
              <div className="space-y-2">
-                <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <MapIcon className="w-3 h-3" /> Google Maps Link
+                <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <div className="w-4 h-4 overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" alt="G" className="w-full h-full object-contain" /></div> Google Maps Link
                 </label>
                 <input name="googleMapsUrl" placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
              </div>
              <div className="space-y-2">
-                <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <Navigation className="w-3 h-3" /> Waze Link
+                <label className="text-[11px] font-black text-cyan-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <div className="w-4 h-4 overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" alt="W" className="w-full h-full object-contain" /></div> Waze Link
                 </label>
                 <input name="wazeUrl" placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
              </div>
              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
+                  <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3.5 h-3.5" /> Google Embed Code
+                  </label>
                   <textarea name="googleEmbedCode" placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
+                  <label className="text-[11px] font-black text-cyan-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Navigation className="w-3.5 h-3.5" /> Waze Embed Code
+                  </label>
                   <textarea name="wazeEmbedCode" placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
                 </div>
              </div>
@@ -415,24 +413,28 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
                 <input name="name" required defaultValue={editingVenue?.name} className="input-field h-14" />
              </div>
              <div className="space-y-2">
-                <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <MapIcon className="w-3 h-3" /> Google Maps Link
+                <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <div className="w-4 h-4 overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/a/aa/Google_Maps_icon_%282020%29.svg" alt="G" className="w-full h-full object-contain" /></div> Google Maps Link
                 </label>
                 <input name="googleMapsUrl" defaultValue={editingVenue?.googleMapsUrl || ''} placeholder="Paste link..." className="input-field h-14 border-blue-100 focus:border-blue-500" />
              </div>
              <div className="space-y-2">
-                <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1 flex items-center gap-2">
-                  <Navigation className="w-3 h-3" /> Waze Link
+                <label className="text-[11px] font-black text-cyan-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                  <div className="w-4 h-4 overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg" alt="W" className="w-full h-full object-contain" /></div> Waze Link
                 </label>
                 <input name="wazeUrl" defaultValue={editingVenue?.wazeUrl || ''} placeholder="Paste link..." className="input-field h-14 border-cyan-100 focus:border-cyan-500" />
              </div>
              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-blue-500 uppercase tracking-widest ml-1">Google Embed Code (Iframe)</label>
+                  <label className="text-[11px] font-black text-blue-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapIcon className="w-3.5 h-3.5" /> Google Embed Code
+                  </label>
                   <textarea name="googleEmbedCode" defaultValue={editingVenue?.googleEmbedCode || ''} placeholder="Paste Google iframe..." className="input-field min-h-[80px] py-3 border-blue-50 font-mono text-[10px]" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-cyan-500 uppercase tracking-widest ml-1">Waze Embed Code (Iframe)</label>
+                  <label className="text-[11px] font-black text-cyan-600 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Navigation className="w-3.5 h-3.5" /> Waze Embed Code
+                  </label>
                   <textarea name="wazeEmbedCode" defaultValue={editingVenue?.wazeEmbedCode || ''} placeholder="Paste Waze iframe..." className="input-field min-h-[80px] py-3 border-cyan-50 font-mono text-[10px]" />
                 </div>
              </div>

@@ -157,12 +157,14 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
               )}
             </div>
 
-            <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
-            {venue.address && (
-              <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <MapPin className="w-3 h-3 text-primary-500" /> {venue.address}
-              </p>
-            )}
+            <div className="flex-1">
+              <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-primary-600 transition-colors">{venue.name}</h3>
+              {venue.address && (
+                <p className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <MapPin className="w-3 h-3 text-primary-500" /> {venue.address}
+                </p>
+              )}
+            </div>
             
             {/* NAVIGATION BUTTONS: Fused Pill Design */}
             <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">

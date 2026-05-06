@@ -46,6 +46,7 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
   const router = useRouter();
   const [isVenueModalOpen, setIsVenueModalOpen] = useState(false);
   const [isRouteModalOpen, setIsRouteModalOpen] = useState(false);
+  const [trafficVenue, setTrafficVenue] = useState<Venue | null>(null);
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -157,36 +158,47 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
             <h3 className="text-2xl lg:text-3xl font-black text-gray-900 mb-6 tracking-tight group-hover:text-primary-600 transition-colors flex-1">{venue.name}</h3>
             
             {/* NAVIGATION BUTTONS: Bottom of card for mobile accessibility */}
-            <div className="grid grid-cols-2 gap-3 pt-6 border-t border-gray-50">
-              {venue.googleMapsUrl ? (
-                <a 
-                  href={venue.googleMapsUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="h-12 lg:h-14 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-3 border border-gray-100 font-black text-[10px] lg:text-xs tracking-widest uppercase shadow-sm"
+            <div className="space-y-3 pt-6 border-t border-gray-50">
+              {venue.wazeUrl && (
+                <button 
+                  onClick={() => setTrafficVenue(venue)}
+                  className="w-full h-12 rounded-2xl bg-primary-500 text-white transition-all flex items-center justify-center gap-2 font-black text-[10px] tracking-widest uppercase shadow-lg shadow-primary-100 hover:bg-primary-600 active:scale-95"
                 >
-                  <GoogleMapsLogo /> GOOGLE
-                </a>
-              ) : (
-                <div className="h-12 lg:h-14 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-3 border border-gray-50 font-black text-[10px] uppercase tracking-widest cursor-not-allowed">
-                  NO LINK
-                </div>
+                  <Clock className="w-4 h-4" /> View Live Traffic
+                </button>
               )}
+              
+              <div className="grid grid-cols-2 gap-3">
+                {venue.googleMapsUrl ? (
+                  <a 
+                    href={venue.googleMapsUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="h-12 rounded-2xl bg-gray-50 hover:bg-blue-50 text-gray-900 hover:text-blue-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                  >
+                    <GoogleMapsLogo /> GOOGLE
+                  </a>
+                ) : (
+                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
+                    NO LINK
+                  </div>
+                )}
 
-              {venue.wazeUrl ? (
-                <a 
-                  href={venue.wazeUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="h-12 lg:h-14 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-3 border border-gray-100 font-black text-[10px] lg:text-xs tracking-widest uppercase shadow-sm"
-                >
-                  <WazeLogo /> WAZE
-                </a>
-              ) : (
-                <div className="h-12 lg:h-14 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-3 border border-gray-50 font-black text-[10px] uppercase tracking-widest cursor-not-allowed">
-                  NO LINK
-                </div>
-              )}
+                {venue.wazeUrl ? (
+                  <a 
+                    href={venue.wazeUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="h-12 rounded-2xl bg-gray-50 hover:bg-cyan-50 text-gray-900 hover:text-cyan-600 transition-all flex items-center justify-center gap-2 border border-gray-100 font-black text-[9px] tracking-widest uppercase shadow-sm"
+                  >
+                    <WazeLogo /> WAZE
+                  </a>
+                ) : (
+                  <div className="h-12 rounded-2xl bg-gray-50 text-gray-300 flex items-center justify-center gap-2 border border-gray-50 font-black text-[9px] uppercase tracking-widest cursor-not-allowed">
+                    NO LINK
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -241,6 +253,35 @@ export function VenuesView({ venues: initialVenues, routes, userRole }: VenuesVi
       </div>
 
       {/* MODALS */}
+      <Modal 
+        isOpen={!!trafficVenue} 
+        onClose={() => setTrafficVenue(null)} 
+        title={`Live Traffic: ${trafficVenue?.name}`}
+        size="large"
+      >
+        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-gray-100 border-4 border-white shadow-inner">
+          {trafficVenue?.wazeUrl ? (
+            <iframe
+              src={`https://embed.waze.com/iframe?zoom=15&url=${encodeURIComponent(trafficVenue.wazeUrl)}&pin=1`}
+              width="100%"
+              height="100%"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 font-bold uppercase tracking-widest text-xs">
+              No Waze Link Provided
+            </div>
+          )}
+        </div>
+        <div className="mt-4 p-4 bg-primary-50 rounded-xl border border-primary-100">
+           <p className="text-[10px] lg:text-xs font-bold text-primary-700 leading-relaxed">
+             <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>
+             Showing real-time traffic updates. You can interact with the map to explore the surrounding areas.
+           </p>
+        </div>
+      </Modal>
+
       <Modal isOpen={isVenueModalOpen} onClose={() => setIsVenueModalOpen(false)} title="New Swim Venue" size="default">
         <form onSubmit={handleAddVenue} className="space-y-6 bg-gray-50/50 -m-8 p-8">
           <div className="space-y-4">

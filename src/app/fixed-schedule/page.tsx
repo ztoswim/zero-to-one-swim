@@ -3,6 +3,9 @@ import { coaches, students } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { Container } from "@/components/Container";
 import { FixedScheduleView } from "./FixedScheduleView";
+import { getTranslations } from "@/lib/i18n";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
@@ -36,10 +39,6 @@ async function getData() {
     allStudents: studentsData.map(s => ({ id: s.id, name: s.name }))
   };
 }
-
-import { getTranslations } from "@/lib/i18n";
-import { getCurrentUserProfile } from "@/app/staff-access/actions";
-import { redirect } from "next/navigation";
 
 export default async function FixedSchedulePage() {
   const [data, user, dict] = await Promise.all([

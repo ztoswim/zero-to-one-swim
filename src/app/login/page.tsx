@@ -43,9 +43,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="w-full max-w-md animate-in">
         {/* Logo/Brand */}
-        <div className="text-center mb-10 flex flex-col items-center">
-          <img src="/logo.png" alt="Zero To One Swim" className="h-20 w-auto mb-4" />
-          <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Management Hub Login</p>
+        <div className="text-center -mb-20 flex flex-col items-center relative z-10">
+          <img src="/logo.png" alt="Zero To One Swim" className="h-[450px] w-auto object-contain" />
         </div>
 
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-10 border border-gray-100">
@@ -66,7 +65,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@swim.com"
+                  placeholder="advisor@swim.com"
                   className="w-full h-14 bg-gray-50 border-2 border-transparent rounded-2xl pl-12 pr-4 font-bold text-gray-900 focus:bg-white focus:border-primary-500 transition-all outline-none"
                 />
               </div>

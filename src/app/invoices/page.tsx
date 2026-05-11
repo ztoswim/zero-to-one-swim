@@ -33,27 +33,37 @@ async function getInvoicesData() {
   }
 }
 
+import { getTranslations } from "@/lib/i18n";
+
 export default async function InvoicesPage() {
   const data = await getInvoicesData();
+  const dict = await getTranslations();
 
   return (
-    <Container>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-in">
+    <>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
         <div>
-          <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-            Billing <span className="text-primary-500">History</span>
-          </h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Review all academy invoices</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {dict.nav.invoices}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {dict.common.reviewAcademyInvoices}
+          </p>
         </div>
-        <a 
-          href="/create-invoice" 
-          className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2"
-        >
-          Generate New Bill <span className="text-xl">+</span>
-        </a>
+
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          <a 
+            href="/create-invoice" 
+            className="btn btn-primary px-8 h-12 shadow-xl shadow-primary-200 flex items-center gap-2 rounded-xl whitespace-nowrap"
+          >
+            {dict.common.newInvoice} <span className="text-xl">+</span>
+          </a>
+        </div>
       </div>
 
       <InvoicesList initialInvoices={data.invoices} students={data.students} packages={data.packages} coaches={data.coaches} />
-    </Container>
+    </>
   );
 }

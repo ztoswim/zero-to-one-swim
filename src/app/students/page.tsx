@@ -1,110 +1,77 @@
 import { Container } from "@/components/Container";
 import { db } from "@/db";
-import { students } from "@/db/schema";
-import { desc } from "drizzle-orm";
-import { Users, UserPlus, Phone, MapPin } from "lucide-react";
+import { students as studentsSchema, locations as locationsSchema, coaches as coachesSchema } from "@/db/schema";
+import { desc, eq, asc } from "drizzle-orm";
+import { Users, UserPlus, Phone, MapPin, Pencil, Trash2 } from "lucide-react";
+import { hasPermission } from "@/lib/permissions";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
 
 import { AddStudentDialog } from "./AddStudentDialog";
-import { coaches, venues as venuesSchema } from "@/db/schema";
+import { StudentsListClient } from "./StudentsListClient";
+
+import { getTranslations } from "@/lib/i18n";
 
 export const dynamic = 'force-dynamic';
 
 async function getInitialData() {
-  const studentsData = await db.query.students.findMany({
-    orderBy: [desc(students.createdAt)],
-    with: {
-      venue: true
-    }
-  });
-  const coachesData = await db.query.coaches.findMany();
-  const venuesData = await db.query.venues.findMany();
-  return { students: studentsData, coaches: coachesData, venues: venuesData };
+  try {
+    const studentsData = await db.query.students.findMany({
+      with: {
+        location: true,
+        fixedSlots: true,
+      },
+      orderBy: [desc(studentsSchema.createdAt)]
+    });
+
+    const locationsData = await db.select().from(locationsSchema).orderBy(asc(locationsSchema.name));
+    const coachesData = await db.select().from(coachesSchema).orderBy(asc(coachesSchema.name));
+    
+    return { students: studentsData, locations: locationsData, coaches: coachesData };
+  } catch (error: any) {
+    console.error("Failed to fetch students data:", error);
+    throw error;
+  }
 }
 
 export default async function StudentsPage() {
-  const data = await getInitialData();
+  const [data, user, dict] = await Promise.all([
+    getInitialData(),
+    getCurrentUserProfile(),
+    getTranslations()
+  ]);
+
+  const canCreate = hasPermission(user, 'create_student');
+  const canEdit = hasPermission(user, 'edit_student');
+  const canDelete = hasPermission(user, 'delete_student');
 
   return (
-    <Container>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12 animate-in">
+    <>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
         <div>
-          <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-            Academy <span className="text-primary-500">Students</span>
-          </h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage Roster</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {dict.nav.students}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {dict.common.manageRoster}
+          </p>
         </div>
-        <div className="flex items-center gap-4">
-          <AddStudentDialog coaches={data.coaches} venues={data.venues} />
+
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          {canCreate && <AddStudentDialog coaches={data.coaches} locations={data.locations} />}
         </div>
       </div>
 
-
-      <div className="bg-white rounded-[2.5rem] border border-gray-50 shadow-sm overflow-hidden animate-in" style={{ animationDelay: '0.1s' }}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-gray-50">
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student Information</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Parent / Contact</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Lesson Details</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Enrollment</th>
-                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {data.students.map((student: any) => (
-                <tr key={student.id} className="group hover:bg-gray-50/50 transition-all">
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-500 flex items-center justify-center font-black text-lg shadow-sm">
-                        {student.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="font-black text-gray-900 text-base leading-none mb-1">{student.name}</div>
-                        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: {student.id.slice(0, 8)}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-gray-600">{student.parentName || 'No Parent Name'}</div>
-                      <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                        <Phone className="w-3 h-3" /> {student.phone}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
-                        <MapPin className="w-3.5 h-3.5 text-primary-500" />
-                        {student.venue?.name || 'General Venue'}
-                      </div>
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
-                        Duration: {student.lessonDuration || '45'} mins
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <div className="space-y-2">
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${student.status === 'active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
-                        {student.status}
-                      </span>
-                      <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block ml-0.5">
-                        Since: {student.startDate || '-'}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <button className="p-3 rounded-xl bg-gray-50 text-gray-400 hover:bg-primary-50 hover:text-primary-500 transition-all">
-                      <Users className="w-5 h-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </Container>
+      <StudentsListClient 
+        students={data.students}
+        locations={data.locations}
+        coaches={data.coaches}
+        canEdit={canEdit}
+        canDelete={canDelete}
+        dict={dict}
+      />
+    </>
   );
 }
+

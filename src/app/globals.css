@@ -59,6 +59,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Hide Edge/Chrome default password reveal button */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
 }
 
 @keyframes fadeIn {

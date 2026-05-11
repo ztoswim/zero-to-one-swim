@@ -9,9 +9,10 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
   size?: 'default' | 'wide';
+  maxWidth?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children, size = 'default' }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, size = 'default', maxWidth }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -34,7 +35,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'default' }: Mo
         className="absolute inset-0 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300"
         onClick={onClose}
       />
-      <div className={`bg-white w-full ${size === 'wide' ? 'max-w-7xl' : 'max-w-xl'} rounded-[2.5rem] shadow-2xl relative z-10 animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 overflow-hidden`}>
+      <div className={`bg-white w-full ${maxWidth || (size === 'wide' ? 'max-w-7xl' : 'max-w-xl')} rounded-[2.5rem] shadow-2xl relative z-10 animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 overflow-hidden`}>
         <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
           <h2 className="text-3xl font-black text-gray-900 tracking-tighter">{title}</h2>
           <button 

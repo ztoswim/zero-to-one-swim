@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { Calendar as CalendarIcon, Clock, User, ChevronLeft, ChevronRight, X, Check, Search, AlertCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Calendar as CalendarIcon, User, X, Check, AlertCircle } from 'lucide-react';
 import { WheelDateInput } from '@/components/WheelDateInput';
+import { useTranslation } from '@/lib/i18n/useTranslation';
 
 interface ScheduleViewProps {
   initialLessons: any[];
@@ -15,6 +16,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   coaches, 
   students 
 }) => {
+  const { t, locale } = useTranslation();
   const [selectedDay, setSelectedDay] = useState(new Date().toISOString().split('T')[0]);
   const [filterCoach, setFilterCoach] = useState('');
   const [showDetail, setShowDetail] = useState(false);
@@ -33,7 +35,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   }, [selectedDay]);
 
   const getDayName = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+    return new Date(dateStr).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'short' });
   };
 
   const getDayNumber = (dateStr: string) => {
@@ -70,7 +72,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   return (
     <div className="space-y-10">
       {/* Header Controls */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 animate-in">
         <div className="flex items-center bg-white border-2 border-gray-100 rounded-2xl px-4 py-1 shadow-sm focus-within:border-primary-500 transition-all">
           <CalendarIcon className="w-4 h-4 text-gray-400 mr-2" />
           <WheelDateInput 
@@ -81,15 +83,15 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         </div>
         <div 
           onClick={() => setFilterCoach('')}
-          className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer border-2 whitespace-nowrap ${filterCoach === '' ? 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-100' : 'bg-white text-gray-400 border-gray-100 hover:border-primary-200'}`}
+          className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer border-2 whitespace-nowrap shadow-xl ${filterCoach === '' ? 'bg-primary-500 text-white border-primary-500 shadow-primary-200' : 'bg-white text-slate-400 border-slate-200 shadow-slate-100 hover:border-primary-200'}`}
         >
-          All Coaches
+          {t('common.allCoaches')}
         </div>
         {coaches.map(c => (
           <div 
             key={c.id}
             onClick={() => setFilterCoach(c.id)}
-            className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer border-2 whitespace-nowrap ${filterCoach === c.id ? 'bg-primary-500 text-white border-primary-500 shadow-lg shadow-primary-100' : 'bg-white text-gray-400 border-gray-100 hover:border-primary-200'}`}
+            className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer border-2 whitespace-nowrap shadow-xl ${filterCoach === c.id ? 'bg-primary-500 text-white border-primary-500 shadow-primary-200' : 'bg-white text-slate-400 border-slate-200 shadow-slate-100 hover:border-primary-200'}`}
           >
             {c.name}
           </div>
@@ -103,7 +105,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <div 
               key={day} 
               onClick={() => setSelectedDay(day)}
-              className={`min-w-[110px] md:min-w-[120px] p-6 rounded-[2.5rem] flex flex-col items-center gap-2 transition-all cursor-pointer border-2 ${selectedDay === day ? 'bg-white border-primary-500 shadow-xl -translate-y-2' : 'bg-white/50 border-transparent text-gray-400 hover:bg-white'}`}
+              className={`min-w-[110px] md:min-w-[120px] p-6 rounded-[2.5rem] flex flex-col items-center gap-2 transition-all cursor-pointer border-2 ${selectedDay === day ? 'bg-white border-primary-500 shadow-2xl shadow-primary-100 -translate-y-2' : 'bg-white/50 border-slate-100 text-slate-400 hover:bg-white'}`}
             >
               <span className="text-[10px] font-black uppercase tracking-widest">{getDayName(day)}</span>
               <span className={`text-3xl font-black tracking-tighter ${selectedDay === day ? 'text-gray-900' : 'text-gray-400'}`}>{getDayNumber(day)}</span>
@@ -126,7 +128,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           </div>
           <div>
             <h2 className="text-4xl font-black text-gray-900 tracking-tighter">{selectedDay}</h2>
-            <p className="text-xs font-black text-primary-500 uppercase tracking-[0.3em] mt-1">{filteredGroups.length} Time Slots Scheduled</p>
+            <p className="text-xs font-black text-primary-500 uppercase tracking-[0.3em] mt-1">{filteredGroups.length} {t('common.timeSlotsScheduled')}</p>
           </div>
         </div>
 
@@ -134,7 +136,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           {filteredGroups.map((group) => (
             <div 
               key={`${group.time}_${group.coachId}`} 
-              className="group relative bg-white rounded-[3.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col md:flex-row md:items-center gap-10"
+              className="group relative bg-white rounded-[3.5rem] p-8 border-2 border-slate-200 shadow-2xl shadow-slate-200/60 hover:shadow-primary-100/50 transition-all duration-500 flex flex-col md:flex-row md:items-center gap-10"
             >
               <div className="md:w-40 flex flex-col items-center md:items-start border-b md:border-b-0 md:border-r border-gray-50 pb-6 md:pb-0 md:pr-10">
                 <div className="text-3xl font-black text-gray-900 group-hover:text-primary-600 transition-colors tracking-tighter mb-2">{group.time}</div>
@@ -157,8 +159,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       </div>
                       <div>
                         <h4 className="font-black text-gray-900 text-lg tracking-tight mb-1">{l.student?.name}</h4>
-                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase inline-block w-fit ${l.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-primary-100 text-primary-600'}`}>
-                          {l.status}
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase inline-block w-fit ${l.status === 'completed' ? 'bg-green-100 text-green-600' : (l.status === 'cancelled' ? 'bg-red-100 text-red-600' : 'bg-primary-100 text-primary-600')}`}>
+                          {t(`common.${l.status}`)}
                         </span>
                       </div>
                     </div>
@@ -173,8 +175,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-200">
                 <CalendarIcon className="w-12 h-12" />
               </div>
-              <h3 className="text-3xl font-black text-gray-900 tracking-tighter mb-2">NO LESSONS</h3>
-              <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Nothing scheduled for this day</p>
+              <h3 className="text-3xl font-black text-gray-900 tracking-tighter mb-2">{t('common.noLessons')}</h3>
+              <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">{t('common.noLessonsDesc')}</p>
             </div>
           )}
         </div>
@@ -183,11 +185,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       {/* Lesson Detail Modal */}
       {showDetail && selectedLesson && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm p-4" onClick={() => setShowDetail(false)}>
-          <div className="bg-white rounded-[3rem] w-full max-w-xl shadow-2xl animate-in p-10" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-[3rem] w-full max-w-xl shadow-2xl border-2 border-slate-200 animate-in p-10" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-8">
               <div>
-                <h3 className="text-4xl font-black text-gray-900 tracking-tighter mb-2">Lesson Detail</h3>
-                <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Manage session status</p>
+                <h3 className="text-4xl font-black text-gray-900 tracking-tighter mb-2">{t('common.lessonDetail')}</h3>
+                <p className="text-xs font-black text-gray-400 uppercase tracking-widest">{t('common.manageSessionStatus')}</p>
               </div>
               <button onClick={() => setShowDetail(false)} className="p-3 hover:bg-gray-50 rounded-2xl transition-colors">
                 <X className="w-6 h-6 text-gray-400" />
@@ -201,28 +203,28 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 </div>
                 <div>
                   <h4 className="text-2xl font-black text-gray-900 tracking-tight">{selectedLesson.student?.name}</h4>
-                  <p className="text-sm font-bold text-gray-500">{selectedLesson.time} • {selectedLesson.coach?.name}</p>
+                  <p className="text-sm font-bold text-gray-500">{selectedLesson.time} - {selectedLesson.coach?.name}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Update Status</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('common.updateStatus')}</p>
                 <div className="grid grid-cols-2 gap-4">
                   <button className="flex flex-col items-center justify-center p-6 bg-green-50 border-2 border-green-100 rounded-[2rem] hover:bg-green-100 transition-all group">
                     <Check className="w-8 h-8 text-green-500 mb-2 group-hover:scale-110 transition-transform" />
-                    <span className="font-black text-green-600 text-xs uppercase tracking-widest">Completed</span>
+                    <span className="font-black text-green-600 text-xs uppercase tracking-widest">{t('common.completed')}</span>
                   </button>
                   <button className="flex flex-col items-center justify-center p-6 bg-orange-50 border-2 border-orange-100 rounded-[2rem] hover:bg-orange-100 transition-all group">
                     <AlertCircle className="w-8 h-8 text-orange-500 mb-2 group-hover:scale-110 transition-transform" />
-                    <span className="font-black text-orange-600 text-xs uppercase tracking-widest">Postpone</span>
+                    <span className="font-black text-orange-600 text-xs uppercase tracking-widest">{t('common.postpone')}</span>
                   </button>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <button className="btn w-full py-5 border-2 border-gray-100 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-gray-50">Cancel Session</button>
-              <button className="btn btn-primary w-full py-5 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-primary-200">Save Changes</button>
+              <button className="btn w-full py-5 border-2 border-gray-100 font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-gray-50">{t('common.cancelSession')}</button>
+              <button className="btn btn-primary w-full py-5 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl shadow-primary-200">{t('common.saveChanges')}</button>
             </div>
           </div>
         </div>

@@ -1,0 +1,281 @@
+'use client';
+
+import React, { useState } from 'react';
+import { Modal } from '@/components/Modal';
+import { User, Phone, Mail, MapPin, Map, Calendar, ShieldAlert, GraduationCap, Clock, Save, Plus, Trash2 } from 'lucide-react';
+import { WheelDateInput } from '@/components/WheelDateInput';
+import { WheelTimeInput } from '@/components/WheelTimeInput';
+import { updateStudent } from './actions';
+import { useTranslation } from '@/lib/i18n/useTranslation';
+
+interface EditStudentDialogProps {
+  student: any;
+  coaches: { id: string, name: string }[];
+  locations: { id: string, name: string }[];
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function EditStudentDialog({ student, coaches, locations, isOpen, onClose }: EditStudentDialogProps) {
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [dob, setDob] = useState(student.dob || new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(student.startDate || new Date().toISOString().split('T')[0]);
+
+  const [slots, setSlots] = useState<any[]>(student.fixedSlots || []);
+
+  const addSlot = () => {
+    setSlots([...slots, { id: Math.random().toString(), day: 'Monday', time: '18:00', duration: 45, coachId: '' }]);
+  };
+
+  const removeSlot = (id: string) => {
+    setSlots(slots.filter(s => s.id !== id && s.day + s.time !== id)); // Handle both random IDs and composite keys if any
+  };
+
+  const updateSlot = (id: string, updates: Partial<any>) => {
+    setSlots(slots.map(s => (s.id === id || s.day + s.time === id) ? { ...s, ...updates } : s));
+  };
+
+  const [status, setStatus] = useState(student.status || 'active');
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    formData.append('fixedSlots', JSON.stringify(slots));
+    formData.append('status', status); // Use the state value
+    
+    const result = await updateStudent(student.id, formData);
+
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      onClose();
+      setLoading(false);
+    }
+  }
+
+  const handleSelectWheel = (e: React.WheelEvent<HTMLSelectElement>, onChange: (val: string) => void) => {
+    e.preventDefault();
+    const select = e.currentTarget;
+    const delta = e.deltaY > 0 ? 1 : -1;
+    const newIndex = Math.max(0, Math.min(select.options.length - 1, select.selectedIndex + delta));
+    if (newIndex !== select.selectedIndex) {
+      onChange(select.options[newIndex].value);
+    }
+  };
+
+  const Req = () => <span className="text-red-600 ml-1">*</span>;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={t('students.editStudent')} size="wide">
+      <form onSubmit={handleSubmit} className="bg-gray-100/30 -m-8 p-8 space-y-6">
+        {error && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border-2 border-red-200 flex items-center gap-3">
+            <ShieldAlert className="w-5 h-5 shrink-0" />
+            {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Section 1: Student Profile */}
+          <div className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-200 space-y-5">
+            <div className="flex items-center justify-between border-b-2 border-slate-50 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary-600 text-white flex items-center justify-center"><User className="w-5 h-5" /></div>
+                <h3 className="text-xl font-black text-slate-900 tracking-tight">{t('students.studentProfile')}</h3>
+              </div>
+              
+              {/* Active Toggle Switch */}
+              <label className="relative inline-flex items-center cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  checked={status === 'active'}
+                  onChange={(e) => {
+                    setStatus(e.target.checked ? 'active' : 'inactive');
+                  }}
+                  className="sr-only peer" 
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success"></div>
+                <span className="ms-3 text-[10px] font-black text-slate-500 uppercase tracking-widest group-hover:text-slate-700 transition-colors">
+                  {status === 'active' ? 'Active' : 'Inactive'}
+                </span>
+              </label>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.fullLegalName')} <Req /></label>
+                <input name="name" defaultValue={student.name} required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder={t('students.studentNamePlaceholder')} />
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('common.gender')} <Req /></label>
+                  <div className="relative">
+                    <select 
+                      name="gender" 
+                      defaultValue={student.gender}
+                      required 
+                      onWheel={(e) => handleSelectWheel(e, (val) => e.currentTarget.value = val)}
+                      className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none text-sm"
+                    >
+                      <option value="Male">{t('common.male')}</option>
+                      <option value="Female">{t('common.female')}</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">▼</div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('common.dob')} <Req /></label>
+                  <WheelDateInput value={dob} onChange={setDob} name="dob" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Contact Info */}
+          <div className="bg-white rounded-[2rem] p-6 shadow-sm border-2 border-slate-200 space-y-5">
+            <div className="flex items-center gap-3 border-b-2 border-slate-50 pb-3">
+              <div className="w-10 h-10 rounded-xl bg-success text-white flex items-center justify-center"><Phone className="w-5 h-5" /></div>
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">{t('common.contactInfo')}</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.parentGuardianName')}</label>
+                  <input name="parentName" defaultValue={student.parentName} className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none text-sm" placeholder={t('students.guardianNamePlaceholder')} />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.primaryPhone')} <Req /></label>
+                  <input name="phone" defaultValue={student.phone} required className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="+60..." />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.emailAddress')}</label>
+                  <input name="email" type="email" defaultValue={student.email} className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 text-sm" placeholder="parent@example.com" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.regionArea')}</label>
+                  <div className="relative">
+                    <Map className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                    <input name="sameArea" defaultValue={student.sameArea} className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none pl-10 text-sm" placeholder={t('students.areaPlaceholder')} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Fixed Weekly Slots */}
+        <div className="bg-orange-50/50 rounded-[2rem] p-6 border-2 border-orange-200 shadow-sm space-y-6 max-h-[400px] overflow-y-auto no-scrollbar">
+          <div className="flex items-center justify-between border-b border-orange-200 pb-3 sticky top-0 bg-orange-50/95 z-20">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center"><GraduationCap className="w-5 h-5" /></div>
+              <h3 className="text-xl font-black text-orange-900 tracking-tight">{t('students.fixedWeeklySlots')}</h3>
+            </div>
+            <button type="button" onClick={addSlot} className="flex items-center gap-2 bg-orange-500 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all">
+              <Plus className="w-4 h-4" /> {t('students.addSlot')}
+            </button>
+          </div>
+          <div className="space-y-6">
+            {slots.map((slot, index) => (
+              <div key={slot.id || (slot.day + slot.time)} className="bg-white/60 p-6 rounded-2xl border border-orange-100 relative group animate-in slide-in-from-right-2">
+                <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-orange-500 text-white text-[10px] font-black flex items-center justify-center shadow-md">{index + 1}</div>
+                <button type="button" onClick={() => removeSlot(slot.id || (slot.day + slot.time))} className="absolute -right-2 -top-2 w-8 h-8 rounded-full bg-white border border-red-100 text-red-500 flex items-center justify-center shadow-md hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100"><Trash2 className="w-4 h-4" /></button>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-orange-800 uppercase tracking-widest">{t('students.classDay')}</label>
+                    <div className="relative">
+                      <select 
+                        value={slot.day}
+                        onChange={(e) => updateSlot(slot.id || (slot.day + slot.time), { day: e.target.value })}
+                        required 
+                        className="w-full px-4 py-2.5 bg-white border border-orange-100 rounded-xl font-bold text-slate-900 outline-none appearance-none text-xs"
+                      >
+                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => (<option key={d} value={d}>{t(`days.${d}`)}</option>))}
+                      </select>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-orange-400 text-[8px]">▼</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-orange-800 uppercase tracking-widest">{t('students.startTime')}</label>
+                    <WheelTimeInput value={slot.time} onChange={(val) => updateSlot(slot.id || (slot.day + slot.time), { time: val })} className="!py-2 !border-orange-100 !text-xs" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-orange-800 uppercase tracking-widest">{t('students.durationMin')}</label>
+                    <input type="number" value={slot.duration} onChange={(e) => updateSlot(slot.id || (slot.day + slot.time), { duration: parseInt(e.target.value) })} step="5" required className="w-full px-4 py-2.5 bg-white border border-orange-100 rounded-xl font-black text-slate-900 outline-none text-xs" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-orange-800 uppercase tracking-widest">{t('students.assignCoach')}</label>
+                    <div className="relative">
+                      <select 
+                        value={slot.coachId}
+                        onChange={(e) => updateSlot(slot.id || (slot.day + slot.time), { coachId: e.target.value })}
+                        required 
+                        className="w-full px-4 py-2.5 bg-white border border-orange-100 rounded-xl font-bold text-slate-900 outline-none appearance-none text-xs"
+                      >
+                        <option value="">{t('students.selectCoach')}</option>
+                        {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-orange-400 text-[8px]">▼</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+           <div className="space-y-2">
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.overallStartDate')} <Req /></label>
+              <WheelDateInput value={startDate} onChange={setStartDate} name="startDate" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.classLocation')} <Req /></label>
+              <div className="relative">
+                <select 
+                  name="locationId" 
+                  defaultValue={student.locationId} 
+                  required 
+                  onWheel={(e) => handleSelectWheel(e, (val) => e.currentTarget.value = val)}
+                  className="w-full px-5 py-3.5 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none focus:border-primary-500 appearance-none text-sm"
+                >
+                  <option value="">{t('students.selectLocation')}</option>
+                  {locations.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-[10px]">▼</div>
+              </div>
+            </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('common.address')}</label>
+            <textarea name="address" defaultValue={student.address} className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none h-20 resize-none text-sm" placeholder={`${t('common.address')}...`} />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-slate-700 uppercase tracking-wider">{t('students.internalNotes')}</label>
+            <textarea name="notes" defaultValue={student.notes} className="w-full px-4 py-3 bg-white border-2 border-slate-300 rounded-xl font-bold text-slate-900 outline-none h-20 resize-none text-sm" placeholder={t('students.healthLevelPlaceholder')} />
+          </div>
+          <div className="bg-red-50/50 rounded-2xl p-4 border-2 border-red-200 shadow-sm space-y-3">
+            <h4 className="text-xs font-black text-red-900 uppercase tracking-tight flex items-center gap-2"><ShieldAlert className="w-3.5 h-3.5" /> {t('common.emergency')}</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <input name="emergencyName" defaultValue={student.emergencyName} className="w-full px-3 py-2 bg-white border border-red-200 rounded-lg font-bold text-slate-900 text-xs" placeholder={t('common.name') || "Name..."} />
+              <input name="emergencyPhone" defaultValue={student.emergencyPhone} className="w-full px-3 py-2 bg-white border border-red-200 rounded-lg font-bold text-slate-900 text-xs" placeholder={t('common.phone') || "Phone..."} />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end pt-2">
+          <button type="submit" disabled={loading} className="btn btn-primary px-20 h-14 text-lg font-black tracking-tighter shadow-xl shadow-primary-200 rounded-2xl w-full lg:w-auto">
+            {loading ? t('common.loading') : (t('common.saveChanges') || "SAVE CHANGES").toUpperCase()}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}

@@ -7,9 +7,10 @@ interface WheelDateInputProps {
   onChange: (value: string) => void;
   className?: string;
   name?: string;
+  readOnly?: boolean;
 }
 
-export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange, className = '', name }) => {
+export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange, className = '', name, readOnly }) => {
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -66,33 +67,36 @@ export const WheelDateInput: React.FC<WheelDateInputProps> = ({ value, onChange,
   };
 
   return (
-    <div className={`w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-50 transition-all bg-white font-medium text-gray-900 flex items-center justify-center gap-1 ${className}`}>
+    <div className={`w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-50 transition-all bg-white font-medium text-gray-900 flex items-center justify-center gap-1 ${readOnly ? 'pointer-events-none opacity-80 bg-gray-50/50' : ''} ${className}`}>
       {name && <input type="hidden" name={name} value={value} />}
       <div className="flex items-center gap-1 font-black text-gray-900 tracking-tighter select-none">
         <input
-          className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]"
+          className={`${readOnly ? '' : 'hover:bg-primary-50'} px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]`}
           value={day}
-          onChange={(e) => setDay(e.target.value)}
-          onWheel={(e) => handleWheel('day', e)}
-          onBlur={handleBlur}
+          onChange={(e) => !readOnly && setDay(e.target.value)}
+          onWheel={(e) => !readOnly && handleWheel('day', e)}
+          onBlur={() => !readOnly && handleBlur()}
+          readOnly={readOnly}
           maxLength={2}
         />
         <span className="text-gray-300">/</span>
         <input
-          className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]"
+          className={`${readOnly ? '' : 'hover:bg-primary-50'} px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]`}
           value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          onWheel={(e) => handleWheel('month', e)}
-          onBlur={handleBlur}
+          onChange={(e) => !readOnly && setMonth(e.target.value)}
+          onWheel={(e) => !readOnly && handleWheel('month', e)}
+          onBlur={() => !readOnly && handleBlur()}
+          readOnly={readOnly}
           maxLength={2}
         />
         <span className="text-gray-300">/</span>
         <input
-          className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[4.5ch]"
+          className={`${readOnly ? '' : 'hover:bg-primary-50'} px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[4.5ch]`}
           value={year}
-          onChange={(e) => setYear(e.target.value)}
-          onWheel={(e) => handleWheel('year', e)}
-          onBlur={handleBlur}
+          onChange={(e) => !readOnly && setYear(e.target.value)}
+          onWheel={(e) => !readOnly && handleWheel('year', e)}
+          onBlur={() => !readOnly && handleBlur()}
+          readOnly={readOnly}
           maxLength={4}
         />
       </div>

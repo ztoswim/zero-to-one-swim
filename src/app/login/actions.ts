@@ -29,18 +29,18 @@ export async function login(formData: FormData) {
   if (!userProfile) {
     // If no profile exists, this is an error state for this specific app's RBAC
     await supabase.auth.signOut();
-    return { error: "User profile not found. Please contact admin." };
+    return { error: "User profile not found. Please contact course advisor." };
   }
 
   revalidatePath('/', 'layout');
   
   // Redirect based on role
-  if (userProfile.role === 'admin' || userProfile.role === 'super_admin') {
-    redirect('/admin/dashboard');
+  if (userProfile.role === 'admin' || userProfile.role === 'super_admin' || userProfile.role === 'root') {
+    redirect('/');
   } else if (userProfile.role === 'coach') {
-    redirect('/coach/dashboard');
+    redirect('/dashboard/coach');
   } else if (userProfile.role === 'parent') {
-    redirect('/parent/dashboard');
+    redirect('/dashboard/parent');
   }
 
   redirect('/');

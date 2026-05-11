@@ -6,9 +6,10 @@ interface WheelTimeInputProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  readOnly?: boolean;
 }
 
-export const WheelTimeInput: React.FC<WheelTimeInputProps> = ({ value, onChange, className = '' }) => {
+export const WheelTimeInput: React.FC<WheelTimeInputProps> = ({ value, onChange, className = '', readOnly }) => {
   const [hour, setHour] = useState('');
   const [minute, setMinute] = useState('');
   const [ampm, setAmpm] = useState('AM');
@@ -72,29 +73,31 @@ export const WheelTimeInput: React.FC<WheelTimeInputProps> = ({ value, onChange,
   };
 
   return (
-    <div className={`w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-50 transition-all bg-white font-medium text-gray-900 flex items-center justify-center gap-1 ${className}`}>
+    <div className={`w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus-within:border-primary-500 focus-within:ring-4 focus-within:ring-primary-50 transition-all bg-white font-medium text-gray-900 flex items-center justify-center gap-1 ${readOnly ? 'pointer-events-none opacity-80 bg-gray-50/50' : ''} ${className}`}>
       <div className="flex items-center gap-1 font-black text-gray-900 tracking-tighter select-none">
         <input
-          className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]"
+          className={`${readOnly ? '' : 'hover:bg-primary-50'} px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]`}
           value={hour}
-          onChange={(e) => setHour(e.target.value)}
-          onWheel={(e) => handleWheel('hour', e)}
-          onBlur={() => syncAndEmit(hour, minute, ampm)}
+          onChange={(e) => !readOnly && setHour(e.target.value)}
+          onWheel={(e) => !readOnly && handleWheel('hour', e)}
+          onBlur={() => !readOnly && syncAndEmit(hour, minute, ampm)}
+          readOnly={readOnly}
           maxLength={2}
         />
         <span className="text-gray-300">:</span>
         <input
-          className="hover:bg-primary-50 px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]"
+          className={`${readOnly ? '' : 'hover:bg-primary-50'} px-0.5 py-1 rounded cursor-ns-resize transition-colors text-center bg-transparent outline-none appearance-none w-[2.5ch]`}
           value={minute}
-          onChange={(e) => setMinute(e.target.value)}
-          onWheel={(e) => handleWheel('minute', e)}
-          onBlur={() => syncAndEmit(hour, minute, ampm)}
+          onChange={(e) => !readOnly && setMinute(e.target.value)}
+          onWheel={(e) => !readOnly && handleWheel('minute', e)}
+          onBlur={() => !readOnly && syncAndEmit(hour, minute, ampm)}
+          readOnly={readOnly}
           maxLength={2}
         />
         <div
-          className="hover:bg-primary-50 px-1 py-1 rounded cursor-ns-resize transition-colors ml-0.5 text-primary-500 cursor-pointer text-center w-[3.5ch]"
-          onWheel={(e) => handleWheel('ampm', e)}
-          onClick={toggleAmpm}
+          className={`${readOnly ? 'text-primary-500' : 'hover:bg-primary-50 text-primary-500 cursor-pointer'} px-1 py-1 rounded transition-colors ml-0.5 text-center w-[3.5ch]`}
+          onWheel={(e) => !readOnly && handleWheel('ampm', e)}
+          onClick={() => !readOnly && toggleAmpm()}
         >
           {ampm}
         </div>

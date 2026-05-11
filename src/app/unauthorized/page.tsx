@@ -11,7 +11,7 @@ export default function UnauthorizedPage() {
         </div>
         <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-4">Access Denied</h1>
         <p className="text-gray-500 font-bold mb-10 leading-relaxed">
-          You don't have the necessary permissions to access this area. If you believe this is an error, please contact the academy administrator.
+          You don't have the necessary permissions to access this area. If you believe this is an error, please contact the academy course advisor.
         </p>
         <Link 
           href="/" 

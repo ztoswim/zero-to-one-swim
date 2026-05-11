@@ -6,5 +6,6 @@ const connectionString = process.env.DATABASE_URL!;
 
 // Disable prefetch as it is not supported for "Transaction" mode sessions 
 // (needed for Supabase pooling)
+// Schema updated: 2026-05-08
 const client = postgres(connectionString, { prepare: false });
 export const db = drizzle(client, { schema });

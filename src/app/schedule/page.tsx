@@ -4,6 +4,8 @@ import { lessons, coaches, students } from "@/db/schema";
 import { asc, desc } from "drizzle-orm";
 import { ScheduleView } from "./ScheduleView";
 
+import { getTranslations } from "@/lib/i18n";
+
 export const dynamic = 'force-dynamic';
 
 async function getScheduleData() {
@@ -35,15 +37,20 @@ async function getScheduleData() {
 
 export default async function SchedulePage() {
   const data = await getScheduleData();
+  const dict = await getTranslations();
 
   return (
-    <Container>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 animate-in">
+    <>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
         <div>
-          <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-            Lesson <span className="text-primary-500">Schedule</span>
-          </h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Manage upcoming and past sessions</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {dict.nav.schedule}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {dict.common.upcomingPast}
+          </p>
         </div>
       </div>
 
@@ -58,6 +65,6 @@ export default async function SchedulePage() {
         coaches={data.coaches} 
         students={data.students} 
       />
-    </Container>
+    </>
   );
 }

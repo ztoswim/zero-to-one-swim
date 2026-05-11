@@ -4,6 +4,7 @@ import { students, packages, coaches, invoices } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { CreateInvoiceForm } from "./CreateInvoiceForm";
 import { BackButton } from "@/components/BackButton";
+import { getTranslation } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -55,21 +56,26 @@ async function getInitialData() {
 }
 
 export default async function CreateInvoicePage() {
+  const { t } = await getTranslation();
   const data = await getInitialData();
 
   return (
-    <Container>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 animate-in">
+    <>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
         <div>
-          <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-            Create <span className="text-primary-500">Invoice</span>
-          </h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Generate invoice and schedule</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {t('common.createInvoice')}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {t('common.invoiceSubtitle')}
+          </p>
         </div>
         <BackButton 
-          className="btn bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-100 px-8 h-12 shadow-sm font-bold rounded-2xl transition-all"
+          className="btn bg-white hover:bg-gray-50 text-gray-600 border-2 border-gray-100 px-8 h-12 shadow-sm font-bold rounded-xl transition-all"
         >
-          Discard & Back
+          {t('common.discardAndBack')}
         </BackButton>
       </div>
 
@@ -86,6 +92,6 @@ export default async function CreateInvoicePage() {
         lessons={data.lessons}
         initialInvNumber={data.initialInvNumber} 
       />
-    </Container>
+    </>
   );
 }

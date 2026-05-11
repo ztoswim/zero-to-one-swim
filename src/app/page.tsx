@@ -4,6 +4,10 @@ import { invoices, lessons, students } from "@/db/schema";
 import { desc, eq, gte, lte, and } from "drizzle-orm";
 import { TrendingUp, Calendar, AlertCircle, User, MessageSquare, CheckCircle, Plus } from "lucide-react";
 import Link from "next/link";
+import { hasPermission } from "@/lib/permissions";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
+
+import { getTranslations } from "@/lib/i18n";
 
 export const dynamic = 'force-dynamic';
 
@@ -51,35 +55,49 @@ async function getDashboardData() {
     }).filter((s: any) => s.rem <= 2).sort((a: any, b: any) => a.rem - b.rem);
 
     return { monthIncome, monthProfit, totalLessons, lowBalanceList };
-  } catch (e) {
-    console.error("Database connection failed", e);
+  } catch (e: any) {
+    console.error("Database connection failed:", e);
     return {
       monthIncome: 0,
       monthProfit: 0,
       totalLessons: 0,
       lowBalanceList: [],
-      error: "Database connection needed.",
+      error: `Database error: ${e.message || "Connection failed"}. Please check DATABASE_URL and run push.`,
     };
   }
 }
 
 export default async function DashboardPage() {
-  const data = await getDashboardData();
+  const [data, user, dict] = await Promise.all([
+    getDashboardData(),
+    getCurrentUserProfile(),
+    getTranslations()
+  ]);
+
+  const canViewMetrics = hasPermission(user, 'view_dashboard_metrics');
+  const canCreateInvoice = hasPermission(user, 'create_invoice');
 
   return (
-    <Container>
+    <>
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12 animate-in">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
         <div>
-          <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-            Performance <span className="text-primary-500">Hub</span>
-          </h1>
-          <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Real-time academy overview</p>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {dict.nav.dashboard}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {dict.common.realtimeOverview}
+          </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href="/create-invoice" className="btn btn-primary px-8 h-14 shadow-xl shadow-primary-200 flex items-center gap-2">
-            New Invoice <Plus className="w-5 h-5" />
-          </Link>
+
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          {canCreateInvoice && (
+            <Link href="/create-invoice" className="btn btn-primary px-8 h-12 shadow-xl shadow-primary-200 flex items-center gap-2 rounded-xl whitespace-nowrap">
+              {dict.common.newInvoice} <Plus className="w-5 h-5" />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -92,30 +110,34 @@ export default async function DashboardPage() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16 animate-in" style={{ animationDelay: '0.1s' }}>
         {/* Income */}
-        <div className="metric-card">
-          <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black rotate-12">RM</div>
-          <div className="relative z-10">
-            <p className="stat-label">Monthly Income</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-xl font-black text-primary-500 opacity-60">RM</span>
-              <span className="stat-value">{data.monthIncome.toLocaleString()}</span>
+        {canViewMetrics && (
+          <div className="metric-card">
+            <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black rotate-12">RM</div>
+            <div className="relative z-10">
+              <p className="stat-label">{dict.common.monthlyIncome}</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-primary-500 opacity-60">RM</span>
+                <span className="stat-value">{data.monthIncome.toLocaleString()}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Profit */}
-        <div className="metric-card">
-          <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black -rotate-12 flex justify-center">
-            <TrendingUp className="w-32 h-32" />
-          </div>
-          <div className="relative z-10">
-            <p className="stat-label">Monthly Profit</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-xl font-black text-green-500 opacity-60">RM</span>
-              <span className="stat-value text-green-600">{data.monthProfit.toLocaleString()}</span>
+        {canViewMetrics && (
+          <div className="metric-card">
+            <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black -rotate-12 flex justify-center">
+              <TrendingUp className="w-32 h-32" />
+            </div>
+            <div className="relative z-10">
+              <p className="stat-label">{dict.common.monthlyProfit}</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-green-500 opacity-60">RM</span>
+                <span className="stat-value text-green-600">{data.monthProfit.toLocaleString()}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Lessons */}
         <div className="metric-card">
@@ -123,7 +145,7 @@ export default async function DashboardPage() {
             <Calendar className="w-32 h-32" />
           </div>
           <div className="relative z-10">
-            <p className="stat-label">Total Lessons</p>
+            <p className="stat-label">{dict.nav.schedule}</p>
             <span className="stat-value">{data.totalLessons}</span>
           </div>
         </div>
@@ -134,7 +156,7 @@ export default async function DashboardPage() {
             <AlertCircle className="w-32 h-32" />
           </div>
           <div className="relative z-10">
-            <p className="stat-label">Renewal Alerts</p>
+            <p className="stat-label">{dict.common.renewalAlerts}</p>
             <span className={`stat-value ${data.lowBalanceList.length > 0 ? 'text-red-600' : ''}`}>
               {data.lowBalanceList.length}
             </span>
@@ -147,7 +169,7 @@ export default async function DashboardPage() {
         <section className="animate-in" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-4 mb-8">
             <h2 className="text-3xl font-black text-gray-900 tracking-tighter">
-              Low Balance <span className="text-red-500">Alerts</span>
+              {dict.common.lowBalanceAlerts}
             </h2>
             <div className="flex-1 h-px bg-gray-100"></div>
           </div>
@@ -170,7 +192,7 @@ export default async function DashboardPage() {
                     <div className={`text-2xl font-black leading-none ${s.rem <= 0 ? 'text-red-600' : 'text-orange-500'}`}>
                       {s.rem}
                     </div>
-                    <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Rem</div>
+                    <div className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{dict.common.rem}</div>
                   </div>
                   <a href={`https://wa.me/${s.phone?.replace(/\D/g, '')}?text=Hi%20${s.name},%20you%20have%20${s.rem}%20lessons%20remaining.`} target="_blank" rel="noreferrer"
                      className="w-12 h-12 rounded-2xl bg-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-200 hover:scale-110 transition-all active:scale-90">
@@ -186,10 +208,10 @@ export default async function DashboardPage() {
           <div className="text-6xl mb-4 text-success flex justify-center">
             <CheckCircle className="w-16 h-16" />
           </div>
-          <h3 className="text-xl font-black text-gray-900 uppercase tracking-widest">All Clear</h3>
-          <p className="text-gray-400 font-bold text-sm">No students need renewal at this moment.</p>
+          <h3 className="text-xl font-black text-gray-900 uppercase tracking-widest">{dict.common.allClear}</h3>
+          <p className="text-gray-400 font-bold text-sm">{dict.common.noRenewalNeeded}</p>
         </section>
       )}
-    </Container>
+    </>
   );
 }

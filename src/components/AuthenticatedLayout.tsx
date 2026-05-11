@@ -18,7 +18,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
       
       <main className="flex-1 min-w-0 relative h-screen overflow-y-auto no-scrollbar scroll-smooth">
         {/* Added extra padding on mobile for "breath" */}
-        <div className="w-full px-4 py-8 lg:px-8 lg:py-10 pb-28 lg:pb-12">
+        <div className="w-full px-4 pt-24 pb-28 lg:px-8 lg:py-10 lg:pb-12">
           {children}
         </div>
       </main>

@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { coaches, students } from "@/db/schema";
 import { asc } from "drizzle-orm";
+import { Container } from "@/components/Container";
 import { FixedScheduleView } from "./FixedScheduleView";
 
 export const dynamic = 'force-dynamic';
@@ -29,22 +30,39 @@ async function getData() {
     }))
   );
 
-  return { coaches: coachesData, students: flattenedSlots };
+  return { 
+    coaches: coachesData, 
+    slots: flattenedSlots,
+    allStudents: studentsData.map(s => ({ id: s.id, name: s.name }))
+  };
 }
 
+import { getTranslations } from "@/lib/i18n";
+
 export default async function FixedSchedulePage() {
-  const { coaches, students } = await getData();
+  const data = await getData();
+  const dict = await getTranslations();
 
   return (
-    <main className="py-12 bg-gray-50/50 min-h-screen">
-      <div className="container mx-auto px-6 mb-12">
-        <h1 className="text-5xl font-black text-gray-900 tracking-tighter mb-2">
-          Fixed <span className="text-primary-500">Schedule</span>
-        </h1>
-        <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs">Slot Management & Weekly Overview</p>
+    <>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 animate-in">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tight">
+              {dict.nav.fixedSchedule}
+            </h1>
+          </div>
+          <p className="text-gray-400 font-medium tracking-wide">
+            {dict.common.recurringLessons}
+          </p>
+        </div>
       </div>
-      
-      <FixedScheduleView coaches={coaches} students={students} />
-    </main>
+
+      <FixedScheduleView 
+        coaches={data.coaches} 
+        students={data.slots} 
+        allStudents={data.allStudents} 
+      />
+    </>
   );
 }

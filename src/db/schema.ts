@@ -1,14 +1,35 @@
-import { pgTable, uuid, text, timestamp, integer, decimal, date, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, integer, decimal, date, boolean, jsonb } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey(), // Linked to auth.users.id
   email: text("email").notNull().unique(),
   fullName: text("full_name"),
-  phone: text("phone"),
-  role: text("role").default("coach").notNull(),
+  role: text("role").default("coach").notNull(), // root, admin, coach, parent
+  permissions: jsonb("permissions"), // Store granular permissions
+  linkedCoachId: uuid("linked_coach_id").references(() => coaches.id),
+  linkedAdminId: uuid("linked_admin_id").references(() => admins.id),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
+export const admins = pgTable("admins", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  nickname: text("nickname"),
+  gender: text("gender"),
+  dob: date("dob"),
+  ic: text("ic"),
+  phone: text("phone"),
+  email: text("email"),
+  address: text("address"),
+  joinDate: date("join_date"),
+  bankName: text("bank_name"),
+  bankAccount: text("bank_account"),
+  emergencyName: text("emergency_name"),
+  emergencyPhone: text("emergency_phone"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
 
 export const coaches = pgTable("coaches", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -43,7 +64,7 @@ export const students = pgTable("students", {
   sameArea: text("same_area"),
   emergencyName: text("emergency_name"),
   emergencyPhone: text("emergency_phone"),
-  venueId: uuid("venue_id").references(() => venues.id),
+  locationId: uuid("location_id").references(() => locations.id),
   startDate: date("start_date"),
   lessonDuration: integer("lesson_duration").default(45),
   notes: text("notes"),
@@ -54,7 +75,7 @@ export const students = pgTable("students", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
-export const venues = pgTable("venues", {
+export const locations = pgTable("locations", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   googleMapsUrl: text("google_maps_url"),
@@ -64,10 +85,10 @@ export const venues = pgTable("venues", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
-export const venueRoutes = pgTable("venue_routes", {
+export const locationRoutes = pgTable("location_routes", {
   id: uuid("id").primaryKey().defaultRandom(),
-  fromVenueId: uuid("from_venue_id").references(() => venues.id, { onDelete: "cascade" }).notNull(),
-  toVenueId: uuid("to_venue_id").references(() => venues.id, { onDelete: "cascade" }).notNull(),
+  fromLocationId: uuid("from_location_id").references(() => locations.id, { onDelete: "cascade" }).notNull(),
+  toLocationId: uuid("to_location_id").references(() => locations.id, { onDelete: "cascade" }).notNull(),
   durationMinutes: integer("duration_minutes").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
@@ -88,7 +109,8 @@ export const packages = pgTable("packages", {
   lessonCount: integer("lesson_count").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   type: text("type"),
-  duration: integer("duration").default(45),
+  pax: integer("pax").default(1),
+  transportFee: decimal("transport_fee", { precision: 10, scale: 2 }).default("0.00"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
@@ -99,12 +121,15 @@ export const invoices = pgTable("invoices", {
   packageId: uuid("package_id").references(() => packages.id),
   coachId: uuid("coach_id").references(() => coaches.id),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }),
+  transportFee: decimal("transport_fee", { precision: 10, scale: 2 }).default("0.00"),
   paymentMethod: text("payment_method"),
   paymentDate: date("payment_date"),
   lessonsRemaining: integer("lessons_remaining").notNull(),
   status: text("status").default("paid"),
+  createdBy: uuid("created_by").references(() => users.id),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+
 
 export const lessons = pgTable("lessons", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -130,9 +155,9 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
     fields: [students.coachId],
     references: [coaches.id],
   }),
-  venue: one(venues, {
-    fields: [students.venueId],
-    references: [venues.id],
+  location: one(locations, {
+    fields: [students.locationId],
+    references: [locations.id],
   }),
   invoices: many(invoices),
   lessons: many(lessons),
@@ -167,6 +192,10 @@ export const invoicesRelations = relations(invoices, ({ one, many }) => ({
     fields: [invoices.coachId],
     references: [coaches.id],
   }),
+  creator: one(users, {
+    fields: [invoices.createdBy],
+    references: [users.id],
+  }),
   lessons: many(lessons),
 }));
 
@@ -185,13 +214,13 @@ export const lessonsRelations = relations(lessons, ({ one }) => ({
   }),
 }));
 
-export const venueRoutesRelations = relations(venueRoutes, ({ one }) => ({
-  fromVenue: one(venues, {
-    fields: [venueRoutes.fromVenueId],
-    references: [venues.id],
+export const locationRoutesRelations = relations(locationRoutes, ({ one }) => ({
+  fromLocation: one(locations, {
+    fields: [locationRoutes.fromLocationId],
+    references: [locations.id],
   }),
-  toVenue: one(venues, {
-    fields: [venueRoutes.toVenueId],
-    references: [venues.id],
+  toLocation: one(locations, {
+    fields: [locationRoutes.toLocationId],
+    references: [locations.id],
   }),
 }));

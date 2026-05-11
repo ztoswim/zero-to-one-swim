@@ -9,6 +9,7 @@ import { getCurrentUserProfile } from "@/app/staff-access/actions";
 import { AddStudentDialog } from "./AddStudentDialog";
 import { StudentsListClient } from "./StudentsListClient";
 
+import { redirect } from "next/navigation";
 import { getTranslations } from "@/lib/i18n";
 
 export const dynamic = 'force-dynamic';
@@ -39,6 +40,10 @@ export default async function StudentsPage() {
     getCurrentUserProfile(),
     getTranslations()
   ]);
+  
+  if (!user) {
+    redirect("/login");
+  }
 
   const canCreate = hasPermission(user, 'create_student');
   const canEdit = hasPermission(user, 'edit_student');

@@ -34,10 +34,19 @@ async function getInvoicesData() {
 }
 
 import { getTranslations } from "@/lib/i18n";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
+import { redirect } from "next/navigation";
 
 export default async function InvoicesPage() {
-  const data = await getInvoicesData();
-  const dict = await getTranslations();
+  const [data, user, dict] = await Promise.all([
+    getInvoicesData(),
+    getCurrentUserProfile(),
+    getTranslations()
+  ]);
+
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <>

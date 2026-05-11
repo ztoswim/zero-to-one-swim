@@ -38,10 +38,19 @@ async function getData() {
 }
 
 import { getTranslations } from "@/lib/i18n";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
+import { redirect } from "next/navigation";
 
 export default async function FixedSchedulePage() {
-  const data = await getData();
-  const dict = await getTranslations();
+  const [data, user, dict] = await Promise.all([
+    getData(),
+    getCurrentUserProfile(),
+    getTranslations()
+  ]);
+
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <>

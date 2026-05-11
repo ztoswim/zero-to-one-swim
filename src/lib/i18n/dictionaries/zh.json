@@ -249,6 +249,7 @@
     "staffAccess": "员工权限",
     "settings": "设置",
     "logout": "退出登录",
+    "signOut": "退出登录",
     "signOutConfirm": "您确定要退出当前账号吗？",
     "loggingOut": "正在退出...",
     "root": "超级管理员",

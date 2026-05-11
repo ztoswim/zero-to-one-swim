@@ -7,6 +7,7 @@ import { getCurrentUserProfile } from "@/app/staff-access/actions";
 import { AddCoachDialog } from "./AddCoachDialog";
 import { CoachesListClient } from "./CoachesListClient";
 
+import { redirect } from "next/navigation";
 import { getTranslations } from "@/lib/i18n";
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +25,10 @@ export default async function CoachesPage() {
     getCurrentUserProfile(),
     getTranslations()
   ]);
+
+  if (!user) {
+    redirect("/login");
+  }
 
   const canCreate = hasPermission(user, 'create_coach');
   const canEdit = hasPermission(user, 'edit_coach');

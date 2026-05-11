@@ -2,45 +2,14 @@ import { db } from "@/db";
 import { locations } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import { LocationsView } from "./LocationsView";
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
+import { getTranslations } from "@/lib/i18n";
+import { getCurrentUserProfile } from "@/app/staff-access/actions";
+import { redirect } from "next/navigation";
+
 async function getInitialData() {
-  let userProfile: any = { role: 'coach' };
-  
-  try {
-    const cookieStore = await cookies();
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (supabaseUrl && supabaseAnonKey) {
-      const supabase = createServerClient(
-        supabaseUrl,
-        supabaseAnonKey,
-        {
-          cookies: {
-            get(name: string) {
-              return cookieStore.get(name)?.value;
-            },
-          },
-        }
-      );
-
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const profile = await db.query.users.findFirst({
-          where: (u, { eq }) => eq(u.id, user.id)
-        });
-        userProfile = profile || { role: 'coach' };
-      }
-    }
-  } catch (e) {
-    console.error('Error fetching user profile in locations page:', e);
-  }
-
   // Fetch location data with error handling
   let locationsData: any[] = [];
   let routesData: any[] = [];
@@ -59,11 +28,19 @@ async function getInitialData() {
     console.error('Database query error in locations page:', e);
   }
 
-  return { locations: locationsData, routes: routesData, userProfile };
+  return { locations: locationsData, routes: routesData };
 }
 
 export default async function LocationsPage() {
-  const { locations: locationsData, routes, userProfile } = await getInitialData();
+  const [data, user, dict] = await Promise.all([
+    getInitialData(),
+    getCurrentUserProfile(),
+    getTranslations()
+  ]);
 
-  return <LocationsView locations={locationsData} routes={routes} user={userProfile} />;
+  if (!user) {
+    redirect("/login");
+  }
+
+  return <LocationsView locations={data.locations} routes={data.routes} user={user} />;
 }

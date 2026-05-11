@@ -7,6 +7,7 @@ import Link from "next/link";
 import { hasPermission } from "@/lib/permissions";
 import { getCurrentUserProfile } from "@/app/staff-access/actions";
 
+import { redirect } from "next/navigation";
 import { getTranslations } from "@/lib/i18n";
 
 export const dynamic = 'force-dynamic';
@@ -73,6 +74,10 @@ export default async function DashboardPage() {
     getCurrentUserProfile(),
     getTranslations()
   ]);
+
+  if (!user) {
+    redirect("/login");
+  }
 
   const canViewMetrics = hasPermission(user, 'view_dashboard_metrics');
   const canCreateInvoice = hasPermission(user, 'create_invoice');

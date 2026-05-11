@@ -4,12 +4,25 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // 1. FAST PATH: Extremely simple skip for login and static files
-  if (pathname.startsWith('/login') || pathname.startsWith('/_next') || pathname.includes('.')) {
+  // 1. FAST PATH: Extremely strict skip for essential paths
+  if (
+    pathname.startsWith('/_next') || 
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.') ||
+    pathname === '/favicon.ico'
+  ) {
     return NextResponse.next()
   }
 
-  // 2. Simple Supabase check
+  // 2. Create initial response
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  // 3. Initialize Supabase
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -18,28 +31,45 @@ export async function middleware(request: NextRequest) {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
-        // Skip setting/removing in middleware to avoid hang/loop issues
-        set() {},
-        remove() {},
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({ name, value, ...options })
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          })
+          response.cookies.set({ name, value, ...options })
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({ name, value: '', ...options })
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          })
+          response.cookies.set({ name, value: '', ...options })
+        },
       },
     }
   )
 
+  // 4. Get User Session
+  // Using try-catch to ensure any auth errors don't hang the request
   try {
     const { data: { user } } = await supabase.auth.getUser()
 
-    // 3. Redirect to login if not authenticated
+    // 5. Redirect if no user
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
     }
   } catch (e) {
-    // If anything fails, just let it through to avoid a total site hang
-    return NextResponse.next()
+    // If error, just allow next() to avoid blocking access during dev/errors
+    return response
   }
 
-  return NextResponse.next()
+  return response
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

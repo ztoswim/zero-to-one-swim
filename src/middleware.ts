@@ -2,79 +2,42 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname
+  const { pathname } = request.nextUrl
 
-  // 1. FAST PATH: Ignore static files and images
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') ||
-    pathname === '/favicon.ico'
-  ) {
+  // 1. FAST PATH: Extremely simple skip for login and static files
+  if (pathname.startsWith('/login') || pathname.startsWith('/_next') || pathname.includes('.')) {
     return NextResponse.next()
   }
 
-  // 2. INITIAL RESPONSE
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
-
-  // 3. IF LOGIN PAGE: Just allow it (prevent loop)
-  if (pathname === '/login') {
-    return response
-  }
-
-  // 4. SUPABASE CLIENT
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Supabase env vars are missing')
-      return response
-    }
-
-    const supabase = createServerClient(supabaseUrl, supabaseKey, {
+  // 2. Simple Supabase check
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
       cookies: {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({ name, value, ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({ name, value: '', ...options })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value: '', ...options })
-        },
+        // Skip setting/removing in middleware to avoid hang/loop issues
+        set() {},
+        remove() {},
       },
-    })
+    }
+  )
 
-    // 5. CHECK AUTH
+  try {
     const { data: { user } } = await supabase.auth.getUser()
 
-    // 6. REDIRECT IF NOT LOGGED IN
+    // 3. Redirect to login if not authenticated
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-
-    return response
   } catch (e) {
-    console.error('Middleware error:', e)
-    return response
+    // If anything fails, just let it through to avoid a total site hang
+    return NextResponse.next()
   }
+
+  return NextResponse.next()
 }
 
 export const config = {

@@ -44,7 +44,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md animate-in">
         {/* Logo/Brand */}
         <div className="text-center -mb-20 flex flex-col items-center relative z-10">
-          <img src="/logo.png" alt="Zero To One Swim" className="h-[450px] w-auto object-contain" />
+          <img src="/logo.png" alt="Zero To One Swim" className="h-[320px] w-auto object-contain" />
         </div>
 
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-10 border border-gray-100">

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, FileText, Calendar, Medal, Clock, MapPin, LogOut, ShieldAlert, UserCog, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Calendar, Medal, Clock, MapPin, LogOut, ShieldAlert, UserCog, DollarSign, Settings as SettingsIcon } from 'lucide-react';
 
 import { useState, useEffect } from 'react';
 import { getCurrentUserProfile } from '@/app/staff-access/actions';
@@ -66,6 +66,12 @@ const navGroups: NavGroup[] = [
     title: 'system',
     items: [
       { id: 'staffAccess', name: 'Staff Access', href: '/staff-access', icon: ShieldAlert, permission: 'manage_users' },
+    ]
+  },
+  {
+    title: 'account',
+    items: [
+      { id: 'settings', name: 'Settings', href: '/settings', icon: SettingsIcon },
     ]
   }
 ];

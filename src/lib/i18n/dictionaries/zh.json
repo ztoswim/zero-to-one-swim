@@ -237,6 +237,7 @@
     "group_finance": "财务",
     "group_settings": "设置",
     "group_system": "系统管理",
+    "group_account": "个人账户",
     "dashboard": "仪表盘",
     "schedule": "课表",
     "students": "学生管理",
@@ -432,5 +433,17 @@
     "parentDesc": "追踪孩子的学习进度",
     "lessonsRemaining": "剩余课时",
     "nextSession": "下一次课程"
+  },
+  "settings": {
+    "title": "系统设置",
+    "subtitle": "管理您的个人账户与偏好设置",
+    "changePassword": "修改登录密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmNewPassword": "确认新密码",
+    "passwordMismatch": "两次输入的密码不一致",
+    "updateSuccess": "密码修改成功",
+    "updating": "正在更新...",
+    "passwordRequirement": "新密码至少需要 6 个字符"
   }
 }

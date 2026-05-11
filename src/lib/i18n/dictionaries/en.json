@@ -244,6 +244,7 @@
     "group_finance": "Finance",
     "group_settings": "Settings",
     "group_system": "System",
+    "group_account": "Account",
     "dashboard": "Dashboard",
     "schedule": "Schedule",
     "students": "Students",
@@ -441,5 +442,17 @@
     "parentDesc": "Track your child's progress",
     "lessonsRemaining": "Lessons Remaining",
     "nextSession": "Next Session"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordMismatch": "Passwords do not match",
+    "updateSuccess": "Password updated successfully",
+    "updating": "Updating...",
+    "passwordRequirement": "Minimum 6 characters required"
   }
 }
